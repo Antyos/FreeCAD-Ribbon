@@ -19,16 +19,17 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import FreeCAD as App
-import FreeCADGui as Gui
 import os
+import sys
 
+import FreeCADGui as Gui
 from PySide.QtCore import Qt
+from PySide.QtGui import QPixmap
 from PySide.QtWidgets import (
     QLabel,
 )
-from PySide.QtGui import QPixmap
-import sys
+
+import FreeCAD as App
 
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
@@ -56,7 +57,6 @@ translate = App.Qt.translate
 
 
 class LoadDialog(LicenseForm_ui.Ui_Dialog):
-
     FormLoaded = False
 
     def __init__(self):

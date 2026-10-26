@@ -22,18 +22,16 @@
 
 # This code is based on the serialize function of the SearBar Addon.
 # Original developer for the SearchBar addon is Suzanne Soy.
-from PySide.QtGui import QIcon, QPixmap
 from PySide.QtCore import (
-    QSize,
     QBuffer,
-    QIODevice,
     QByteArray,
+    QIODevice,
+    QSize,
 )
+from PySide.QtGui import QIcon, QPixmap
 
 
-def iconToBase64(
-    icon: QIcon, sz=QSize(64, 64), mode=QIcon.Mode.Normal, state=QIcon.State.On
-):
+def iconToBase64(icon: QIcon, sz=QSize(64, 64), mode=QIcon.Mode.Normal, state=QIcon.State.On):
     """
     Converts a QIcon to a Base64-encoded string representation of its pixmap.
 
@@ -81,9 +79,7 @@ def serializeIcon(icon):
                 "off": QIcon.State.Off,
                 "on": QIcon.State.On,
             }.items():
-                iconPixmaps[strW][strH][strMode][strState] = iconToBase64(
-                    icon, sz, mode, state
-                )
+                iconPixmaps[strW][strH][strMode][strState] = iconToBase64(icon, sz, mode, state)
     return iconPixmaps
 
 
@@ -101,8 +97,6 @@ def deserializeIcon(iconPixmaps):
                 for strState, statePixmap in modePixmaps.items():
                     state = {"off": QIcon.State.Off, "on": QIcon.State.On}[strState]
                     pxm = QPixmap()
-                    pxm.loadFromData(
-                        QByteArray.fromBase64(bytearray(statePixmap.encode("utf-8")))
-                    )
+                    pxm.loadFromData(QByteArray.fromBase64(bytearray(statePixmap.encode("utf-8"))))
                     ico.addPixmap(pxm, mode, state)
     return ico

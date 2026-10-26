@@ -19,12 +19,13 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import FreeCAD as App
-import FreeCADGui as Gui
 import os
-
-from PySide.QtCore import Qt
 import sys
+
+import FreeCADGui as Gui
+from PySide.QtCore import Qt
+
+import FreeCAD as App
 
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters

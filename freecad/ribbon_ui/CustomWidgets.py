@@ -22,103 +22,54 @@
 import os
 import sys
 import typing
-from typing import TYPE_CHECKING
 
 import FreeCAD as App
 import FreeCADGui as Gui
-
-if TYPE_CHECKING:
-    from PySide6.QtCore import (
-        Property,
-        QEasingCurve,
-        QMimeData,
-        QPoint,
-        QPointF,
-        QPropertyAnimation,
-        QRectF,
-        QSequentialAnimationGroup,
-        QSize,
-        Qt,
-        Slot,
-    )
-    from PySide6.QtGui import (
-        QAction,
-        QBrush,
-        QColor,
-        QCursor,
-        QDrag,
-        QFont,
-        QFontMetrics,
-        QIcon,
-        QPainter,
-        QPaintEvent,
-        QPen,
-        QPixmap,
-    )
-    from PySide6.QtWidgets import (
-        QCheckBox,
-        QComboBox,
-        QFrame,
-        QGridLayout,
-        QHBoxLayout,
-        QLabel,
-        QLayout,
-        QLineEdit,
-        QMainWindow,
-        QMenu,
-        QSizePolicy,
-        QSpinBox,
-        QToolButton,
-        QVBoxLayout,
-        QWidget,
-        QWidgetAction,
-    )
-else:
-    from PySide.QtCore import (
-        Property,
-        QEasingCurve,
-        QMimeData,
-        QPoint,
-        QPointF,
-        QPropertyAnimation,
-        QRectF,
-        QSequentialAnimationGroup,
-        QSize,
-        Qt,
-        Slot,
-    )
-    from PySide.QtGui import (
-        QAction,
-        QBrush,
-        QColor,
-        QCursor,
-        QDrag,
-        QFont,
-        QFontMetrics,
-        QIcon,
-        QPainter,
-        QPaintEvent,
-        QPen,
-        QPixmap,
-    )
-    from PySide.QtWidgets import (
-        QCheckBox,
-        QComboBox,
-        QFrame,
-        QGridLayout,
-        QHBoxLayout,
-        QLabel,
-        QLayout,
-        QLineEdit,
-        QMainWindow,
-        QMenu,
-        QSizePolicy,
-        QSpinBox,
-        QToolButton,
-        QVBoxLayout,
-        QWidget,
-        QWidgetAction,
-    )
+from PySide.QtCore import (
+    Property,
+    QEasingCurve,
+    QMimeData,
+    QPoint,
+    QPointF,
+    QPropertyAnimation,
+    QRectF,
+    QSequentialAnimationGroup,
+    QSize,
+    Qt,
+    Slot,
+)
+from PySide.QtGui import (
+    QAction,
+    QBrush,
+    QColor,
+    QCursor,
+    QDrag,
+    QFont,
+    QFontMetrics,
+    QIcon,
+    QPainter,
+    QPaintEvent,
+    QPen,
+    QPixmap,
+)
+from PySide.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QLineEdit,
+    QMainWindow,
+    QMenu,
+    QSizePolicy,
+    QSpinBox,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+    QWidgetAction,
+)
 
 from . import Standard_Functions_Ribbon as StandardFunctions
 from . import StyleMapping_Ribbon

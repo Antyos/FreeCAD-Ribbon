@@ -34,9 +34,7 @@ translate = App.Qt.translate
 
 preferences = App.ParamGet("User parameter:BaseApp/Preferences/Mod/FreeCAD-Ribbon")
 
-STYLESHEET_LOCATION = os.path.join(
-    os.path.dirname(__file__), "resources", "stylesheets"
-)
+STYLESHEET_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "stylesheets")
 
 DefaultSettings = {
     "Docked_Dialogs": bool(False),
@@ -242,9 +240,7 @@ class Parameters:
 
     # region - Define the resources ----------------------------------------------------------------------------------------
     ICON_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "icons")
-    STYLESHEET_LOCATION = os.path.join(
-        os.path.dirname(__file__), "resources", "stylesheets"
-    )
+    STYLESHEET_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "stylesheets")
     UI_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "ui")
     # endregion ------------------------------------------------------------------------------------------------------------
 

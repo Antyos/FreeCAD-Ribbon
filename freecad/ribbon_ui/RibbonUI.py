@@ -23,9 +23,11 @@
 # Script for creating the command for FreeCAD
 
 # FreeCAD init script of the Work Features module
-import FreeCAD as App
-import FreeCADGui as Gui
 import os
+
+import FreeCADGui as Gui
+
+import FreeCAD as App
 
 # Define the translation
 translate = App.Qt.translate
@@ -42,6 +44,7 @@ class RibbonApplicationMenu_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget
+
         from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
@@ -64,6 +67,7 @@ class RibbonLayout_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget
+
         from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
@@ -86,6 +90,7 @@ class RibbonPreferences_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget
+
         from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
@@ -100,6 +105,7 @@ class RibbonPreferences_Class:
 class RibbonPin_Class:
     def GetResources(self):
         from . import StyleMapping_Ribbon
+
         pixmap = os.path.join(
             os.path.dirname(__file__), "resources", "icons", "pin-icon-default.svg"
         )
@@ -107,7 +113,7 @@ class RibbonPin_Class:
             pixmap = os.path.join(
                 os.path.dirname(__file__), "resources", "icons", "pin-icon-default_white.svg"
             )
-        
+
         return {
             "Pixmap": pixmap,
             "Accel": "Alt+T",
@@ -117,6 +123,7 @@ class RibbonPin_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget, QToolButton
+
         from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
@@ -149,14 +156,14 @@ class MenuBar_Class:
             return
         if mb.isVisible() is False:
             mb.show()
-            return        
+            return
         return
 
 
 Gui.addCommand("Ribbon_Menu", RibbonApplicationMenu_Class())
 Gui.addCommand("Ribbon_Layout", RibbonLayout_Class())
 Gui.addCommand("Ribbon_Preferences", RibbonPreferences_Class())
-try: 
+try:
     Gui.addCommand("Ribbon_Pin", RibbonPin_Class())
     Gui.addCommand("Ribbon_Menubar", MenuBar_Class())
 except Exception:

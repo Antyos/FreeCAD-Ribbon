@@ -19,15 +19,18 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import FreeCAD as App
-import FreeCADGui as Gui
 import os
-from PySide.QtGui import QIcon, QPixmap, QColor
-from PySide.QtWidgets import (
-    QToolButton,
-    QMainWindow,
-)
 import sys
+
+import FreeCADGui as Gui
+from PySide.QtGui import QColor, QIcon, QPixmap
+from PySide.QtWidgets import (
+    QMainWindow,
+    QToolButton,
+)
+
+import FreeCAD as App
+
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
 
@@ -48,28 +51,29 @@ sys.path.append(pathBackup)
 
 mw: QMainWindow = Gui.getMainWindow()
 
-preferences = App.ParamGet('User parameter:BaseApp/Preferences/Themes/UserTokens/')
-BackGroundColor = preferences.GetString('GeneralBackgroundColor')
-HoverColor = preferences.GetString('GeneralBackgroundHoverColor')
-BorderColor = preferences.GetString('GeneralBorderColor')
-BorderColorHover = preferences.GetString('GeneralBorderHoverColor')
-TextColor = preferences.GetString('TextForegroundColor')
+preferences = App.ParamGet("User parameter:BaseApp/Preferences/Themes/UserTokens/")
+BackGroundColor = preferences.GetString("GeneralBackgroundColor")
+HoverColor = preferences.GetString("GeneralBackgroundHoverColor")
+BorderColor = preferences.GetString("GeneralBorderColor")
+BorderColorHover = preferences.GetString("GeneralBorderHoverColor")
+TextColor = preferences.GetString("TextForegroundColor")
 
 btn = QToolButton()
 
 
 def GetColorSetting(settingName: str) -> object:
-        # Create a tuple from the int value of the color
-        result = QColor.fromRgba(preferences.GetUnsigned(settingName)).toTuple()
+    # Create a tuple from the int value of the color
+    result = QColor.fromRgba(preferences.GetUnsigned(settingName)).toTuple()
 
-        # correct the order of the tuple
-        result = (result[3], result[0], result[1], result[2])
+    # correct the order of the tuple
+    result = (result[3], result[0], result[1], result[2])
 
-        return result
+    return result
+
 
 def DarkMode():
-    import xml.etree.ElementTree as ET
     import os
+    import xml.etree.ElementTree as ET
 
     # Define the standard result
     IsDarkTheme = False
@@ -117,16 +121,12 @@ def DarkMode():
             # # if the current stylesheet matches a sub directory, try to get the package.xml
             packageXML = os.path.join(path, name, "package.xml")
             try:
-                
                 if os.path.exists(packageXML):
-
                     # Get the tree and root of the xml file
                     tree = ET.parse(packageXML)
                     treeRoot = tree.getroot()
                     namespaces = {"i": "https://wiki.freecad.org/Package_Metadata"}
-                    pack =  treeRoot.findall(
-                        ".//i:content/i:preferencepack", namespaces
-                    )
+                    pack = treeRoot.findall(".//i:content/i:preferencepack", namespaces)
 
                     for element in pack:
                         for child in element.iter():
@@ -141,13 +141,15 @@ def DarkMode():
                                             print(f"{child2.text} theme detected for: {child.text}")
                                         return False
 
-
             except Exception:
                 if not os.path.isfile(packageXML):
                     if "dark" in currentStyleSheet.lower():
                         IsDarkTheme = True
-                    else: 
-                        if mw.palette().windowText().color().lightness() > mw.palette().window().color().lightness():
+                    else:
+                        if (
+                            mw.palette().windowText().color().lightness()
+                            > mw.palette().window().color().lightness()
+                        ):
                             IsDarkTheme = True
                         else:
                             IsDarkTheme = False
@@ -191,9 +193,9 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
     #         currentStyleSheet = "FreeCAD Light.qss"
     #     if str("FreeCAD Dark").lower() in Theme.lower():
     #         currentStyleSheet = "FreeCAD Dark.qss"
-    
+
     # currentStyleSheet = "FreeCAD.qss"
-    
+
     IsInList = False
     for key, value in StyleMapping_default["Stylesheets"].items():
         if key == currentStyleSheet:
@@ -228,9 +230,7 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
             else:
                 PixmapName = ""
             if PixmapName == "" or PixmapName is None:
-                PixmapName = StyleMapping_default["Stylesheets"][currentStyleSheet][
-                    ControlName
-                ]
+                PixmapName = StyleMapping_default["Stylesheets"][currentStyleSheet][ControlName]
                 if PixmapName == "" or PixmapName is None:
                     PixmapName = StyleMapping_default["Stylesheets"][""][ControlName]
             if os.path.exists(PixmapName):
@@ -253,9 +253,7 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
             ):
                 result = "none"
             if result == "" or result is None:
-                result = StyleMapping_default["Stylesheets"][currentStyleSheet][
-                    ControlName
-                ]
+                result = StyleMapping_default["Stylesheets"][currentStyleSheet][ControlName]
                 if result == "" or result is None:
                     result = StyleMapping_default["Stylesheets"][""][ControlName]
             return result
@@ -350,10 +348,10 @@ def ReturnStyleSheet(
                     + BorderColor
                     + """;}"""
                     + "QToolButton:disabled, QLabel:disabled {background-color: "
-                        + ReturnStyleItem("Background_Color")
-                        + ";border: 0.5px solid"
-                        + BorderColor
-                        + ";}"
+                    + ReturnStyleItem("Background_Color")
+                    + ";border: 0.5px solid"
+                    + BorderColor
+                    + ";}"
                 )
                 return StyleSheet
             if control.lower() == "applicationbutton":
@@ -373,7 +371,7 @@ def ReturnStyleSheet(
                     + AppColor_1
                     + """;border: 0.5px solid"""
                     + BorderColor
-                     + """;color: """
+                    + """;color: """
                     + FontColor
                     + """;}"""
                     + """QToolButton:hover { """
@@ -446,7 +444,7 @@ def ReturnFontColor():
 
     if IsDarkTheme is True:
         fontColor = "#ffffff"
-    
+
     if Parameters.CUSTOM_COLORS_ENABLED:
         if Parameters.COLOR_FONT != "":
             fontColor = Parameters.COLOR_FONT
@@ -499,6 +497,7 @@ def ReturnTitleBarIcons():
         Icons.append(Icon)
     return Icons
 
+
 def ReturnIcons_ThemeEditor():
     lightIcons = {
         "ScrollLeftButton_Tab": "backward_small_default.svg",
@@ -508,9 +507,9 @@ def ReturnIcons_ThemeEditor():
         "OptionButton": "more_default.svg",
         "PinButton_open": "pin-icon-open.svg",
         "PinButton_closed": "pin-icon-default.svg",
-        "TitleBarButtons": ["maximize_default.svg", "restore_default.svg", "minimize_default.svg"]
+        "TitleBarButtons": ["maximize_default.svg", "restore_default.svg", "minimize_default.svg"],
     }
-    
+
     darkIcons = {
         "ScrollLeftButton_Tab": "backward_small_default_white.svg",
         "ScrollRightButton_Tab": "forward_small_default_white.svg",
@@ -519,15 +518,20 @@ def ReturnIcons_ThemeEditor():
         "OptionButton": "more_default_white.svg",
         "PinButton_open": "pin-icon-open_white.svg",
         "PinButton_closed": "pin-icon-default_white.svg",
-        "TitleBarButtons": ["maximize_default_white.svg", "restore_default_white.svg", "minimize_default_white.svg"]
+        "TitleBarButtons": [
+            "maximize_default_white.svg",
+            "restore_default_white.svg",
+            "minimize_default_white.svg",
+        ],
     }
-    color = GetColorSetting('TextForegroundColor')
+    color = GetColorSetting("TextForegroundColor")
     # if StandardFunctions.LightOrDark(color) == "dark":
     IsDarkTheme = darkMode
     if IsDarkTheme is False:
         return lightIcons
     else:
         return darkIcons
+
 
 # Used when custom colors are enabled
 StyleMapping = {
@@ -536,7 +540,7 @@ StyleMapping = {
         "Background_Color_Hover": Parameters.COLOR_BACKGROUND_HOVER,
         "Border_Color": Parameters.COLOR_BORDERS,
         "ApplicationButton_Background": Parameters.COLOR_APPLICATION_BUTTON_BACKGROUND,
-        "FontColor": ReturnFontColor(),  
+        "FontColor": ReturnFontColor(),
         "UpdateColor": ReturnUpdateColor(),
         "DevelopColor": ReturnDevelopColor(),
         "ScrollLeftButton_Tab": Parameters.SCROLL_LEFT_BUTTON_TAB,
@@ -554,9 +558,15 @@ StyleMapping_default = {
     "Stylesheets": {
         "": {
             "Background_Color": "none",
-            "Background_Color_Hover": StandardFunctions.ColorConvertor(mw.palette().highlight().color().toTuple(), 1, True, False),
-            "Border_Color": StandardFunctions.ColorConvertor(mw.palette().text().color().toTuple(), 1, True, False),
-            "ApplicationButton_Background": StandardFunctions.ColorConvertor(mw.palette().highlight().color().toTuple(), 1, True, False),
+            "Background_Color_Hover": StandardFunctions.ColorConvertor(
+                mw.palette().highlight().color().toTuple(), 1, True, False
+            ),
+            "Border_Color": StandardFunctions.ColorConvertor(
+                mw.palette().text().color().toTuple(), 1, True, False
+            ),
+            "ApplicationButton_Background": StandardFunctions.ColorConvertor(
+                mw.palette().highlight().color().toTuple(), 1, True, False
+            ),
             "FontColor": ReturnFontColor(),
             "UpdateColor": ReturnUpdateColor(),
             "DevelopColor": ReturnDevelopColor(),
@@ -580,9 +590,7 @@ StyleMapping_default = {
             "ScrollLeftButton_Tab": GetIconBasedOnTag("ScrollLeftButton_Tab"),
             "ScrollRightButton_Tab": GetIconBasedOnTag("ScrollRightButton_Tab"),
             "ScrollLeftButton_Category": GetIconBasedOnTag("ScrollLeftButton_Category"),
-            "ScrollRightButton_Category": GetIconBasedOnTag(
-                "ScrollRightButton_Category"
-            ),
+            "ScrollRightButton_Category": GetIconBasedOnTag("ScrollRightButton_Category"),
             "OptionButton": GetIconBasedOnTag("OptionButton"),
             "PinButton_open": GetIconBasedOnTag("PinButton_open"),
             "PinButton_closed": GetIconBasedOnTag("PinButton_closed"),
@@ -601,7 +609,7 @@ StyleMapping_default = {
             "ScrollLeftButton_Category": ReturnIcons_ThemeEditor()["ScrollLeftButton_Category"],
             "ScrollRightButton_Category": ReturnIcons_ThemeEditor()["ScrollRightButton_Category"],
             "OptionButton": ReturnIcons_ThemeEditor()["OptionButton"],
-            "PinButton_open":  ReturnIcons_ThemeEditor()["PinButton_open"],
+            "PinButton_open": ReturnIcons_ThemeEditor()["PinButton_open"],
             "PinButton_closed": ReturnIcons_ThemeEditor()["PinButton_closed"],
             "TitleBarButtons": ReturnIcons_ThemeEditor()["TitleBarButtons"],
         },
@@ -774,4 +782,3 @@ StyleMapping_default = {
         },
     }
 }
-

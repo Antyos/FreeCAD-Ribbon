@@ -20,14 +20,15 @@
 # *                                                                       *
 # *************************************************************************
 
+import datetime
+import math
 from xml.etree.ElementTree import Element
-from PySide.QtGui import QIcon
+
+import FreeCADGui as Gui
 from PySide.QtCore import QSize
+from PySide.QtGui import QIcon
 
 import FreeCAD as App
-import FreeCADGui as Gui
-import math
-import datetime
 
 # Define the translation
 translate = App.Qt.translate
@@ -53,8 +54,8 @@ def Mbox(
     Icontype:                       string: NoIcon, Question, Warning, Critical. Default Information\n
     30 : OK (Non blocking)          (text, title, style)\n
     """
-    from PySide.QtWidgets import QMessageBox, QInputDialog
     from PySide.QtCore import Qt
+    from PySide.QtWidgets import QInputDialog, QMessageBox
 
     Icon = QMessageBox.Icon.Information
     if IconType == "NoIcon":
@@ -83,9 +84,7 @@ def Mbox(
         msgBox.setText(text)
         msgBox.setWindowTitle(title)
         # Set the buttons and default button
-        msgBox.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         msgBox.setDefaultButton(QMessageBox.StandardButton.No)
 
         reply = msgBox.exec_()
@@ -100,9 +99,7 @@ def Mbox(
         msgBox.setText(text)
         msgBox.setWindowTitle(title)
         # Set the buttons and default button
-        msgBox.setStandardButtons(
-            QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
-        )
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
         msgBox.setDefaultButton(QMessageBox.StandardButton.Ok)
 
         reply = msgBox.exec_()
@@ -180,9 +177,7 @@ def RestartDialog(message="", includeIcons=False):
     msgBox.setText(message)
     msgBox.setWindowTitle("FreeCAD Ribbon")
     # Set the buttons and default button
-    msgBox.setStandardButtons(
-        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-    )
+    msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
     msgBox.setDefaultButton(QMessageBox.StandardButton.No)
     msgBox.button(QMessageBox.StandardButton.Yes).setText(
         translate("FreeCAD Ribbon", "Restart now")
@@ -191,12 +186,8 @@ def RestartDialog(message="", includeIcons=False):
         translate("FreeCAD Ribbon", "Restart later")
     )
     if includeIcons is True:
-        msgBox.button(QMessageBox.StandardButton.No).setIcon(
-            Gui.getIcon("edit_Cancel.svg")
-        )
-        msgBox.button(QMessageBox.StandardButton.Yes).setIcon(
-            Gui.getIcon("edit_OK.svg")
-        )
+        msgBox.button(QMessageBox.StandardButton.No).setIcon(Gui.getIcon("edit_Cancel.svg"))
+        msgBox.button(QMessageBox.StandardButton.Yes).setIcon(Gui.getIcon("edit_OK.svg"))
 
     reply = msgBox.exec_()
     if reply == QMessageBox.StandardButton.Yes:
@@ -206,15 +197,13 @@ def RestartDialog(message="", includeIcons=False):
 
 
 def restart_freecad():
-    from PySide import QtWidgets, QtCore
+    from PySide import QtCore, QtWidgets
 
     """Shuts down and restarts FreeCAD"""
 
     args = QtWidgets.QApplication.arguments()[1:]
     if Gui.getMainWindow().close():
-        QtCore.QProcess.startDetached(
-            QtWidgets.QApplication.applicationFilePath(), args
-        )
+        QtCore.QProcess.startDetached(QtWidgets.QApplication.applicationFilePath(), args)
 
     return
 
@@ -233,8 +222,7 @@ def SaveDialog(files, OverWrite: bool = True):
     If False, only the path+filename will be returned\n
     """
     import tkinter as tk
-    from tkinter.filedialog import asksaveasfile
-    from tkinter.filedialog import askopenfilename
+    from tkinter.filedialog import askopenfilename, asksaveasfile
 
     # Create the window
     root = tk.Tk()
@@ -250,28 +238,30 @@ def SaveDialog(files, OverWrite: bool = True):
         if file is not None:
             return file
 
+
 def OpenDirectory(path):
+    import os
     import platform
     import subprocess
-    import os
-    
+
     try:
         if os.path.exists(path) is False:
             return False
-        
+
         if platform.system().lower() == "darwin":
-                subprocess.run(['open', path])
+            subprocess.run(["open", path])
         elif platform.system().lower() == "Windows":
             os.startfile(path)
         else:
-            # Linux: try xdg-open, then sensible-browser as fallback 
-            try: 
-                subprocess.run(['xdg-open', path], check=True) 
-            except Exception: 
-                subprocess.run(['gio', 'open', path], check=False)          
+            # Linux: try xdg-open, then sensible-browser as fallback
+            try:
+                subprocess.run(["xdg-open", path], check=True)
+            except Exception:
+                subprocess.run(["gio", "open", path], check=False)
         return True
     except Exception:
         return False
+
 
 def GetLetterFromNumber(number: int, UCase: bool = True):
     """Number to Excel-style column name, e.g., 1 = A, 26 = Z, 27 = AA, 703 = AAA."""
@@ -315,9 +305,9 @@ def OpenFile(FileName: str):
     """
     Filename = full path with filename as string
     """
-    import subprocess
     import os
     import platform
+    import subprocess
 
     try:
         if os.path.exists(FileName):
@@ -413,8 +403,8 @@ def GetFolder(parent=None, DefaultPath="") -> str:
 
 
 def getRepoAdress(base_path):
-    import pathlib
     import os
+    import pathlib
 
     try:
         if base_path == "":
@@ -444,9 +434,7 @@ def CreateToolbar(Name: str, WorkBenchName: str = "Global", ButtonList: list = [
         "User parameter:BaseApp/Workbench/Global/Toolbar"
     ).GetGroups()
     for Group in CustomToolbars:
-        Parameter = App.ParamGet(
-            "User parameter:BaseApp/Workbench/Global/Toolbar/" + Group
-        )
+        Parameter = App.ParamGet("User parameter:BaseApp/Workbench/Global/Toolbar/" + Group)
         ItemName = Parameter.GetString("Name")
         if ItemName == ToolBarName:
             return ToolBarName
@@ -475,20 +463,16 @@ def RemoveWorkBenchToolbars(Name: str, WorkBenchName: str = "Global") -> None:
     # Define the name for the toolbar
     ToolBarName = Name
     # define the parameter path for the toolbar
-    ToolBarsParamPath = (
-        "User parameter:BaseApp/Workbench/" + ToolbarGroupName + "/Toolbar/"
-    )
+    ToolBarsParamPath = "User parameter:BaseApp/Workbench/" + ToolbarGroupName + "/Toolbar/"
 
     custom_toolbars = App.ParamGet(ToolBarsParamPath)
     custom_toolbars.RemGroup(ToolBarName)
     return
 
 
-def ReturnXML_Value(
-    path: str, ElementName: str, attribKey: str = "", attribValue: str = ""
-):
-    import xml.etree.ElementTree as ET
+def ReturnXML_Value(path: str, ElementName: str, attribKey: str = "", attribValue: str = ""):
     import os
+    import xml.etree.ElementTree as ET
 
     # Passing the path of the
     # xml document to enable the
@@ -534,10 +518,12 @@ def ReturnXML_Value_Git(
         # parsing process
         url = f"{host}/{User}/{Repository}/{Branch}/{File}"
         if host == "https://codeberg.org":
-           url = f"{host}/{User}/{Repository}/src/branch/{Branch}/{File}" 
+            url = f"{host}/{User}/{Repository}/src/branch/{Branch}/{File}"
         if host == "https://github.com":
-            url = f"{host}/{User}/{Repository}/blob/{Branch}/{File}" 
-        url = "https://raw.githubusercontent.com/APEbbers/FreeCAD-Ribbon/refs/heads/main/package.xml"
+            url = f"{host}/{User}/{Repository}/blob/{Branch}/{File}"
+        url = (
+            "https://raw.githubusercontent.com/APEbbers/FreeCAD-Ribbon/refs/heads/main/package.xml"
+        )
         response = request.urlopen(url)
         data = response.read()
         root: Element[str] = ET.fromstring(data)
@@ -615,9 +601,7 @@ def GetGitData(PrintErrors=False):
             Commits = str(line)[: len("  1418  ") - 1]
             Commits = int(Commits.strip())
             User = str(line)[len("  1418  ") - 1 :].split("<")[0].strip()
-            email = (
-                str(line)[len("  1418  ") - 1 :].split("<")[1].replace(">", "").strip()
-            )
+            email = str(line)[len("  1418  ") - 1 :].split("<")[1].replace(">", "").strip()
 
             UserList.append([Commits, User, email])
 
@@ -632,10 +616,7 @@ def GetGitData(PrintErrors=False):
                     tempUser = UserList[j]
                     if tempUser[2] == User[2] and tempUser[0] > User[0]:
                         Contributers.pop()
-                        if (
-                            tempUser[1] not in Contributers
-                            and tempUser[1] != "pre-commit-ci[bot]"
-                        ):
+                        if tempUser[1] not in Contributers and tempUser[1] != "pre-commit-ci[bot]":
                             Contributers.append(tempUser[1])
 
         # get the short commit id
@@ -733,7 +714,7 @@ def TranslationsMapping(WorkBenchName: str, string: str):
 #             self.Dict_RibbonCommandPanel,
 #             ["workbenches", WorkBenchName, "toolbars", Toolbar, "order"],
 #         )
-def add_keys_nested_dict(dict, keys, default=1, endEmpty = False):
+def add_keys_nested_dict(dict, keys, default=1, endEmpty=False):
     """_summary_
 
     Args:
@@ -756,12 +737,13 @@ def add_keys_nested_dict(dict, keys, default=1, endEmpty = False):
         pass
     return result
 
+
 def remove_keys_with_values(Dict: dict, keyName):
     DictCopy = {}
     for key in Dict.keys():
         if key != keyName:
-           DictCopy[key] = Dict[key]
-    
+            DictCopy[key] = Dict[key]
+
     return DictCopy
 
 
@@ -816,7 +798,7 @@ def CommandInfoCorrections(CommandName):
                 CommandInfo["ActionText"] = CommandInfo["menuText"]
             if CommandInfo["ActionText"] == "":
                 CommandInfo["ActionText"] = CommandInfo["menuText"]
-            
+
             if CommandName == "Std_RecentFiles":
                 CommandInfo["ActionText"] = CommandInfo["menuText"]
 
@@ -912,7 +894,7 @@ def returnQiCons_Commands(CommandName, pixmap=""):
         pass
 
     icon = QIcon()
-    
+
     if pixmap != "":
         if icon is None or (icon is not None and icon.isNull()):
             try:
@@ -921,7 +903,7 @@ def returnQiCons_Commands(CommandName, pixmap=""):
                     return icon
             except Exception:
                 pass
-        
+
     # if icon is None or (icon is not None and icon.isNull()):
     #     try:
     #         Command = Gui.Command.get(CommandName)
@@ -941,7 +923,7 @@ def returnQiCons_Commands(CommandName, pixmap=""):
                 return icon
         except Exception:
             pass
-        
+
     if icon is None or (icon is not None and icon.isNull()):
         try:
             Menus = mw.findChildren(QToolButton)
@@ -983,7 +965,7 @@ def ReturnWrappedText(text: str, max_length: int = 50, max_Lines=0, returnList=F
 
     result = ""
     wrapped_text = []
-    
+
     if len(text.split(" ")) == 2:
         wrapped_text = text.split(" ")
     else:
@@ -1018,7 +1000,7 @@ def AddToClipboard(Text):
 
     # cmd = "clip" if platform.system() == "Windows" else "pbcopy"
     # subprocess.run(cmd, input=Text, text=True, shell=True)
-    
+
     clipboard = QtWidgets.QApplication.clipboard()
     clipboard.setText(Text)
 
@@ -1034,7 +1016,7 @@ def checkFreeCADVersion(main: int, sub: int, patch: int, git: int):
 
     Returns:
         True if the FreeCAD version is equal or higher than the given version number.
-    """    
+    """
     version = App.Version()
 
     if main <= int(version[0]):
@@ -1046,24 +1028,31 @@ def checkFreeCADVersion(main: int, sub: int, patch: int, git: int):
 
     return False
 
-def TimeDeltaToDict(timeDelta:datetime.timedelta) -> dict:
+
+def TimeDeltaToDict(timeDelta: datetime.timedelta) -> dict:
     def __t(seconds, divider):
-        if seconds < divider: return (seconds, 0)
-        value = seconds//divider
-        return (seconds -  (value * divider), value)
+        if seconds < divider:
+            return (seconds, 0)
+        value = seconds // divider
+        return (seconds - (value * divider), value)
+
     (seconds, hours) = __t(timeDelta.seconds, 3600)
-    (seconds, minutes) = __t(seconds, 60)    
+    (seconds, minutes) = __t(seconds, 60)
     (microseconds, milliseconds) = __t(timeDelta.microseconds, 1000)
 
     return {
-         'days': timeDelta.days
-        ,'hours': hours
-        ,'minutes': minutes
-        ,'seconds': seconds
-        ,'milliseconds': milliseconds
-        ,'microseconds': microseconds
+        "days": timeDelta.days,
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds,
+        "milliseconds": milliseconds,
+        "microseconds": microseconds,
     }
-    
+
+
 def CompareIcons(icon1: QIcon, icon2: QIcon):
     icon1 = Gui.getIcon("Std_OnlineHelp")
-    return (icon1.pixmap(icon1.actualSize(QSize(16,16))).toImage() == icon2.pixmap(icon2.actualSize(QSize(16,16))).toImage())
+    return (
+        icon1.pixmap(icon1.actualSize(QSize(16, 16))).toImage()
+        == icon2.pixmap(icon2.actualSize(QSize(16, 16))).toImage()
+    )

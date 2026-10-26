@@ -19,12 +19,13 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import FreeCAD as App
-import FreeCADGui as Gui
 import os
-
-from PySide.QtCore import Qt
 import sys
+
+import FreeCADGui as Gui
+from PySide.QtCore import Qt
+
+import FreeCAD as App
 
 from .Parameters_Ribbon import Parameters
 
@@ -51,7 +52,6 @@ translate = App.Qt.translate
 
 
 class LoadDialog(ui_ProgressDialog.Ui_dialog):
-
     Text = ""
 
     def __init__(self, Text):

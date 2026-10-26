@@ -57,9 +57,7 @@ pathIcons = Parameters.ICON_LOCATION
 pathStylSheets = Parameters.STYLESHEET_LOCATION
 pathUI = Parameters.UI_LOCATION
 pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(
-    os.path.dirname(FCBinding.__file__), "resources", "packages"
-)
+pathPackages = os.path.join(os.path.dirname(FCBinding.__file__), "resources", "packages")
 pathBackup = Parameters.BACKUP_LOCATION
 sys.path.append(ConfigDirectory)
 sys.path.append(pathIcons)

@@ -19,28 +19,29 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import FreeCAD as App
-import FreeCADGui as Gui
 import os
-
-from PySide.QtCore import Qt, SIGNAL, QSize, Signal, QObject, QEvent, QEventLoop
-from PySide.QtWidgets import (
-    QSizePolicy,
-    QDockWidget,
-    QMenu,
-    QApplication,
-    QMainWindow,
-)
-from PySide.QtGui import QIcon, QPixmap, QColor
-
 import sys
-from . import StyleMapping_Ribbon
-from . import Standard_Functions_Ribbon as StandardFunctions
-from . import Parameters_Ribbon
-from .Parameters_Ribbon import DefaultSettings
-from .Parameters_Ribbon import Parameters
 import webbrowser
-from . import FCBinding
+
+import FreeCADGui as Gui
+from PySide.QtCore import SIGNAL, QEvent, QEventLoop, QObject, QSize, Qt, Signal
+from PySide.QtGui import QColor, QIcon, QPixmap
+from PySide.QtWidgets import (
+    QApplication,
+    QDockWidget,
+    QMainWindow,
+    QMenu,
+    QSizePolicy,
+)
+
+import FreeCAD as App
+
+from . import FCBinding, Parameters_Ribbon, StyleMapping_Ribbon
+from . import Standard_Functions_Ribbon as StandardFunctions
+from .Parameters_Ribbon import DefaultSettings, Parameters
+
+# import graphical created Ui. (With QtDesigner or QtCreator)
+from .resources.ui import Settings_ui
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -57,8 +58,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-# import graphical created Ui. (With QtDesigner or QtCreator)
-import Settings_ui as Settings_ui
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()
@@ -192,7 +191,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
     def __init__(self):
         # Makes "self.on_CreateBOM_clicked" listen to the changed control values instead initial values
         super(LoadDialog, self).__init__()
-        
+
         # Set the wait cursor
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         QApplication.processEvents(QEventLoop.ProcessEventsFlag.AllEvents)
@@ -227,14 +226,10 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         # Set the size of the window to the previous state
         #
         # Get the previous values
-        LayoutDialog_Height = Parameters_Ribbon.Settings.GetIntSetting(
-            "SettingsDialog_Height"
-        )
+        LayoutDialog_Height = Parameters_Ribbon.Settings.GetIntSetting("SettingsDialog_Height")
         if LayoutDialog_Height == 0 or LayoutDialog_Height is None:
             LayoutDialog_Height = 730
-        LayoutDialog_Width = Parameters_Ribbon.Settings.GetIntSetting(
-            "SettingsDialog_Width"
-        )
+        LayoutDialog_Width = Parameters_Ribbon.Settings.GetIntSetting("SettingsDialog_Width")
         if LayoutDialog_Width == 0 or LayoutDialog_Height is None:
             LayoutDialog_Width = 800
         # set a fixed size to force the form in to shape
@@ -245,17 +240,15 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.setMinimumSize(600, 600)
         self.form.setMaximumSize(120000, 120000)
         # change the sizepolicy to preferred, to allow stretching
-        self.form.setSizePolicy(
-            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred
-        )
-     
+        self.form.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+
         # Set the limits for the spinboxes
         self.form.IconSize_Small.setRange(16, 36)
         self.form.IconSize_Medium.setRange(12, 48)
-        if (Parameters.ICON_SIZE_SMALL * 3 >= Parameters.ICON_SIZE_MEDIUM * 2):
-            max = Parameters.ICON_SIZE_SMALL * 3 + Parameters.BUTTON_SPACING*2
+        if Parameters.ICON_SIZE_SMALL * 3 >= Parameters.ICON_SIZE_MEDIUM * 2:
+            max = Parameters.ICON_SIZE_SMALL * 3 + Parameters.BUTTON_SPACING * 2
             self.form.IconSize_Large.setRange(24, max)
-        if (Parameters.ICON_SIZE_MEDIUM * 2 > Parameters.ICON_SIZE_SMALL * 3):
+        if Parameters.ICON_SIZE_MEDIUM * 2 > Parameters.ICON_SIZE_SMALL * 3:
             max = Parameters.ICON_SIZE_MEDIUM * 2 + Parameters.BUTTON_SPACING
             self.form.IconSize_Large.setRange(24, max)
         self.form.IconSize_QuickAccessButton.setRange(8, 36)
@@ -294,7 +287,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.label_22.setDisabled(True)
         self.form.label_22.setHidden(True)
         self.form.IconSize_rightToolbarButton.setDisabled(True)
-        self.form.IconSize_rightToolbarButton.setHidden(True)        
+        self.form.IconSize_rightToolbarButton.setHidden(True)
         # Hide button size factor. It is not needed right now
         self.form.ButtonSizeFactor.setHidden(True)
         self.form.ButtonSizeFactor.setDisabled(True)
@@ -319,14 +312,11 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.label_4.setText(Parameters.BACKUP_LOCATION)
         self.form.TabbarStyle.setCurrentIndex(Parameters.TABBAR_STYLE)
         self.form.ToolbarPositions.setCurrentIndex(Parameters.TOOLBAR_POSITION)
-        if (
-            Parameters.HIDE_TITLEBAR_FC is True
-            or Parameters.HIDE_TITLEBAR_FC is None
-        ):
+        if Parameters.HIDE_TITLEBAR_FC is True or Parameters.HIDE_TITLEBAR_FC is None:
             self.form.HideTitleBarFC.setCheckState(Qt.CheckState.Checked)
         else:
             self.form.HideTitleBarFC.setCheckState(Qt.CheckState.Unchecked)
-        
+
         self.form.IconSize_Small.setValue(Parameters.ICON_SIZE_SMALL)
         self.form.IconSize_Medium.setValue(Parameters.ICON_SIZE_MEDIUM)
         self.form.IconSize_Large.setValue(Parameters.ICON_SIZE_LARGE)
@@ -346,9 +336,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             self.form.LinkIconSizes.setCheckState(Qt.CheckState.Unchecked)
             self.form.IconSize_ApplicationButton.setValue(Parameters.APP_ICON_SIZE)
             self.form.IconSize_QuickAccessButton.setValue(Parameters.QUICK_ICON_SIZE)
-            self.form.IconSize_rightToolbarButton.setValue(
-                Parameters.RIGHT_ICON_SIZE
-            )
+            self.form.IconSize_rightToolbarButton.setValue(Parameters.RIGHT_ICON_SIZE)
             Parameters.TABBAR_SIZE = Parameters.QUICK_ICON_SIZE
             self.form.TabbarHeight.setValue(Parameters.TABBAR_SIZE)
 
@@ -356,7 +344,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.TextSize_Buttons.setValue(Parameters.FONTSIZE_BUTTONS)
         self.form.TextSize_Tabs.setValue(Parameters.FONTSIZE_TABS)
         self.form.TextSize_Panels.setValue(Parameters.FONTSIZE_PANELS)
-        
+
         self.form.RibbonHeightOffset.setValue(Parameters.RIBBON_HEIGHT_OFFSET)
         self.form.PanelHeightOffset.setValue(Parameters.PANEL_HEIGHT_OFFSET)
         self.form.ButtonSizeFactor.setValue(Parameters.SIZE_FACTOR)
@@ -474,13 +462,9 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             )
         )
 
-        self.form.MoreCommands.setIcon(
-            StyleMapping_Ribbon.ReturnStyleItem("OptionButton", True)
-        )
+        self.form.MoreCommands.setIcon(StyleMapping_Ribbon.ReturnStyleItem("OptionButton", True))
         self.form.MoreCommands.setIconSize(
-            QSize(
-                self.form.MoreCommands.width() - 6, self.form.MoreCommands.height() - 6
-            )
+            QSize(self.form.MoreCommands.width() - 6, self.form.MoreCommands.height() - 6)
         )
 
         self.form.pinButton_open.setIcon(
@@ -513,9 +497,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         # else:
         #     self.form.BorderTransparant.setCheckState(Qt.CheckState.Unchecked)
 
-        self.form.Color_Borders.setProperty(
-            "color", QColor(Parameters.COLOR_BORDERS)
-        )
+        self.form.Color_Borders.setProperty("color", QColor(Parameters.COLOR_BORDERS))
         # self.form.Color_Background.setProperty("color", QColor(Parameters.COLOR_BACKGROUND))
         self.form.Color_Background_Hover.setProperty(
             "color", QColor(Parameters.COLOR_BACKGROUND_HOVER)
@@ -529,10 +511,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.Color_Background_TitleBar.setProperty(
             "color", QColor(Parameters.COLOR_BACKGROUND_TITLEBAR)
         )
-        self.form.Color_Font.setProperty(
-            "color", QColor(Parameters.COLOR_FONT)
-        )
-
+        self.form.Color_Font.setProperty("color", QColor(Parameters.COLOR_FONT))
 
         # Get the icon from the FreeCAD help
         helpMenu = mw.findChildren(QMenu, "&Help")[0]
@@ -541,10 +520,8 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
 
         if helpIcon is not None:
             self.form.HelpButton.setIcon(helpIcon)
-        self.form.HelpButton.setMinimumHeight(
-            self.form.GenerateJsonExit.minimumHeight()
-        )
-        
+        self.form.HelpButton.setMinimumHeight(self.form.GenerateJsonExit.minimumHeight())
+
         # Hide the correct ok and cancel button when the form is docked or not
         if Parameters.DOCKED_DIALOGS is True:
             self.form.GenerateJsonExit.setHidden(True)
@@ -561,9 +538,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.EnableBackup.clicked.connect(self.on_EnableBackup_clicked)
         self.form.BackUpLocation.clicked.connect(self.on_BackUpLocation_clicked)
         # Connect the tabbar style
-        self.form.TabbarStyle.currentIndexChanged.connect(
-            self.on_TabbarStyle_currentIndexChanged
-        )
+        self.form.TabbarStyle.currentIndexChanged.connect(self.on_TabbarStyle_currentIndexChanged)
         self.form.ToolbarPositions.currentIndexChanged.connect(
             self.on_ToolbarPositions_currentIndexChanged
         )
@@ -594,30 +569,16 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.EnableWrap_Large.clicked.connect(self.on_EnableWrap_Large_clicked)
         # Connect text sizes
         self.form.TextSize_Menus.textChanged.connect(self.on_TextSize_Menus_TextChanged)
-        self.form.TextSize_Buttons.textChanged.connect(
-            self.on_TextSize_Buttons_TextChanged
-        )
+        self.form.TextSize_Buttons.textChanged.connect(self.on_TextSize_Buttons_TextChanged)
         self.form.TextSize_Tabs.textChanged.connect(self.on_TextSize_Tabs_TextChanged)
-        self.form.TextSize_Panels.textChanged.connect(
-            self.on_TextSize_Panels_TextChanged
-        )
-        
+        self.form.TextSize_Panels.textChanged.connect(self.on_TextSize_Panels_TextChanged)
+
         # Connect the advanced size settings
-        self.form.RibbonHeightOffset.textChanged.connect(
-            self.on_RibbonHeightOffset_TextChanged
-        )
-        self.form.PanelHeightOffset.textChanged.connect(
-            self.on_PanelHeightOffset_TextChanged
-        )
-        self.form.ButtonSizeFactor.textChanged.connect(
-            self.on_ButtonSizeFactor_TextChanged
-        )
-        self.form.MinimumRibbonHeight.textChanged.connect(
-            self.on_MinimumRibbonHeight_TextChanged
-        )
-        self.form.ButtonSpacing.textChanged.connect(
-            self.on_ButtonSpacing_TextChanged
-        )
+        self.form.RibbonHeightOffset.textChanged.connect(self.on_RibbonHeightOffset_TextChanged)
+        self.form.PanelHeightOffset.textChanged.connect(self.on_PanelHeightOffset_TextChanged)
+        self.form.ButtonSizeFactor.textChanged.connect(self.on_ButtonSizeFactor_TextChanged)
+        self.form.MinimumRibbonHeight.textChanged.connect(self.on_MinimumRibbonHeight_TextChanged)
+        self.form.ButtonSpacing.textChanged.connect(self.on_ButtonSpacing_TextChanged)
         self.form.ResetAdvancedSettings.clicked.connect(self.on_ResetAdvancedSettings_clicked)
 
         # Connect column width
@@ -642,8 +603,12 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         def GenerateJsonExit():
             self.on_Close_clicked(self)
 
-        self.form.GenerateJsonExit.connect(self.form.GenerateJsonExit, SIGNAL("clicked()"), GenerateJsonExit)
-        self.form.GenerateJsonExit_2.connect(self.form.GenerateJsonExit_2, SIGNAL("clicked()"), GenerateJsonExit)
+        self.form.GenerateJsonExit.connect(
+            self.form.GenerateJsonExit, SIGNAL("clicked()"), GenerateJsonExit
+        )
+        self.form.GenerateJsonExit_2.connect(
+            self.form.GenerateJsonExit_2, SIGNAL("clicked()"), GenerateJsonExit
+        )
 
         # Connect the reset button
         def Reset():
@@ -653,18 +618,10 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
 
         # Connect the behavior settings
         self.form.EnableEnterEvent.clicked.connect(self.on_EnableEnterEvent_clicked)
-        self.form.ScrollSpeed_TabBar.valueChanged.connect(
-            self.on_ScrollSpeed_TabBar_valueCHanged
-        )
-        self.form.ScrollSpeed_Ribbon.valueChanged.connect(
-            self.on_ScrollSpeed_Ribbon_valueCHanged
-        )
-        self.form.ScrollClicks_TabBar.textChanged.connect(
-            self.on_ScrollClicks_TabBar_valueCHanged
-        )
-        self.form.ScrollClicks_Ribbon.textChanged.connect(
-            self.on_ScrollClicks_Ribbon_valueCHanged
-        )
+        self.form.ScrollSpeed_TabBar.valueChanged.connect(self.on_ScrollSpeed_TabBar_valueCHanged)
+        self.form.ScrollSpeed_Ribbon.valueChanged.connect(self.on_ScrollSpeed_Ribbon_valueCHanged)
+        self.form.ScrollClicks_TabBar.textChanged.connect(self.on_ScrollClicks_TabBar_valueCHanged)
+        self.form.ScrollClicks_Ribbon.textChanged.connect(self.on_ScrollClicks_Ribbon_valueCHanged)
 
         # Connect the preferred panel settings
         self.form.PreferedViewPanel.currentIndexChanged.connect(
@@ -674,9 +631,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.EnableToolsPanel.clicked.connect(self.on_EnableToolsPanel_clicked)
         # Connect the overlay setting:
         self.form.OverlayState.currentIndexChanged.connect(self.on_OverlayState_currentIndexChanged)
-        self.form.UseButtonBackGround.clicked.connect(
-            self.on_UseButtonBackGround_clicked
-        )
+        self.form.UseButtonBackGround.clicked.connect(self.on_UseButtonBackGround_clicked)
 
         # endregion
 
@@ -719,9 +674,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         def MoreCommands():
             self.on_MoreCommands_clicked()
 
-        self.form.MoreCommands.connect(
-            self.form.MoreCommands, SIGNAL("clicked()"), MoreCommands
-        )
+        self.form.MoreCommands.connect(self.form.MoreCommands, SIGNAL("clicked()"), MoreCommands)
 
         #
         def PinButtonOpen():
@@ -742,26 +695,18 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         # self.form.BorderTransparant.clicked.connect(self.on_BorderTransparant_clicked)
         self.form.Color_Borders.clicked.connect(self.on_Color_Borders_clicked)
         # self.form.Color_Background.clicked.connect(self.on_Color_Background_clicked)
-        self.form.Color_Background_Hover.clicked.connect(
-            self.on_Color_Background_Hover_clicked
-        )
-        self.form.Color_Background_App.clicked.connect(
-            self.on_Color_Background_App_clicked
-        )
-        self.form.Color_Background_Tabs.clicked.connect(
-            self.on_Color_Background_Tabs_clicked
-        )
+        self.form.Color_Background_Hover.clicked.connect(self.on_Color_Background_Hover_clicked)
+        self.form.Color_Background_App.clicked.connect(self.on_Color_Background_App_clicked)
+        self.form.Color_Background_Tabs.clicked.connect(self.on_Color_Background_Tabs_clicked)
         self.form.Color_Background_TitleBar.clicked.connect(
             self.on_Color_Background_TitleBar_clicked
         )
-        self.form.Color_Font.clicked.connect(
-            self.on_Color_Font_clicked
-        )
+        self.form.Color_Font.clicked.connect(self.on_Color_Font_clicked)
         # endregion
 
         # Set the first tab active
         self.form.tabWidget.setCurrentIndex(0)
-        
+
         # Set a line (QFrame) right from the icon sizes for buttons
         self.form.SizeButtonBox.setFixedWidth(8)
         self.form.SizeButtonBox.setStyleSheet("""border-right: 0.5px solid red;
@@ -769,10 +714,10 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
                                               border-bottom: 0.5px solid red;
                                               border-top-right-radius: 5px;
                                               border-bottom-right-radius: 5px;""")
-        
+
         # Restore the cursor
         QApplication.restoreOverrideCursor()
-        
+
         return
 
     # region - Control functions----------------------------------------------------------------------
@@ -787,7 +732,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
 
         # self.settingChanged = True
         return
-    
+
     def on_EnableBackup_clicked(self):
         if self.form.EnableBackup.isChecked() is True:
             self.ValuesToUpdate["BackupEnabled"] = True
@@ -817,9 +762,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         return
 
     def on_ToolbarPositions_currentIndexChanged(self):
-        self.ValuesToUpdate["Toolbar_Position"] = (
-            self.form.ToolbarPositions.currentIndex()
-        )
+        self.ValuesToUpdate["Toolbar_Position"] = self.form.ToolbarPositions.currentIndex()
         self.settingChanged = True
         return
 
@@ -829,7 +772,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         if self.form.HideTitleBarFC.isChecked() is False:
             self.ValuesToUpdate["Hide_Titlebar_FC"] = False
         self.settingChanged = True
-        
+
     def on_LinkIconSizes_clicked(self):
         if self.form.LinkIconSizes.isChecked() is True:
             self.ValuesToUpdate["Link_IconSizes"] = True
@@ -858,7 +801,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             self.form.label_44.setHidden(True)
         self.settingChanged = True
 
-    def on_IconSize_Small_TextChanged(self):        
+    def on_IconSize_Small_TextChanged(self):
         if self.form.LinkIconSizes.isChecked() is True:
             # Set the values for medium and large buttons
             self.form.IconSize_Medium.setValue(int(self.form.IconSize_Small.text()) * 1.5)
@@ -870,38 +813,34 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
                 int(self.form.IconSize_Small.text()) * 3
                 >= int(self.form.IconSize_Medium.text()) * 2
             ):
-                max = int(self.form.IconSize_Small.text()) * 3 + int(self.form.ButtonSpacing.text())*2
+                max = (
+                    int(self.form.IconSize_Small.text()) * 3
+                    + int(self.form.ButtonSpacing.text()) * 2
+                )
                 self.form.IconSize_Large.setRange(24, max)
-            if (
-                int(self.form.IconSize_Medium.text()) * 2
-                > int(self.form.IconSize_Small.text()) * 3
-            ):
-                max = int(self.form.IconSize_Medium.text()) * 2 + int(self.form.ButtonSpacing.text())
+            if int(self.form.IconSize_Medium.text()) * 2 > int(self.form.IconSize_Small.text()) * 3:
+                max = int(self.form.IconSize_Medium.text()) * 2 + int(
+                    self.form.ButtonSpacing.text()
+                )
                 self.form.IconSize_Large.setRange(24, max)
-                
+
         self.ValuesToUpdate["IconSize_Small"] = int(self.form.IconSize_Small.text())
         self.settingChanged = True
         return
 
-    def on_IconSize_Medium_TextChanged(self):      
-        if (
-            int(self.form.IconSize_Small.text()) * 3
-            >= int(self.form.IconSize_Medium.text()) * 2
-        ):
-            max = int(self.form.IconSize_Small.text()) * 3 + int(self.form.ButtonSpacing.text())*2
+    def on_IconSize_Medium_TextChanged(self):
+        if int(self.form.IconSize_Small.text()) * 3 >= int(self.form.IconSize_Medium.text()) * 2:
+            max = int(self.form.IconSize_Small.text()) * 3 + int(self.form.ButtonSpacing.text()) * 2
             self.form.IconSize_Large.setRange(24, max)
-        if (
-            int(self.form.IconSize_Medium.text()) * 2
-            > int(self.form.IconSize_Small.text()) * 3
-        ):
+        if int(self.form.IconSize_Medium.text()) * 2 > int(self.form.IconSize_Small.text()) * 3:
             max = int(self.form.IconSize_Medium.text()) * 2 + int(self.form.ButtonSpacing.text())
-            self.form.IconSize_Large.setRange(24, max)  
-            
+            self.form.IconSize_Large.setRange(24, max)
+
         self.ValuesToUpdate["IconSize_Medium"] = int(self.form.IconSize_Medium.text())
         self.settingChanged = True
         return
 
-    def on_IconSize_Large_TextChanged(self):        
+    def on_IconSize_Large_TextChanged(self):
         self.ValuesToUpdate["IconSize_Large"] = int(self.form.IconSize_Large.text())
         self.settingChanged = True
         return
@@ -951,32 +890,32 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.ValuesToUpdate["FontSize_Panels"] = int(self.form.TextSize_Panels.text())
         self.settingChanged = True
         return
-    
+
     def on_RibbonHeightOffset_TextChanged(self):
         self.ValuesToUpdate["RibbonHeightOffset"] = int(self.form.RibbonHeightOffset.text())
         self.settingChanged = True
         return
-    
+
     def on_PanelHeightOffset_TextChanged(self):
         self.ValuesToUpdate["PanelHeightOffset"] = int(self.form.PanelHeightOffset.text())
         self.settingChanged = True
         return
-    
+
     def on_ButtonSizeFactor_TextChanged(self):
         self.ValuesToUpdate["SizeFactor"] = float(self.form.ButtonSizeFactor.text())
         self.settingChanged = True
         return
-    
+
     def on_MinimumRibbonHeight_TextChanged(self):
         self.ValuesToUpdate["RibbonMinimumHeight"] = int(self.form.MinimumRibbonHeight.text())
         self.settingChanged = True
         return
-    
+
     def on_ButtonSpacing_TextChanged(self):
         self.ValuesToUpdate["ButtonSpacing"] = int(self.form.ButtonSpacing.text())
         self.settingChanged = True
         return
-    
+
     def on_ResetAdvancedSettings_clicked(self):
         self.form.RibbonHeightOffset.setValue(DefaultSettings["RibbonHeightOffset"])
         self.form.PanelHeightOffset.setValue(DefaultSettings["PanelHeightOffset"])
@@ -1083,9 +1022,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.settingChanged = True
 
     def on_PreferedViewPanel_currentIndexChanged(self):
-        self.ValuesToUpdate["Preferred_view"] = (
-            self.form.PreferedViewPanel.currentIndex()
-        )
+        self.ValuesToUpdate["Preferred_view"] = self.form.PreferedViewPanel.currentIndex()
         self.settingChanged = True
         return
 
@@ -1190,9 +1127,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         )
         # if File is not nothing, set the icon in settings and on the button
         if File is not None and File != "" and os.path.isfile(File):
-            Parameters_Ribbon.Settings.SetStringSetting(
-                "ScrollLeftButton_Category", File
-            )
+            Parameters_Ribbon.Settings.SetStringSetting("ScrollLeftButton_Category", File)
             self.form.Ribbon_Scroll_Left.setIcon(QIcon(QPixmap(File)))
             self.form.Ribbon_Scroll_Left.setIconSize(
                 QSize(
@@ -1217,9 +1152,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         )
         # if File is not nothing, set the icon in settings and on the button
         if File is not None and File != "" and os.path.isfile(File):
-            Parameters_Ribbon.Settings.SetStringSetting(
-                "ScrollRightButton_Category", File
-            )
+            Parameters_Ribbon.Settings.SetStringSetting("ScrollRightButton_Category", File)
             self.form.Ribbon_Scroll_Right.setIcon(QIcon(QPixmap(File)))
             self.form.Ribbon_Scroll_Right.setIconSize(
                 QSize(
@@ -1315,12 +1248,8 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
 
     def on_Color_Borders_clicked(self):
         try:
-            Color = QColor(
-                self.form.Color_Borders.property("color")
-            ).toTuple()  # RGBA tupple
-            HexColor = StandardFunctions.ColorConvertor(
-                Color, Color[3] / 255, True, False
-            )
+            Color = QColor(self.form.Color_Borders.property("color")).toTuple()  # RGBA tupple
+            HexColor = StandardFunctions.ColorConvertor(Color, Color[3] / 255, True, False)
             self.ValuesToUpdate["Color_Borders"] = HexColor
             self.settingChanged = True
         except Exception:
@@ -1342,9 +1271,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             Color = QColor(
                 self.form.Color_Background_Hover.property("color")
             ).toTuple()  # RGBA tupple
-            HexColor = StandardFunctions.ColorConvertor(
-                Color, Color[3] / 255, True, False
-            )
+            HexColor = StandardFunctions.ColorConvertor(Color, Color[3] / 255, True, False)
             self.ValuesToUpdate["Color_Background_Hover"] = HexColor
             self.settingChanged = True
         except Exception:
@@ -1356,51 +1283,41 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             Color = QColor(
                 self.form.Color_Background_App.property("color")
             ).toTuple()  # RGBA tupple
-            HexColor = StandardFunctions.ColorConvertor(
-                Color, Color[3] / 255, True, False
-            )
+            HexColor = StandardFunctions.ColorConvertor(Color, Color[3] / 255, True, False)
             self.ValuesToUpdate["Color_Background_App"] = HexColor
             self.settingChanged = True
         except Exception:
             pass
         return
-    
+
     def on_Color_Background_Tabs_clicked(self):
         try:
             Color = QColor(
                 self.form.Color_Background_Tabs.property("color")
             ).toTuple()  # RGBA tupple
-            HexColor = StandardFunctions.ColorConvertor(
-                Color, Color[3] / 255, True, False
-            )
+            HexColor = StandardFunctions.ColorConvertor(Color, Color[3] / 255, True, False)
             self.ValuesToUpdate["Color_Background_Tabs"] = HexColor
             self.settingChanged = True
         except Exception:
             pass
         return
-    
+
     def on_Color_Background_TitleBar_clicked(self):
         try:
             Color = QColor(
                 self.form.Color_Background_TitleBar.property("color")
             ).toTuple()  # RGBA tupple
-            HexColor = StandardFunctions.ColorConvertor(
-                Color, Color[3] / 255, True, False
-            )
+            HexColor = StandardFunctions.ColorConvertor(Color, Color[3] / 255, True, False)
             self.ValuesToUpdate["Color_Background_TitleBar"] = HexColor
             self.settingChanged = True
         except Exception:
             pass
         return
-    
+
     def on_Color_Font_clicked(self):
         try:
-            Color = QColor(
-                self.form.Color_Font.property("color")
-            ).toTuple()  # RGBA tupple
-            HexColor = StandardFunctions.ColorConvertor(
-                Color, Color[3] / 255, True, False
-            )
+            Color = QColor(self.form.Color_Font.property("color")).toTuple()  # RGBA tupple
+            HexColor = StandardFunctions.ColorConvertor(Color, Color[3] / 255, True, False)
             self.ValuesToUpdate["Color_Font"] = HexColor
             self.settingChanged = True
         except Exception:
@@ -1445,9 +1362,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         Parameters_Ribbon.Settings.SetIntSetting(
             "IconSize_Large", int(self.OriginalValues["IconSize_Large"])
         )
-        Parameters_Ribbon.Settings.SetStringSetting(
-            "Stylesheet", self.OriginalValues["Stylesheet"]
-        )
+        Parameters_Ribbon.Settings.SetStringSetting("Stylesheet", self.OriginalValues["Stylesheet"])
         Parameters_Ribbon.Settings.SetIntSetting(
             "ApplicationButtonSize", int(self.OriginalValues["ApplicationButtonSize"])
         )
@@ -1492,12 +1407,8 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         Parameters_Ribbon.Settings.SetIntSetting(
             "MaxColumnsPerPanel", int(self.OriginalValues["MaxColumnsPerPanel"])
         )
-        Parameters_Ribbon.Settings.SetBoolSetting(
-            "DebugMode", self.OriginalValues["DebugMode"]
-        )
-        Parameters_Ribbon.Settings.SetBoolSetting(
-            "ShowOnHover", self.OriginalValues["ShowOnHover"]
-        )
+        Parameters_Ribbon.Settings.SetBoolSetting("DebugMode", self.OriginalValues["DebugMode"])
+        Parameters_Ribbon.Settings.SetBoolSetting("ShowOnHover", self.OriginalValues["ShowOnHover"])
         # Save behavior settings
         Parameters_Ribbon.Settings.SetIntSetting(
             "TabBar_Scroll", self.OriginalValues["TabBar_Scroll"]
@@ -1533,9 +1444,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             "UseButtonBackGround", self.OriginalValues["UseButtonBackGround"]
         )
         # Set the use of custom icons
-        Parameters_Ribbon.Settings.SetBoolSetting(
-            "CustomIcons", self.OriginalValues["CustomIcons"]
-        )
+        Parameters_Ribbon.Settings.SetBoolSetting("CustomIcons", self.OriginalValues["CustomIcons"])
         # Set the use of custom colors
         Parameters_Ribbon.Settings.SetBoolSetting(
             "CustomColors", self.OriginalValues["CustomColors"]
@@ -1558,30 +1467,32 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         Parameters_Ribbon.Settings.SetStringSetting(
             "Color_Background_TitleBar", self.OriginalValues["Color_Background_TitleBar"]
         )
-        Parameters_Ribbon.Settings.SetStringSetting(
-            "Color_Font", self.OriginalValues["Color_Font"]
-        )
+        Parameters_Ribbon.Settings.SetStringSetting("Color_Font", self.OriginalValues["Color_Font"])
 
         # Set the size of the window to the previous state
-        Parameters_Ribbon.Settings.SetIntSetting(
-            "SettingsDialog_Height", self.form.height()
-        )
-        Parameters_Ribbon.Settings.SetIntSetting(
-            "SettingsDialog_Width", self.form.width()
-        )
-        
+        Parameters_Ribbon.Settings.SetIntSetting("SettingsDialog_Height", self.form.height())
+        Parameters_Ribbon.Settings.SetIntSetting("SettingsDialog_Width", self.form.width())
+
         # Set the advanced size settings to the previous state
         Parameters_Ribbon.Settings.SetFloatSetting("SizeFactor", self.OriginalValues["SizeFactor"])
-        Parameters_Ribbon.Settings.SetIntSetting("PanelHeightOffset", self.OriginalValues["PanelHeightOffset"])
-        Parameters_Ribbon.Settings.SetIntSetting("RibbonHeightOffset", self.OriginalValues["RibbonHeightOffset"])
-        Parameters_Ribbon.Settings.SetIntSetting("RibbonMinimumHeight", self.OriginalValues["RibbonMinimumHeight"])
-        Parameters_Ribbon.Settings.SetIntSetting("ButtonSpacing", self.OriginalValues["ButtonSpacing"])
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "PanelHeightOffset", self.OriginalValues["PanelHeightOffset"]
+        )
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "RibbonHeightOffset", self.OriginalValues["RibbonHeightOffset"]
+        )
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "RibbonMinimumHeight", self.OriginalValues["RibbonMinimumHeight"]
+        )
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "ButtonSpacing", self.OriginalValues["ButtonSpacing"]
+        )
 
         # Close the dockwidget as well, if there is one
         DockWidget = mw.findChild(QDockWidget, "RibbonSettings")
         if DockWidget is not None:
             DockWidget.deleteLater()
-        
+
         # Emit a close signal
         self.closeSignal.emit()
         # Close the form
@@ -1624,9 +1535,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         Parameters_Ribbon.Settings.SetIntSetting(
             "IconSize_Large", int(self.ValuesToUpdate["IconSize_Large"])
         )
-        Parameters_Ribbon.Settings.SetStringSetting(
-            "Stylesheet", self.ValuesToUpdate["Stylesheet"]
-        )
+        Parameters_Ribbon.Settings.SetStringSetting("Stylesheet", self.ValuesToUpdate["Stylesheet"])
         Parameters_Ribbon.Settings.SetIntSetting(
             "ApplicationButtonSize", int(self.ValuesToUpdate["ApplicationButtonSize"])
         )
@@ -1671,12 +1580,8 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         Parameters_Ribbon.Settings.SetIntSetting(
             "MaxColumnsPerPanel", int(self.ValuesToUpdate["MaxColumnsPerPanel"])
         )
-        Parameters_Ribbon.Settings.SetBoolSetting(
-            "DebugMode", self.ValuesToUpdate["DebugMode"]
-        )
-        Parameters_Ribbon.Settings.SetBoolSetting(
-            "ShowOnHover", self.ValuesToUpdate["ShowOnHover"]
-        )
+        Parameters_Ribbon.Settings.SetBoolSetting("DebugMode", self.ValuesToUpdate["DebugMode"])
+        Parameters_Ribbon.Settings.SetBoolSetting("ShowOnHover", self.ValuesToUpdate["ShowOnHover"])
         # Save behavior settings
         Parameters_Ribbon.Settings.SetIntSetting(
             "TabBar_Scroll", self.ValuesToUpdate["TabBar_Scroll"]
@@ -1715,9 +1620,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             "UseButtonBackGround", self.ValuesToUpdate["UseButtonBackGround"]
         )
         # Set the use of custom icons
-        Parameters_Ribbon.Settings.SetBoolSetting(
-            "CustomIcons", self.ValuesToUpdate["CustomIcons"]
-        )
+        Parameters_Ribbon.Settings.SetBoolSetting("CustomIcons", self.ValuesToUpdate["CustomIcons"])
         # Set the use of custom colors
         Parameters_Ribbon.Settings.SetBoolSetting(
             "CustomColors", self.ValuesToUpdate["CustomColors"]
@@ -1741,33 +1644,34 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         Parameters_Ribbon.Settings.SetStringSetting(
             "Color_Background_TitleBar", self.ValuesToUpdate["Color_Background_TitleBar"]
         )
-        Parameters_Ribbon.Settings.SetStringSetting(
-            "Color_Font", self.ValuesToUpdate["Color_Font"]
-        )
+        Parameters_Ribbon.Settings.SetStringSetting("Color_Font", self.ValuesToUpdate["Color_Font"])
 
         # Set the size of the window to the previous state
-        Parameters_Ribbon.Settings.SetIntSetting(
-            "SettingsDialog_Height", self.form.height()
-        )
-        Parameters_Ribbon.Settings.SetIntSetting(
-            "SettingsDialog_Width", self.form.width()
-        )
-        
+        Parameters_Ribbon.Settings.SetIntSetting("SettingsDialog_Height", self.form.height())
+        Parameters_Ribbon.Settings.SetIntSetting("SettingsDialog_Width", self.form.width())
+
         # Set the advanced size settings to the previous state
         Parameters_Ribbon.Settings.SetFloatSetting("SizeFactor", self.ValuesToUpdate["SizeFactor"])
-        Parameters_Ribbon.Settings.SetIntSetting("PanelHeightOffset", self.ValuesToUpdate["PanelHeightOffset"])
-        Parameters_Ribbon.Settings.SetIntSetting("RibbonHeightOffset", self.ValuesToUpdate["RibbonHeightOffset"])
-        Parameters_Ribbon.Settings.SetIntSetting("RibbonMinimumHeight", self.ValuesToUpdate["RibbonMinimumHeight"])
-        Parameters_Ribbon.Settings.SetIntSetting("ButtonSpacing", self.ValuesToUpdate["ButtonSpacing"])
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "PanelHeightOffset", self.ValuesToUpdate["PanelHeightOffset"]
+        )
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "RibbonHeightOffset", self.ValuesToUpdate["RibbonHeightOffset"]
+        )
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "RibbonMinimumHeight", self.ValuesToUpdate["RibbonMinimumHeight"]
+        )
+        Parameters_Ribbon.Settings.SetIntSetting(
+            "ButtonSpacing", self.ValuesToUpdate["ButtonSpacing"]
+        )
 
         # Close the dockwidget as well, if there is one
         DockWidget = mw.findChild(QDockWidget, "RibbonSettings")
         if DockWidget is not None:
             DockWidget.deleteLater()
-            
+
             # RibbonBar: FCBinding.ModernMenu = mw.findChild(FCBinding.ModernMenu, "Ribbon")
             # mw.centralWidget().setFixedWidth(RibbonBar.CentralWidgetWidth[0])
-            
 
         # Emit a close signal
         self.closeSignal.emit()
@@ -1804,7 +1708,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             self.form.HideTitleBarFC.setCheckState(Qt.CheckState.Checked)
         else:
             self.form.HideTitleBarFC.setCheckState(Qt.CheckState.Unchecked)
-        
+
         if DefaultSettings["Link_IconSizes"] is True:
             self.form.LinkIconSizes.setCheckState(Qt.CheckState.Checked)
         else:
@@ -1812,15 +1716,9 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.IconSize_Small.setValue(DefaultSettings["IconSize_Small"])
         self.form.IconSize_Medium.setValue(DefaultSettings["IconSize_Medium"])
         self.form.IconSize_Large.setValue(DefaultSettings["IconSize_Large"])
-        self.form.IconSize_ApplicationButton.setValue(
-            DefaultSettings["ApplicationButtonSize"]
-        )
-        self.form.IconSize_QuickAccessButton.setValue(
-            DefaultSettings["QuickAccessButtonSize"]
-        )
-        self.form.IconSize_rightToolbarButton.setValue(
-            DefaultSettings["RightToolbarButtonSize"]
-        )
+        self.form.IconSize_ApplicationButton.setValue(DefaultSettings["ApplicationButtonSize"])
+        self.form.IconSize_QuickAccessButton.setValue(DefaultSettings["QuickAccessButtonSize"])
+        self.form.IconSize_rightToolbarButton.setValue(DefaultSettings["RightToolbarButtonSize"])
         self.form.TabbarHeight.setValue(DefaultSettings["TabBarSize"])
         self.form.label_7.setText(DefaultSettings["Stylesheet"])
         if DefaultSettings["ShowIconText_Small"] is True:
@@ -1922,13 +1820,9 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
             )
         )
 
-        self.form.MoreCommands.setIcon(
-            StyleMapping_Ribbon.ReturnStyleItem("OptionButton", False)
-        )
+        self.form.MoreCommands.setIcon(StyleMapping_Ribbon.ReturnStyleItem("OptionButton", False))
         self.form.MoreCommands.setIconSize(
-            QSize(
-                self.form.MoreCommands.width() - 6, self.form.MoreCommands.height() - 6
-            )
+            QSize(self.form.MoreCommands.width() - 6, self.form.MoreCommands.height() - 6)
         )
 
         self.form.pinButton_open.setIcon(
@@ -1971,7 +1865,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         self.form.Color_Font.setProperty(
             "color", QColor(StyleMapping_Ribbon.ReturnStyleItem("Color_Font"))
         )
-        
+
         self.form.RibbonHeightOffset.setValue(DefaultSettings["RibbonHeightOffset"])
         self.form.PanelHeightOffset.setValue(DefaultSettings["PanelHeightOffset"])
         self.form.ButtonSizeFactor.setValue(DefaultSettings["SizeFactor"])
@@ -1995,23 +1889,17 @@ class EventInspector(QObject):
         if event.type() == QEvent.Type.Close:
             # self.closeSignal.emit()
             mw: QMainWindow = Gui.getMainWindow()
-            RibbonBar: FCBinding.ModernMenu = mw.findChild(
-                FCBinding.ModernMenu, "Ribbon"
-            )
+            RibbonBar: FCBinding.ModernMenu = mw.findChild(FCBinding.ModernMenu, "Ribbon")
             return False
 
         if event.type() == QEvent.Type.WindowStateChange:
             # self.closeSignal.emit()
             mw = Gui.getMainWindow()
             if self.form.windowState() == Qt.WindowState.WindowMinimized:
-                RibbonBar: FCBinding.ModernMenu = mw.findChild(
-                    FCBinding.ModernMenu, "Ribbon"
-                )
+                RibbonBar: FCBinding.ModernMenu = mw.findChild(FCBinding.ModernMenu, "Ribbon")
                 self.EnableRibbonToolbarsAndMenus(RibbonBar=RibbonBar)
             else:
-                RibbonBar: FCBinding.ModernMenu = mw.findChild(
-                    FCBinding.ModernMenu, "Ribbon"
-                )
+                RibbonBar: FCBinding.ModernMenu = mw.findChild(FCBinding.ModernMenu, "Ribbon")
                 self.DisableRibbonToolbarsAndMenus(RibbonBar=RibbonBar)
             return False
 

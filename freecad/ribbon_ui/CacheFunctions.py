@@ -19,24 +19,27 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import FreeCAD as App
-import FreeCADGui as Gui
+import json
 import os
+import sys
+from datetime import datetime
+
+import FreeCADGui as Gui
+import requests
+from FreeCAD.Qt import translate
+from PySide.QtCore import Qt
 from PySide.QtWidgets import (
+    QProgressBar,
     QToolBar,
     QToolButton,
-    QProgressBar,
 )
-from PySide.QtCore import Qt
-import sys
-import json
-from datetime import datetime
+
+import FreeCAD as App
+
+from . import Parameters_Ribbon, Serialize_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
-from .Standard_Functions_Ribbon import CommandInfoCorrections
-from . import Parameters_Ribbon
 from .Parameters_Ribbon import Parameters
-from . import Serialize_Ribbon
-import requests
+from .Standard_Functions_Ribbon import CommandInfoCorrections
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -53,9 +56,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-
-# Define the translation
-translate = App.Qt.translate
 
 ReproAdress: str = ""
 
@@ -89,12 +89,11 @@ List_WorkBenchIcons = []
 # Create a tomporary list for newly added dropdown buttons
 newDDBList = []
 
+
 def CreateCache(RestartFreeCAD=False):
     # Create a progressbar
     progressBar = QProgressBar(minimum=0, value=0)
-    progressBar.setWindowFlags(
-        Qt.WindowType.Dialog | Qt.WindowType.WindowStaysOnTopHint
-    )
+    progressBar.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowStaysOnTopHint)
     progressBar.setWindowFlag(Qt.WindowType.CustomizeWindowHint, True)
     progressBar.setWindowFlag(Qt.WindowType.WindowMinMaxButtonsHint, False)
     progressBar.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, True)
@@ -102,24 +101,14 @@ def CreateCache(RestartFreeCAD=False):
     progressBar.setMinimumSize(400, 20)
 
     # Get the stylesheet from the main window and use it for this form
-    (
-        progressBar.setStyleSheet(
-            "background-color: "
-            + "none"
-            + ";color: "
-            + "none"
-            + ";"
-        )
-    )
+    (progressBar.setStyleSheet("background-color: " + "none" + ";color: " + "none" + ";"))
     progressBar.setMaximum(5)
     progressBar.setValue(0)
 
     # Load the workbenches
     loadAllWorkbenches(
         AutoHide=False,
-        FinishMessage=translate(
-            "FreeCAD Ribbon", "Ribbon UI: Data file is created."
-        ),
+        FinishMessage=translate("FreeCAD Ribbon", "Ribbon UI: Data file is created."),
         progressBar=progressBar,
         maximum=progressBar.maximum(),
     )
@@ -148,9 +137,7 @@ def CreateCache(RestartFreeCAD=False):
                     # Get the toolbar items
                     ToolbarItems: dict = WorkBench.getToolbarItems()
                     # Update the toolbar items with corrections
-                    ToolbarItems: dict = StandardFunctions.CorrectGetToolbarItems(
-                        ToolbarItems
-                    )
+                    ToolbarItems: dict = StandardFunctions.CorrectGetToolbarItems(ToolbarItems)
 
                     IconName = ""
                     IconName = str(Gui.getWorkbench(WorkBenchName).Icon)
@@ -179,18 +166,12 @@ def CreateCache(RestartFreeCAD=False):
     i = 0
     for WorkBench in List_Workbenches:
         wbToolbars = []
-        if (
-            WorkBench[0] != "General"
-            and WorkBench[0] != ""
-            and WorkBench[0] is not None
-        ):
+        if WorkBench[0] != "General" and WorkBench[0] != "" and WorkBench[0] is not None:
             # Gui.activateWorkbench(WorkBench[0])
             wbToolbars = Gui.getWorkbench(WorkBench[0]).listToolbars()
             # Go through the toolbars
             for Toolbar in wbToolbars:
-                ToolBarTtranslated = StandardFunctions.TranslationsMapping(
-                    WorkBench[0], Toolbar
-                )
+                ToolBarTtranslated = StandardFunctions.TranslationsMapping(WorkBench[0], Toolbar)
                 StringList_Toolbars.append(
                     [Toolbar, WorkBench[2], WorkBench[0], ToolBarTtranslated]
                 )
@@ -238,29 +219,31 @@ def CreateCache(RestartFreeCAD=False):
                         CommandNames.append(Item)
         # Add commands that are not in any toolbars
         for commandNamesItem in Gui.listCommands():
-            CommandName_2 = GetCommand(commandNamesItem)          
+            CommandName_2 = GetCommand(commandNamesItem)
             if CommandName_2.lower().startswith("std_"):
                 inList = False
                 for CommandName in CommandNames:
                     if CommandName[0] == CommandName_2:
                         inList = True
-                
+
                 # Skip "Std_Workbench".
                 if commandNamesItem == "Std_Workbench":
                     continue
-                
-                if inList is False:                    
+
+                if inList is False:
                     CommandNames.append([CommandName_2, "Standard"])
             else:
                 inList = False
                 for CommandName in CommandNames:
                     if CommandName[0] == commandNamesItem:
                         inList = True
-                
+
                 if inList is False:
                     WorkBench = ""
                     for WorkBenchName in List_Workbenches:
-                        if CommandName_2.startswith(WorkBenchName[0]) or WorkBenchName[0].startswith(CommandName_2.split("_")[0]):
+                        if CommandName_2.startswith(WorkBenchName[0]) or WorkBenchName[
+                            0
+                        ].startswith(CommandName_2.split("_")[0]):
                             WorkBench = WorkBenchName[0]
                             break
                     Icon = StandardFunctions.returnQiCons_Commands(CommandName_2)
@@ -280,12 +263,10 @@ def CreateCache(RestartFreeCAD=False):
                 IconName = CommandInfoCorrections(CommandName[0])["pixmap"]
             else:
                 IconName = ""
-            MenuName = CommandInfoCorrections(CommandName[0])["menuText"].replace(
+            MenuName = CommandInfoCorrections(CommandName[0])["menuText"].replace("&", "")
+            MenuNameTranslated = CommandInfoCorrections(CommandName[0])["ActionText"].replace(
                 "&", ""
             )
-            MenuNameTranslated = CommandInfoCorrections(CommandName[0])[
-                "ActionText"
-            ].replace("&", "")
             # Remove numbers from dropdown child commands
             if MenuName.split(" ")[0].isdigit() is True:
                 MenuName = MenuName.split(" ")[1]
@@ -337,9 +318,9 @@ def CreateCache(RestartFreeCAD=False):
                             IconName = CommandInfoCorrections(CustomCommand)["pixmap"]
                         else:
                             IconName = ""
-                        MenuName = CommandInfoCorrections(CustomCommand)[
-                            "menuText"
-                        ].replace("&", "")
+                        MenuName = CommandInfoCorrections(CustomCommand)["menuText"].replace(
+                            "&", ""
+                        )
                         MenuNameTranslated = CommandInfoCorrections(CustomCommand)[
                             "ActionText"
                         ].replace("&", "")
@@ -353,7 +334,7 @@ def CreateCache(RestartFreeCAD=False):
                             ]
                         )
                         shadowList.append(CustomCommand)
-                        
+
     Toolbars = List_ReturnCustomToolbars_Global()
     for Toolbar in Toolbars:
         for CustomCommand in Toolbar[2]:
@@ -363,12 +344,10 @@ def CreateCache(RestartFreeCAD=False):
                     IconName = CommandInfoCorrections(CustomCommand)["pixmap"]
                 else:
                     IconName = None
-                MenuName = CommandInfoCorrections(CustomCommand)["menuText"].replace(
+                MenuName = CommandInfoCorrections(CustomCommand)["menuText"].replace("&", "")
+                MenuNameTranslated = CommandInfoCorrections(CustomCommand)["ActionText"].replace(
                     "&", ""
                 )
-                MenuNameTranslated = CommandInfoCorrections(CustomCommand)[
-                    "ActionText"
-                ].replace("&", "")
                 List_Commands.append(
                     [CustomCommand, IconName, MenuName, Toolbar[1], MenuNameTranslated]
                 )
@@ -393,12 +372,10 @@ def CreateCache(RestartFreeCAD=False):
                     IconName = CommandInfoCorrections(CommandName)["pixmap"]
                 else:
                     IconName = ""
-                MenuName = CommandInfoCorrections(CommandName)["menuText"].replace(
+                MenuName = CommandInfoCorrections(CommandName)["menuText"].replace("&", "")
+                MenuNameTranslated = CommandInfoCorrections(CommandName)["ActionText"].replace(
                     "&", ""
                 )
-                MenuNameTranslated = CommandInfoCorrections(CommandName)[
-                    "ActionText"
-                ].replace("&", "")
                 List_Commands.append(
                     [CommandName, IconName, MenuName, "Standard", MenuNameTranslated]
                 )
@@ -425,9 +402,7 @@ def CreateCache(RestartFreeCAD=False):
                 List_WorkBenchIcons.append([WorkBenchName, Icon])
             except Exception as e:
                 if Parameters.DEBUG_MODE is True:
-                    StandardFunctions.Print(
-                        f"{e.with_traceback(e.__traceback__)}", "Warning"
-                    )
+                    StandardFunctions.Print(f"{e.with_traceback(e.__traceback__)}", "Warning")
 
     CommandIcons = []
     for CommandItem in List_Commands:
@@ -442,9 +417,7 @@ def CreateCache(RestartFreeCAD=False):
                 List_CommandIcons.append([CommandName, Icon])
             except Exception as e:
                 if Parameters.DEBUG_MODE is True:
-                    StandardFunctions.Print(
-                        f"{e.with_traceback(e.__traceback__)}", "Warning"
-                    )
+                    StandardFunctions.Print(f"{e.with_traceback(e.__traceback__)}", "Warning")
 
     # Write the lists to a data file
     progressBar.setFormat(translate("FreeCAD Ribbon", "Write data files"))
@@ -540,10 +513,7 @@ def List_ReturnCustomToolbars():
 
                 for Group in CustomToolbars:
                     Parameter = App.ParamGet(
-                        "User parameter:BaseApp/Workbench/"
-                        + WorkBenchName
-                        + "/Toolbar/"
-                        + Group
+                        "User parameter:BaseApp/Workbench/" + WorkBenchName + "/Toolbar/" + Group
                     )
                     Name = Parameter.GetString("Name")
 
@@ -567,6 +537,7 @@ def List_ReturnCustomToolbars():
 
     return Toolbars
 
+
 def List_ReturnCustomToolbars_Global():
     """
     Returns custom toolbars as a list.
@@ -587,9 +558,7 @@ def List_ReturnCustomToolbars_Global():
     ).GetGroups()
 
     for Group in CustomToolbars:
-        Parameter = App.ParamGet(
-            "User parameter:BaseApp/Workbench/Global/Toolbar/" + Group
-        )
+        Parameter = App.ParamGet("User parameter:BaseApp/Workbench/Global/Toolbar/" + Group)
         Name = Parameter.GetString("Name")
 
         ListCommands = []
@@ -611,6 +580,7 @@ def List_ReturnCustomToolbars_Global():
             continue
 
     return Toolbars
+
 
 def Dict_ReturnCustomToolbars(WorkBenchName):
     """_summary_
@@ -634,10 +604,7 @@ def Dict_ReturnCustomToolbars(WorkBenchName):
 
             for Group in CustomToolbars:
                 Parameter = App.ParamGet(
-                    "User parameter:BaseApp/Workbench/"
-                    + WorkBenchName
-                    + "/Toolbar/"
-                    + Group
+                    "User parameter:BaseApp/Workbench/" + WorkBenchName + "/Toolbar/" + Group
                 )
                 Name = Parameter.GetString("Name")
 
@@ -660,6 +627,7 @@ def Dict_ReturnCustomToolbars(WorkBenchName):
 
     return Toolbars
 
+
 def Dict_ReturnCustomToolbars_Global():
     """_summary_
     Returns:
@@ -675,9 +643,7 @@ def Dict_ReturnCustomToolbars_Global():
     ).GetGroups()
 
     for Group in CustomToolbars:
-        Parameter = App.ParamGet(
-            "User parameter:BaseApp/Workbench/Global/Toolbar/" + Group
-        )
+        Parameter = App.ParamGet("User parameter:BaseApp/Workbench/Global/Toolbar/" + Group)
         Name = Parameter.GetString("Name")
 
         IsIgnored = False
@@ -700,6 +666,7 @@ def Dict_ReturnCustomToolbars_Global():
 
     return Toolbars
 
+
 def returnWorkBenchToolbars(WorkBenchName):
     wbToolbars = []
     try:
@@ -711,6 +678,7 @@ def returnWorkBenchToolbars(WorkBenchName):
         wbToolbars: list = Gui.getWorkbench(WorkBenchName).listToolbars()
     return wbToolbars
 
+
 def returnToolbarCommands(WorkBenchName):
     try:
         for item in List_Workbenches:
@@ -720,6 +688,7 @@ def returnToolbarCommands(WorkBenchName):
         Gui.activateWorkbench(WorkBenchName)
         Toolbars = Gui.getWorkbench(WorkBenchName).getToolbarItems()
         return Toolbars
+
 
 def returnDropDownCommands(commandName):
     Commands = []
@@ -732,7 +701,9 @@ def returnDropDownCommands(commandName):
                     if action is not None and (
                         action.icon() is not None and not action.icon().isNull()
                     ):
-                        IconName = StandardFunctions.CommandInfoCorrections(action.objectName())["pixmap"]
+                        IconName = StandardFunctions.CommandInfoCorrections(action.objectName())[
+                            "pixmap"
+                        ]
                         Commands.append(
                             [
                                 action.objectName(),
@@ -743,7 +714,10 @@ def returnDropDownCommands(commandName):
                         )
     return Commands
 
-def loadAllWorkbenches(AutoHide=True, HideOnly=False, FinishMessage="", progressBar: QProgressBar = None, maximum = 0):        
+
+def loadAllWorkbenches(
+    AutoHide=True, HideOnly=False, FinishMessage="", progressBar: QProgressBar = None, maximum=0
+):
     if HideOnly is False:
         activeWorkbench = Gui.activeWorkbench().name()
         progressBar.show()
@@ -771,18 +745,20 @@ def loadAllWorkbenches(AutoHide=True, HideOnly=False, FinishMessage="", progress
         if FinishMessage != "":
             print(FinishMessage)
         Gui.activateWorkbench(activeWorkbench)
-  
+
         return
+
+
 # endregion---------------------------------------------------------------------------------------
+
 
 def DownLoadIcons():
     PathList = []
 
-    url = 'https://raw.githubusercontent.com/FreeCAD/FreeCAD/main/src/Gui/Icons/3dx_pivot.png'
-    
-    
+    url = "https://raw.githubusercontent.com/FreeCAD/FreeCAD/main/src/Gui/Icons/3dx_pivot.png"
+
     response = requests.get(url)
-    response.raise_for_status() # proper handle HTTP errors
+    response.raise_for_status()  # proper handle HTTP errors
 
     file_content = response.text
     print(f"HTTP status: {response.status_code}")
@@ -790,10 +766,10 @@ def DownLoadIcons():
     with open("setup.py", "w") as file:
         file.write(file_content)
 
-        
+
 def CheckDataFileVersion():
     DataFileIsUpToDate = False
-    
+
     # Check if there is a datafile. if not, ask the user to create one.
     DataFile = os.path.join(ConfigDirectory, "RibbonDataFile.dat")
     if os.path.exists(DataFile) is False:
@@ -853,11 +829,9 @@ def CheckDataFileVersion():
                 "This can take a while!",
             )
 
-            Answer = StandardFunctions.Mbox(
-                Question, "FreeCAD Ribbon", 1, "Question"
-            )
+            Answer = StandardFunctions.Mbox(Question, "FreeCAD Ribbon", 1, "Question")
             if Answer == "yes":
-                CreateCache()                    
+                CreateCache()
     except Exception:
         pass
 
@@ -878,5 +852,5 @@ def CheckDataFileVersion():
         Answer = StandardFunctions.Mbox(Question, "FreeCAD Ribbon", 1, "Question")
         if Answer == "yes":
             DataFileIsUpToDate = CreateCache()
-    
+
     return DataFileIsUpToDate
