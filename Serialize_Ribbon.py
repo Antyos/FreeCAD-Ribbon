@@ -24,11 +24,9 @@
 # Original developer for the SearchBar addon is Suzanne Soy.
 from PySide.QtGui import QIcon, QPixmap
 from PySide.QtCore import (
-    Qt,
     QSize,
     QBuffer,
     QIODevice,
-    QTextStream,
     QByteArray,
 )
 

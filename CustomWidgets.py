@@ -36,8 +36,7 @@ from PySide.QtGui import (
     QBrush,
     QPaintEvent,
     QPen,
-    QPainter,
-    QEnterEvent,   
+    QPainter,   
 )
 from PySide.QtWidgets import (
     QComboBox,
@@ -56,8 +55,6 @@ from PySide.QtWidgets import (
     QLineEdit,
     QLayout,
     QGridLayout,
-    QPushButton,
-    QGraphicsEffect,
 )
 from PySide.QtCore import (
     Qt,
@@ -71,11 +68,9 @@ from PySide.QtCore import (
     QSequentialAnimationGroup,
     Slot,
     Property,
-    Signal,
 )
 
 import os
-import Parameters_Ribbon
 from Parameters_Ribbon import Parameters
 import Standard_Functions_Ribbon as StandardFunctions
 import StyleMapping_Ribbon
@@ -97,12 +92,8 @@ sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
 
-import pyqtribbon_local as pyqtribbon
-from pyqtribbon_local.ribbonbar import RibbonMenu, RibbonBar
-from pyqtribbon_local.panel import RibbonPanel, RibbonPanelItemWidget
 from pyqtribbon_local.toolbutton import RibbonToolButton, RibbonButtonStyle
 from pyqtribbon_local.separator import RibbonSeparator
-from pyqtribbon_local.category import RibbonCategoryLayoutButton
 
 translate = App.Qt.translate
 
@@ -383,7 +374,7 @@ class CustomControls(RibbonToolButton):
                     # Update the text width if neccesary
                     if FontMetrics.tightBoundingRect(line2).width() > TextWidth:
                         TextWidth = FontMetrics.tightBoundingRect(line2).width()
-                except Exception as e:
+                except Exception:
                     # Label_Text.setText(line1 + "\n   ")
                     pass
             

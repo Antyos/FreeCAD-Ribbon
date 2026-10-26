@@ -21,11 +21,8 @@
 # *************************************************************************
 
 import FreeCAD as App
-import FreeCADGui as Gui
 from PySide.QtGui import QColor
 import os
-import sys
-import Standard_Functions_Ribbon as StandardFunctions
 
 # Set the AdvancesSizeSettingsReset version number
 AdvancedSizeReset = "1.0"

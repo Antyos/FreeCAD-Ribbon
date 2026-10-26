@@ -20,9 +20,8 @@
 # *                                                                       *
 # *************************************************************************
 
-import FreeCAD as App
 import FreeCADGui as Gui
-from PySide import QtCore, QtGui, QtWidgets
+from PySide import QtWidgets
 
 mw = Gui.getMainWindow()
 mw.menuBar().show()

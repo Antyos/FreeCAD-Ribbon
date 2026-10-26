@@ -23,24 +23,9 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 
-from PySide.QtCore import Qt, SIGNAL
-from PySide.QtWidgets import (
-    QTabWidget,
-    QSlider,
-    QSpinBox,
-    QCheckBox,
-    QComboBox,
-    QLabel,
-    QDialogButtonBox,
-    QApplication,
-    QPushButton,
-    QDialog,
-)
-from PySide.QtGui import QIcon, QPixmap
+from PySide.QtCore import Qt
 import sys
 
-import Standard_Functions_Ribbon as StandardFunctions
-import Parameters_Ribbon
 from Parameters_Ribbon import Parameters
 
 # Get the resources

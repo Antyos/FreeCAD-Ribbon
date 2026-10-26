@@ -23,50 +23,32 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 
-from PySide.QtCore import Qt, SIGNAL, Signal, QObject, QThread, QSize, QEvent, QEventLoop
+from PySide.QtCore import Qt, SIGNAL, QObject, QSize, QEvent, QEventLoop
 from PySide.QtWidgets import (
-    QTabWidget,
-    QSlider,
-    QSpinBox,
-    QCheckBox,
-    QComboBox,
-    QLabel,
-    QDialogButtonBox,
     QApplication,
-    QPushButton,
-    QDialog,
     QListWidget,
     QListWidgetItem,
     QLineEdit,
     QToolBar,
     QToolButton,
     QDockWidget,
-    QSizePolicy,
-    QGridLayout,
     QHBoxLayout,
 )
-from PySide.QtGui import QIcon, QPixmap, QDragEnterEvent, QDragLeaveEvent, QDropEvent
+from PySide.QtGui import QIcon, QPixmap
 import sys
 import json
 from datetime import datetime, timedelta
 
 import Standard_Functions_Ribbon as StandardFunctions
-from Standard_Functions_Ribbon import CommandInfoCorrections
 import Parameters_Ribbon
 from Parameters_Ribbon import Parameters
 import Serialize_Ribbon
 import CacheFunctions
 import FCBinding
-from CustomWidgets import QuickAccessToolButton, CustomControls
-import StyleMapping_Ribbon
+from CustomWidgets import QuickAccessToolButton
 import webbrowser
 
-import pyqtribbon_local as pyqtribbon
-from pyqtribbon_local.ribbonbar import RibbonMenu, RibbonTitleWidget, RibbonApplicationButton
-from pyqtribbon_local.panel import RibbonPanel, RibbonPanelItemWidget, RibbonPanelTitle
-from pyqtribbon_local.toolbutton import RibbonToolButton, RibbonButtonStyle
-from pyqtribbon_local.separator import RibbonSeparator
-from pyqtribbon_local.category import RibbonCategory, RibbonCategoryLayoutButton, RibbonNormalCategory, RibbonContextCategory
+from pyqtribbon_local.panel import RibbonPanel
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -622,7 +604,7 @@ class LoadDialog(AddCommands_ui.Ui_Form):
             position = None
             try:
                 position = WorkbenchOrderedList.index(item[0])
-            except ValueError as e:
+            except ValueError:
                 position = 999999
             return position
             
@@ -1204,7 +1186,7 @@ class LoadDialog(AddCommands_ui.Ui_Form):
                             for CommandItem in self.List_Commands:
                                 # Check if the items is already there
                                 # if not, continue
-                                if not CommandItem[0] in ShadowList:
+                                if CommandItem[0] not in ShadowList:
                                     MenuName_Command = CommandItem[0]
                                     if (
                                         MenuName_Command == key
@@ -1745,7 +1727,7 @@ class LoadDialog(AddCommands_ui.Ui_Form):
                                                 f"{CommandName} has no icon!", "Warning"
                                             )
                                         
-                            except Exception as e:
+                            except Exception:
                                 continue   
         if (ListWidget_WorkBenches.currentData(Qt.ItemDataRole.UserRole) == "All") and SearchbarText == "":
             # Go through the stored listwidget items and add them to the listwidget

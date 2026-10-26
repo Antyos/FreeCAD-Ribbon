@@ -23,27 +23,15 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 
-from PySide.QtCore import Qt, SIGNAL, QSize, Signal, QObject, QEvent, QPoint, QEventLoop
+from PySide.QtCore import Qt, SIGNAL, QSize, Signal, QObject, QEvent, QEventLoop
 from PySide.QtWidgets import (
-    QTabWidget,
-    QSlider,
-    QSpinBox,
-    QCheckBox,
-    QComboBox,
-    QLabel,
-    QTabWidget,
     QSizePolicy,
     QDockWidget,
-    QPushButton,
-    QLineEdit,
-    QWidget,
-    QGroupBox,
     QMenu,
     QApplication,
     QMainWindow,
-    QLayout,
 )
-from PySide.QtGui import QIcon, QPixmap, QColor, QBrush, QPaintEvent, QPen, QPainter
+from PySide.QtGui import QIcon, QPixmap, QColor
 
 import sys
 import StyleMapping_Ribbon
@@ -2002,7 +1990,6 @@ class EventInspector(QObject):
         super(EventInspector, self).__init__(parent)
 
     def eventFilter(self, obj, event):
-        import FCBinding
 
         # Show the mainwindow after the application is activated
         if event.type() == QEvent.Type.Close:

@@ -23,7 +23,6 @@ import CustomWidgets
 import FreeCAD as App
 import FreeCADGui as Gui
 from pathlib import Path
-import subprocess
 import traceback
 
 from PySide.QtGui import (
@@ -32,85 +31,39 @@ from PySide.QtGui import (
     QDragMoveEvent,
     QDropEvent,
     QContextMenuEvent,
-    QMouseEvent,
     QIcon,
     QAction,
     QPixmap,
-    QScrollEvent,
-    QKeyEvent,
-    QActionGroup,
-    QRegion,
     QFont,
-    QColor,
-    QStyleHints,
     QFontMetrics,
-    QTextOption,
-    QTextItem,
-    QPainter,
-    QKeySequence,
-    QShortcut,
-    QCursor,
-    QGuiApplication,
     QDrag,
-    QScreen,
-    QPen,
     )
 from PySide.QtWidgets import (
-    QCheckBox,
-    QFrame,
-    QLineEdit,
-    QSpinBox,
-    QTextEdit,
     QToolButton,
     QToolBar,
     QSizePolicy,
     QDockWidget,
     QWidget,
-    QMenuBar,
     QMenu,
     QMainWindow,
-    QLayout,
-    QSpacerItem,
-    QLayoutItem,
     QGridLayout,
-    QScrollArea,
     QTabBar,
     QWidgetAction,
-    QStylePainter,
     QStyle,
-    QStyleOptionButton,
-    QPushButton,
     QHBoxLayout,
     QLabel,
-    QVBoxLayout,
-    QToolTip,
-    QWidgetItem,
-    QTreeWidget,
     QApplication,
     QStatusBar,
-    QStyleOption,
-    QDialog,
     QListWidget,
-    QListWidgetItem,
-    QAbstractButton,
-    QStackedWidget,
 )
 from PySide.QtCore import (
     Qt,
     QTimer,
     Signal,
     QObject,
-    QMetaMethod,
-    SIGNAL,
     QEvent,
-    QMetaObject,
-    QCoreApplication,
     QSize,
-    Slot,
-    QRect,
     QPoint,
-    QSettings,
-    QSignalBlocker,
     QMimeData,
     QEventLoop,      
 )
@@ -136,7 +89,6 @@ import Parameters_Ribbon
 from Parameters_Ribbon import Parameters
 import LoadSettings_Ribbon
 import LoadLicenseForm_Ribbon
-import LoadCombinePanel_Ribbon
 import LoadAddCommands
 import CacheFunctions
 import Standard_Functions_Ribbon as StandardFunctions
@@ -149,7 +101,6 @@ from datetime import datetime
 import shutil
 
 # import Ribbon. This contains the ribbon commands for FreeCAD
-import RibbonUI
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -168,12 +119,10 @@ sys.path.append(pathBackup)
 
 translate = App.Qt.translate
 
-import pyqtribbon_local
 import pyqtribbon_local as pyqtribbon
-from pyqtribbon_local.ribbonbar import RibbonMenu, RibbonBar, RibbonTitleWidget, RibbonApplicationButton
+from pyqtribbon_local.ribbonbar import RibbonMenu, RibbonBar, RibbonApplicationButton
 from pyqtribbon_local.panel import RibbonPanel, RibbonPanelItemWidget, RibbonPanelTitle
 from pyqtribbon_local.toolbutton import RibbonToolButton, RibbonButtonStyle
-from pyqtribbon_local.separator import RibbonSeparator
 from pyqtribbon_local.category import RibbonCategory, RibbonCategoryLayoutButton, RibbonNormalCategory, RibbonContextCategory
 
 # Get the main window of FreeCAD
@@ -395,7 +344,7 @@ class ModernMenu(RibbonBar):
         
         # If workbenches are not present in the ribbon structure, something went wrong.
         # Re-create the workbech structure
-        if not "workbenches" in self.ribbonStructure:            
+        if "workbenches" not in self.ribbonStructure:            
             for InstalledWB in Gui.listWorkbenches():
                 if "ignoredWorkbenches" in self.ribbonStructure and InstalledWB not in self.ribbonStructure["ignoredWorkbenches"]:
                     StandardFunctions.add_keys_nested_dict(self.ribbonStructure,["workbenches", InstalledWB], True)
@@ -3999,7 +3948,6 @@ class ModernMenu(RibbonBar):
         if TB is not None:
             try:
                 import SearchBoxLight
-                import StyleMapping_SearchBar
 
                 width = 10 * self.RightToolBarButtonSize
 
@@ -4442,7 +4390,7 @@ class ModernMenu(RibbonBar):
                 position = None
                 try:
                     position = ToolbarOrder.index(toolbar)
-                except ValueError as e:
+                except ValueError:
                     position = 999999
                     if toolbar.endswith("_custom") or toolbar.endswith("_newPanel"):
                         if Parameters.DEFAULT_PANEL_POSITION_CUSTOM == "Right":

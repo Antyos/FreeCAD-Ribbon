@@ -22,21 +22,11 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 import os
-from PySide.QtGui import QIcon, QPixmap, QAction, QColor
+from PySide.QtGui import QIcon, QPixmap, QColor
 from PySide.QtWidgets import (
-    QListWidgetItem,
-    QTableWidgetItem,
-    QListWidget,
-    QTableWidget,
-    QToolBar,
     QToolButton,
-    QComboBox,
-    QPushButton,
-    QMenu,
-    QWidget,
     QMainWindow,
 )
-from PySide.QtCore import Qt, SIGNAL, Signal, QObject, QThread
 import sys
 import Standard_Functions_Ribbon as StandardFunctions
 from Parameters_Ribbon import Parameters
@@ -152,7 +142,7 @@ def DarkMode():
                                         return False
 
 
-            except Exception as e:
+            except Exception:
                 if not os.path.isfile(packageXML):
                     if "dark" in currentStyleSheet.lower():
                         IsDarkTheme = True

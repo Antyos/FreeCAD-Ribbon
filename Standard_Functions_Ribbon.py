@@ -55,7 +55,6 @@ def Mbox(
     """
     from PySide.QtWidgets import QMessageBox, QInputDialog
     from PySide.QtCore import Qt
-    from PySide import QtWidgets
 
     Icon = QMessageBox.Icon.Information
     if IconType == "NoIcon":
@@ -252,7 +251,6 @@ def SaveDialog(files, OverWrite: bool = True):
             return file
 
 def OpenDirectory(path):
-    import webbrowser
     import platform
     import subprocess
     import os
@@ -553,7 +551,7 @@ def ReturnXML_Value_Git(
                             return result
                 else:
                     result = child.text
-    except Exception as e:
+    except Exception:
         # raise e
         pass
     if result is None:
@@ -897,8 +895,8 @@ def addMissingCommands(CommandList: list):
 
 
 def returnQiCons_Commands(CommandName, pixmap=""):
-    from PySide.QtGui import QIcon, QAction
-    from PySide.QtWidgets import QToolButton, QMenu
+    from PySide.QtGui import QIcon
+    from PySide.QtWidgets import QToolButton
 
     try:
         if len(CommandName.split(", ")) > 1:
@@ -1016,7 +1014,7 @@ def ReturnWrappedText(text: str, max_length: int = 50, max_Lines=0, returnList=F
 def AddToClipboard(Text):
     # import subprocess
     # import platform
-    from PySide import QtWidgets, QtCore
+    from PySide import QtWidgets
 
     # cmd = "clip" if platform.system() == "Windows" else "pbcopy"
     # subprocess.run(cmd, input=Text, text=True, shell=True)

@@ -22,38 +22,20 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 import os
-from PySide.QtGui import QIcon, QPixmap, QAction, QGuiApplication
 from PySide.QtWidgets import (
-    QListWidgetItem,
-    QTableWidgetItem,
-    QListWidget,
-    QTableWidget,
     QToolBar,
     QToolButton,
-    QComboBox,
-    QPushButton,
-    QMenu,
-    QWidget,
-    QLineEdit,
-    QSizePolicy,
-    QRadioButton,
-    QLabel,
     QProgressBar,
 )
-from PySide.QtCore import Qt, SIGNAL, Signal, QObject, QThread, QSize, QEvent
+from PySide.QtCore import Qt
 import sys
 import json
 from datetime import datetime
-import shutil
-import Standard_Functions_Ribbon as StandardFunctions
-from Standard_Functions_Ribbon import CommandInfoCorrections
 import Standard_Functions_Ribbon as StandardFunctions
 from Standard_Functions_Ribbon import CommandInfoCorrections
 import Parameters_Ribbon
 from Parameters_Ribbon import Parameters
 import Serialize_Ribbon
-import webbrowser
-import StyleMapping_Ribbon
 import requests
 
 # Get the resources

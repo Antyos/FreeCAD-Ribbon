@@ -22,7 +22,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 import os
-from PySide.QtGui import QIcon, QPixmap, QAction, QGuiApplication
+from PySide.QtGui import QIcon, QPixmap
 from PySide.QtWidgets import (
     QListWidgetItem,
     QTableWidgetItem,
@@ -30,24 +30,19 @@ from PySide.QtWidgets import (
     QTableWidget,
     QToolBar,
     QToolButton,
-    QComboBox,
-    QPushButton,
     QMenu,
-    QWidget,
     QLineEdit,
     QSizePolicy,
-    QRadioButton,
-    QLabel,
     QProgressBar,
     QApplication,
     QDockWidget,
     QMainWindow,
 )
-from PySide.QtCore import Qt, SIGNAL, Signal, QObject, QThread, QSize, QEvent, QEventLoop
+from PySide.QtCore import Qt, SIGNAL, Signal, QObject, QSize, QEvent, QEventLoop
 
 import sys
 import json
-from datetime import datetime, date, timedelta, time
+from datetime import datetime, timedelta
 import shutil
 import Standard_Functions_Ribbon as StandardFunctions
 from Standard_Functions_Ribbon import CommandInfoCorrections
@@ -55,7 +50,6 @@ import Parameters_Ribbon
 from Parameters_Ribbon import Parameters
 import Serialize_Ribbon
 import webbrowser
-import StyleMapping_Ribbon
 import CacheFunctions
 
 # Get the resources
@@ -1755,7 +1749,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                             for CommandItem in self.List_Commands:
                                 # Check if the items is already there
                                 # if not, continue
-                                if not CommandItem[0] in ShadowList:
+                                if CommandItem[0] not in ShadowList:
                                     MenuName_Command = CommandItem[0]
                                     if (
                                         MenuName_Command == key
@@ -2636,7 +2630,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             # If the are not to be ignored, add them to the listwidget
             if IsIgnored is False:
 
-                if Toolbar != "" and not Toolbar in shadowList:
+                if Toolbar != "" and Toolbar not in shadowList:
                     self.form.PanelList_RD.addItem(
                         ToolbarTransLated,
                         Toolbar,
@@ -3610,7 +3604,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             position = None
             try:
                 position = WorkbenchOrderedList.index(item[0])
-            except ValueError as e:
+            except ValueError:
                 position = 999999
             return position
             
