@@ -34,13 +34,13 @@ from PySide.QtWidgets import (
 from PySide.QtGui import QIcon, QPixmap, QColor
 
 import sys
-import StyleMapping_Ribbon
-import Standard_Functions_Ribbon as StandardFunctions
-import Parameters_Ribbon
-from Parameters_Ribbon import DefaultSettings
-from Parameters_Ribbon import Parameters
+from . import StyleMapping_Ribbon
+from . import Standard_Functions_Ribbon as StandardFunctions
+from . import Parameters_Ribbon
+from .Parameters_Ribbon import DefaultSettings
+from .Parameters_Ribbon import Parameters
 import webbrowser
-import FCBinding
+from . import FCBinding
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR

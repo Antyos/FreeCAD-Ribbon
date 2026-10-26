@@ -120,9 +120,9 @@ else:
         QWidgetAction,
     )
 
-import Standard_Functions_Ribbon as StandardFunctions
-import StyleMapping_Ribbon
-from Parameters_Ribbon import Parameters
+from . import Standard_Functions_Ribbon as StandardFunctions
+from . import StyleMapping_Ribbon
+from .Parameters_Ribbon import Parameters
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR

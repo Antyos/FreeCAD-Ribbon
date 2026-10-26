@@ -30,8 +30,8 @@ from PySide.QtWidgets import (
 from PySide.QtGui import QPixmap
 import sys
 
-import Standard_Functions_Ribbon as StandardFunctions
-from Parameters_Ribbon import Parameters
+from . import Standard_Functions_Ribbon as StandardFunctions
+from .Parameters_Ribbon import Parameters
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR

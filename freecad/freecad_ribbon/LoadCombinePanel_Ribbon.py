@@ -26,8 +26,8 @@ import os
 from PySide.QtCore import Qt
 import sys
 
-import Standard_Functions_Ribbon as StandardFunctions
-from Parameters_Ribbon import Parameters
+from . import Standard_Functions_Ribbon as StandardFunctions
+from .Parameters_Ribbon import Parameters
 
 # Get the resources
 pathIcons = Parameters.ICON_LOCATION

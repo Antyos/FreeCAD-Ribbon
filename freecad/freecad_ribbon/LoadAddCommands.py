@@ -39,13 +39,13 @@ import sys
 import json
 from datetime import datetime, timedelta
 
-import Standard_Functions_Ribbon as StandardFunctions
-import Parameters_Ribbon
-from Parameters_Ribbon import Parameters
-import Serialize_Ribbon
-import CacheFunctions
-import FCBinding
-from CustomWidgets import QuickAccessToolButton
+from . import Standard_Functions_Ribbon as StandardFunctions
+from . import Parameters_Ribbon
+from .Parameters_Ribbon import Parameters
+from . import Serialize_Ribbon
+from . import CacheFunctions
+from . import FCBinding
+from .CustomWidgets import QuickAccessToolButton
 import webbrowser
 
 from pyqtribbon_local.panel import RibbonPanel

@@ -42,7 +42,7 @@ class RibbonApplicationMenu_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget
-        from FCBinding import ModernMenu
+        from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
         mw = Gui.getMainWindow()
@@ -64,7 +64,7 @@ class RibbonLayout_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget
-        from FCBinding import ModernMenu
+        from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
         mw = Gui.getMainWindow()
@@ -86,7 +86,7 @@ class RibbonPreferences_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget
-        from FCBinding import ModernMenu
+        from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
         mw = Gui.getMainWindow()
@@ -99,7 +99,7 @@ class RibbonPreferences_Class:
 
 class RibbonPin_Class:
     def GetResources(self):
-        import StyleMapping_Ribbon
+        from . import StyleMapping_Ribbon
         pixmap = os.path.join(
             os.path.dirname(__file__), "..", "..", "Resources", "icons", "pin-icon-default.svg"
         )
@@ -117,7 +117,7 @@ class RibbonPin_Class:
 
     def Activated(self):
         from PySide.QtWidgets import QDockWidget, QToolButton
-        from FCBinding import ModernMenu
+        from .FCBinding import ModernMenu
 
         # Get the main window of FreeCAD
         mw = Gui.getMainWindow()

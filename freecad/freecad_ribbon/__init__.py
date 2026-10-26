@@ -1,0 +1,1 @@
+"""FreeCAD Ribbon addon package."""

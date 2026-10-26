@@ -24,7 +24,6 @@ import os
 import shutil
 import sys
 
-import FreeCAD as App
 import FreeCADGui as Gui
 from PySide.QtCore import Qt
 from PySide.QtWidgets import (
@@ -33,9 +32,10 @@ from PySide.QtWidgets import (
     QMainWindow,
 )
 
-import FCBinding
-import Parameters_Ribbon
-from Parameters_Ribbon import Parameters, Settings
+import FreeCAD as App
+
+from . import FCBinding, Parameters_Ribbon
+from .Parameters_Ribbon import Parameters, Settings
 
 # Set the logger levels to avoid extra output in the report panel
 logging.getLogger("urllib3").setLevel(logging.INFO)
@@ -57,7 +57,9 @@ pathIcons = Parameters.ICON_LOCATION
 pathStylSheets = Parameters.STYLESHEET_LOCATION
 pathUI = Parameters.UI_LOCATION
 pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(FCBinding.__file__), "..", "..", "Resources", "packages")
+pathPackages = os.path.join(
+    os.path.dirname(FCBinding.__file__), "..", "..", "Resources", "packages"
+)
 pathBackup = Parameters.BACKUP_LOCATION
 sys.path.append(ConfigDirectory)
 sys.path.append(pathIcons)
@@ -127,9 +129,7 @@ if Settings.GetStringSetting("BackupFolder") == os.path.join(
 # check if there is a "RibbonStructure.json". if not create one
 file = os.path.join(ConfigDirectory, "RibbonStructure.json")
 file_default = os.path.join(ConfigDirectory, "RibbonStructure_default.json")
-source = os.path.join(
-    os.path.dirname(FCBinding.__file__), "..", "..", "CreateStructure.txt"
-)
+source = os.path.join(os.path.dirname(FCBinding.__file__), "..", "..", "CreateStructure.txt")
 source_default = os.path.join(
     os.path.dirname(FCBinding.__file__), "..", "..", "CreateStructure.txt"
 )
@@ -229,5 +229,7 @@ except Exception as e:
     if Parameters.DEBUG_MODE is True:
         print(f"{e.with_traceback(e.__traceback__)}, 0")
 
-Gui.addLanguagePath(os.path.join(os.path.join(os.path.dirname(FCBinding.__file__), "..", "..", "translations")))
+Gui.addLanguagePath(
+    os.path.join(os.path.join(os.path.dirname(FCBinding.__file__), "..", "..", "translations"))
+)
 Gui.updateLocale()

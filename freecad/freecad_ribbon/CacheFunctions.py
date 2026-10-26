@@ -31,11 +31,11 @@ from PySide.QtCore import Qt
 import sys
 import json
 from datetime import datetime
-import Standard_Functions_Ribbon as StandardFunctions
-from Standard_Functions_Ribbon import CommandInfoCorrections
-import Parameters_Ribbon
-from Parameters_Ribbon import Parameters
-import Serialize_Ribbon
+from . import Standard_Functions_Ribbon as StandardFunctions
+from .Standard_Functions_Ribbon import CommandInfoCorrections
+from . import Parameters_Ribbon
+from .Parameters_Ribbon import Parameters
+from . import Serialize_Ribbon
 import requests
 
 # Get the resources

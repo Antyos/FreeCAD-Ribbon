@@ -26,7 +26,7 @@ import os
 from PySide.QtCore import Qt
 import sys
 
-from Parameters_Ribbon import Parameters
+from .Parameters_Ribbon import Parameters
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR

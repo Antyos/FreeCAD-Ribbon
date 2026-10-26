@@ -44,13 +44,13 @@ import sys
 import json
 from datetime import datetime, timedelta
 import shutil
-import Standard_Functions_Ribbon as StandardFunctions
-from Standard_Functions_Ribbon import CommandInfoCorrections
-import Parameters_Ribbon
-from Parameters_Ribbon import Parameters
-import Serialize_Ribbon
+from . import Standard_Functions_Ribbon as StandardFunctions
+from .Standard_Functions_Ribbon import CommandInfoCorrections
+from . import Parameters_Ribbon
+from .Parameters_Ribbon import Parameters
+from . import Serialize_Ribbon
 import webbrowser
-import CacheFunctions
+from . import CacheFunctions
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -5531,7 +5531,7 @@ class EventInspector(QObject):
         super(EventInspector, self).__init__(parent)
 
     def eventFilter(self, obj, event):
-        import FCBinding
+        from . import FCBinding
 
         # Show the mainwindow after the application is activated
         if event.type() == QEvent.Type.Close:

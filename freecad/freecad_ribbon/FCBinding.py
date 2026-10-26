@@ -19,7 +19,7 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import CustomWidgets
+from . import CustomWidgets
 import FreeCAD as App
 import FreeCADGui as Gui
 from pathlib import Path
@@ -67,7 +67,7 @@ from PySide.QtCore import (
     QMimeData,
     QEventLoop,      
 )
-from CustomWidgets import (
+from .CustomWidgets import (
     CustomControls, 
     DragTargetIndicator, 
     Toggle, 
@@ -84,18 +84,18 @@ import json
 import os
 import sys
 import webbrowser
-import LoadDesign_Ribbon
-import Parameters_Ribbon
-from Parameters_Ribbon import Parameters
-import LoadSettings_Ribbon
-import LoadLicenseForm_Ribbon
-import LoadAddCommands
-import CacheFunctions
-import Standard_Functions_Ribbon as StandardFunctions
-from Standard_Functions_Ribbon import CommandInfoCorrections
-import Serialize_Ribbon
-import Standard_Functions_Ribbon
-import StyleMapping_Ribbon
+from . import LoadDesign_Ribbon
+from . import Parameters_Ribbon
+from .Parameters_Ribbon import Parameters
+from . import LoadSettings_Ribbon
+from . import LoadLicenseForm_Ribbon
+from . import LoadAddCommands
+from . import CacheFunctions
+from . import Standard_Functions_Ribbon as StandardFunctions
+from .Standard_Functions_Ribbon import CommandInfoCorrections
+from . import Serialize_Ribbon
+from . import Standard_Functions_Ribbon
+from . import StyleMapping_Ribbon
 import platform
 from datetime import datetime
 import shutil
