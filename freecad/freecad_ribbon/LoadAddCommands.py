@@ -56,7 +56,7 @@ pathIcons = Parameters.ICON_LOCATION
 pathStylSheets = Parameters.STYLESHEET_LOCATION
 pathUI = Parameters.UI_LOCATION
 pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "Resources", "packages")
+pathPackages = os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "packages")
 pathBackup = Parameters.BACKUP_LOCATION
 sys.path.append(ConfigDirectory)
 sys.path.append(pathIcons)
@@ -280,7 +280,7 @@ class LoadDialog(AddCommands_ui.Ui_Form):
                 if isInList is False:
                     # Check first if the icon can be loaded quickly
                     Icon = QIcon()                                  
-                    FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "Resources", "FreeCAD Icons"))
+                    FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"))
                     for root, dirs, files in os.walk(FreeCAD_Icons):
                         for fileName in files:
                             if CommandItem[0] == fileName.split(".")[0]:
@@ -2003,7 +2003,7 @@ class LoadDialog(AddCommands_ui.Ui_Form):
 
         # If the icon is still empty, try to get the icon from file
         if Icon is None or (Icon is not None and Icon.isNull()):            
-            FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "Resources", "FreeCAD Icons"))
+            FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"))
             for root, dirs, files in os.walk(FreeCAD_Icons):
                 for fileName in files:
                     if CommandName in fileName:

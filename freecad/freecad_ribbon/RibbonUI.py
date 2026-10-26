@@ -25,6 +25,7 @@
 # FreeCAD init script of the Work Features module
 import FreeCAD as App
 import FreeCADGui as Gui
+import os
 
 # Define the translation
 translate = App.Qt.translate
@@ -99,9 +100,13 @@ class RibbonPreferences_Class:
 class RibbonPin_Class:
     def GetResources(self):
         import StyleMapping_Ribbon
-        pixmap = "./Resources/icons/pin-icon-default.svg"
+        pixmap = os.path.join(
+            os.path.dirname(__file__), "..", "..", "Resources", "icons", "pin-icon-default.svg"
+        )
         if StyleMapping_Ribbon.darkMode:
-            pixmap = "./Resources/icons/pin-icon-default_white.svg"
+            pixmap = os.path.join(
+                os.path.dirname(__file__), "..", "..", "Resources", "icons", "pin-icon-default_white.svg"
+            )
         
         return {
             "Pixmap": pixmap,

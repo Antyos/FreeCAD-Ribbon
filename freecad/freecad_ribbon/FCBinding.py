@@ -108,7 +108,7 @@ pathIcons = Parameters.ICON_LOCATION
 pathStylSheets = Parameters.STYLESHEET_LOCATION
 pathUI = Parameters.UI_LOCATION
 pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "Resources", "packages")
+pathPackages = os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "packages")
 pathBackup = Parameters.BACKUP_LOCATION
 sys.path.append(ConfigDirectory)
 sys.path.append(pathIcons)
@@ -5005,7 +5005,7 @@ class ModernMenu(RibbonBar):
                 action = None            
                 Icon = QIcon()
                 if Command is not None:
-                    FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "Resources", "FreeCAD Icons"))
+                    FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"))
                     for root, dirs, files in os.walk(FreeCAD_Icons):
                         for fileName in files:
                             if CommandName in fileName:
@@ -5250,7 +5250,7 @@ class ModernMenu(RibbonBar):
         Icon = QIcon()
         # Try to get the icon from file
         if Icon is None or (Icon is not None and Icon.isNull()):
-            FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "Resources", "FreeCAD Icons"))
+            FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"))
             for root, dirs, files in os.walk(FreeCAD_Icons):
                 for fileName in files:
                     if CommandName in fileName:
@@ -6087,7 +6087,7 @@ class ModernMenu(RibbonBar):
                             text = action.text()
                                                 
                         # Try to get the icon from the stored freecad icons                      
-                        FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "Resources", "FreeCAD Icons"))
+                        FreeCAD_Icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"))
                         for root, dirs, files in os.walk(FreeCAD_Icons):
                             for fileName in files:
                                 if CommandName in fileName:
@@ -7237,7 +7237,9 @@ class ModernMenu(RibbonBar):
         #
         # Fill the correction list -> {workbenchname [[new toolbar, old toolbar], [new toolbar, old toolbar]]}
         CorrectionList = {}
-        MappingFile = os.path.join(os.path.dirname(__file__), "Toolbar name mapping.json")
+        MappingFile = os.path.join(
+            os.path.dirname(__file__), "..", "..", "Toolbar name mapping.json"
+        )
         with open(MappingFile , "r") as File:
             CorrectionList.update(json.load(File))
         File.close()

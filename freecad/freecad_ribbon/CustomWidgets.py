@@ -19,62 +19,110 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
+import os
+import sys
+import typing
+from typing import TYPE_CHECKING
+
 import FreeCAD as App
 import FreeCADGui as Gui
-import typing
-import sys
 
-from PySide.QtGui import (
-    QIcon,
-    QAction,
-    QFontMetrics,
-    QFont,
-    QCursor,
-    QDrag,
-    QPixmap,
-    QColor,
-    QBrush,
-    QPaintEvent,
-    QPen,
-    QPainter,   
-)
-from PySide.QtWidgets import (
-    QComboBox,
-    QMainWindow,
-    QSizePolicy,
-    QSpinBox,
-    QToolButton,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
-    QMenu,
-    QFrame,
-    QCheckBox,
-    QWidget,
-    QWidgetAction,
-    QLineEdit,
-    QLayout,
-    QGridLayout,
-)
-from PySide.QtCore import (
-    Qt,
-    QSize,
-    QMimeData,
-    QPoint,
-    QPointF,
-    QRectF,
-    QEasingCurve,
-    QPropertyAnimation,
-    QSequentialAnimationGroup,
-    Slot,
-    Property,
-)
+if TYPE_CHECKING:
+    from PySide6.QtCore import (
+        Property,
+        QEasingCurve,
+        QMimeData,
+        QPoint,
+        QPointF,
+        QPropertyAnimation,
+        QRectF,
+        QSequentialAnimationGroup,
+        QSize,
+        Qt,
+        Slot,
+    )
+    from PySide6.QtGui import (
+        QAction,
+        QBrush,
+        QColor,
+        QCursor,
+        QDrag,
+        QFont,
+        QFontMetrics,
+        QIcon,
+        QPainter,
+        QPaintEvent,
+        QPen,
+        QPixmap,
+    )
+    from PySide6.QtWidgets import (
+        QCheckBox,
+        QComboBox,
+        QFrame,
+        QGridLayout,
+        QHBoxLayout,
+        QLabel,
+        QLayout,
+        QLineEdit,
+        QMainWindow,
+        QMenu,
+        QSizePolicy,
+        QSpinBox,
+        QToolButton,
+        QVBoxLayout,
+        QWidget,
+        QWidgetAction,
+    )
+else:
+    from PySide.QtCore import (
+        Property,
+        QEasingCurve,
+        QMimeData,
+        QPoint,
+        QPointF,
+        QPropertyAnimation,
+        QRectF,
+        QSequentialAnimationGroup,
+        QSize,
+        Qt,
+        Slot,
+    )
+    from PySide.QtGui import (
+        QAction,
+        QBrush,
+        QColor,
+        QCursor,
+        QDrag,
+        QFont,
+        QFontMetrics,
+        QIcon,
+        QPainter,
+        QPaintEvent,
+        QPen,
+        QPixmap,
+    )
+    from PySide.QtWidgets import (
+        QCheckBox,
+        QComboBox,
+        QFrame,
+        QGridLayout,
+        QHBoxLayout,
+        QLabel,
+        QLayout,
+        QLineEdit,
+        QMainWindow,
+        QMenu,
+        QSizePolicy,
+        QSpinBox,
+        QToolButton,
+        QVBoxLayout,
+        QWidget,
+        QWidgetAction,
+    )
 
-import os
-from Parameters_Ribbon import Parameters
 import Standard_Functions_Ribbon as StandardFunctions
 import StyleMapping_Ribbon
-
+from Parameters_Ribbon import Parameters
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -82,7 +130,7 @@ pathIcons = Parameters.ICON_LOCATION
 pathStylSheets = Parameters.STYLESHEET_LOCATION
 pathUI = Parameters.UI_LOCATION
 pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "Resources", "packages")
+pathPackages = os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "packages")
 pathBackup = Parameters.BACKUP_LOCATION
 sys.path.append(ConfigDirectory)
 sys.path.append(pathIcons)
@@ -92,14 +140,15 @@ sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
 
-from pyqtribbon_local.toolbutton import RibbonToolButton, RibbonButtonStyle
 from pyqtribbon_local.separator import RibbonSeparator
+from pyqtribbon_local.toolbutton import RibbonButtonStyle, RibbonToolButton
 
 translate = App.Qt.translate
 
 mw: QMainWindow = Gui.getMainWindow()
 
-class CustomControls(RibbonToolButton):    
+
+class CustomControls(RibbonToolButton):
     def __init__(
         self,
         Text: str,
@@ -117,10 +166,10 @@ class CustomControls(RibbonToolButton):
         Menu: QMenu = None,
         MenuButtonSpace=10,
         parent=None,
-        ButtonStyle = RibbonButtonStyle.Small,
+        ButtonStyle=RibbonButtonStyle.Small,
         *args,
-        **kwargs
-                 ):
+        **kwargs,
+    ):
         QToolButton.__init__(self, *args, **kwargs)
         self.layout = QHBoxLayout(self)
         self.widget = QToolButton(self)
@@ -184,15 +233,15 @@ class CustomControls(RibbonToolButton):
                 MaxNumberOfLines,
                 Menu,
                 MenuButtonSpace,
-                parent,                
+                parent,
             )
             self.layout.addWidget(self.widget, 0, Qt.AlignmentFlag.AlignLeft)
-        
+
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setFixedSize(self.widget.size())
-          
+
     def mouseMoveEvent(self, e):
         if e.buttons() == Qt.MouseButton.LeftButton:
             try:
@@ -206,33 +255,32 @@ class CustomControls(RibbonToolButton):
                 drag.exec_(Qt.DropAction.MoveAction)
             except Exception as e:
                 print(e)
-    
-                
+
     def actions(self):
         return self.action
 
     @classmethod
     def TextEnabled(self):
-        
+
         return self.showText
-    
+
     def returnMenu(self):
         return self.menu
 
     def LabelWidth(self):
         return self.labelWidth
-    
+
     def MenuButtonWidth(self):
         return self.menuButtonWidth
 
     def ShowText(self, Visible: bool):
-            if Visible is True:
-                for child in self.widget.children():
-                    if type(child) is QLabel:
-                        # show the text
-                        child.show()
-                        return True
-            return False
+        if Visible is True:
+            for child in self.widget.children():
+                if type(child) is QLabel:
+                    # show the text
+                    child.show()
+                    return True
+        return False
 
     @classmethod
     def LargeCustomToolButton(
@@ -276,7 +324,7 @@ class CustomControls(RibbonToolButton):
             if len(Menu.actions()) == 0:
                 CommandButton.addAction(Action)
         CommandButton.setDefaultAction(Action)
-        
+
         CommandButton.setObjectName("CommandButton")
         ArrowButton.setObjectName("MenuButton")
 
@@ -349,7 +397,7 @@ class CustomControls(RibbonToolButton):
                         maxLength = maxLength + 1
                     if maxWidth >= ButtonSize.width():
                         break
-                # maxLength = maxLength + 3 
+                # maxLength = maxLength + 3
                 maxLength = maxLength
 
                 # Get the first text line
@@ -370,14 +418,14 @@ class CustomControls(RibbonToolButton):
                     # Set the alignment
                     Label_Text.setAlignment(TextAlignment)
                     # Add the line
-                    Label_Text.setText(line1 + "\n" +line2)
+                    Label_Text.setText(line1 + "\n" + line2)
                     # Update the text width if neccesary
                     if FontMetrics.tightBoundingRect(line2).width() > TextWidth:
                         TextWidth = FontMetrics.tightBoundingRect(line2).width()
                 except Exception:
                     # Label_Text.setText(line1 + "\n   ")
                     pass
-            
+
             Label_Text.setFixedWidth(TextWidth + 6)
 
             # Add the label with alignment
@@ -408,25 +456,19 @@ class CustomControls(RibbonToolButton):
             def mouseClickevent(event):
                 ArrowButton.animateClick()
 
-            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
-            ArrowButton.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
+            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
+            ArrowButton.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
 
             # Change the background color for commandbutton and label on hovering (CSS)
-            def enterEventCustom(event):               
+            def enterEventCustom(event):
                 BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Border_Color")
                 if Parameters.CUSTOM_COLORS_ENABLED:
                     BorderColor = Parameters.COLOR_BORDERS
                 if Parameters.BORDER_TRANSPARANT:
-                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem(
-                        "Background_Color_Hover"
-                    )
+                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
 
-                StyleSheet_Addition_Arrow= ""
-                StyleSheet_Addition_Label= ""
+                StyleSheet_Addition_Arrow = ""
+                StyleSheet_Addition_Label = ""
                 if showText is False:
                     StyleSheet_Addition_Arrow = (
                         "QToolButton, QToolButton:hover, QLabel, QLabel:hover {background-color: "
@@ -562,6 +604,7 @@ class CustomControls(RibbonToolButton):
             CommandButtonHeight = CommandButtonHeight - ArrowButton.height()
         else:
             MenuButtonSpace = 0
+
             # if showText is True:
             # Create custom events
             #
@@ -569,22 +612,18 @@ class CustomControls(RibbonToolButton):
             def mouseClickevent(event):
                 CommandButton.animateClick()
 
-            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
+            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
 
             # Change the background color for commandbutton and label on hovering (CSS)
-            def enterEventCustom(event):                
+            def enterEventCustom(event):
                 BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Border_Color")
                 if Parameters.CUSTOM_COLORS_ENABLED:
                     BorderColor = Parameters.COLOR_BORDERS
                 if Parameters.BORDER_TRANSPARANT:
-                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem(
-                        "Background_Color_Hover"
-                    )
-                    
+                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
+
                 StyleSheet_Addition_Command = ""
-                StyleSheet_Addition_Label = ""               
+                StyleSheet_Addition_Label = ""
                 if showText is False:
                     StyleSheet_Addition_Label = (
                         "QToolButton, QToolButton:hover, QLabel, QLabel:hover {background-color: "
@@ -670,9 +709,7 @@ class CustomControls(RibbonToolButton):
                     CommandButton.setStyleSheet(StyleSheet_Addition_Command)
 
             Label_Text.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
-            CommandButton.enterEvent = lambda enterEvent: enterEventCustom(
-                enterEvent
-            )
+            CommandButton.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
 
             if showText is False:
                 # Hide the text and set the width
@@ -700,15 +737,13 @@ class CustomControls(RibbonToolButton):
             # Set the tooltip for the label equeal to that of the commandbutton
             Label_Text.setToolTip(CommandButton.toolTip())
 
-        btn.mouseMoveEvent = lambda mouseEvent: CustomControls.mouseMoveEvent(
-            btn, mouseEvent
-        )
+        btn.mouseMoveEvent = lambda mouseEvent: CustomControls.mouseMoveEvent(btn, mouseEvent)
 
         # Set the spacing to zero. If not, the CSS styling will show gaps
         Layout.setSpacing(0)
         # Add the layout to the button
         btn.setLayout(Layout)
-        
+
         if showText is False:
             # Hide the text and set the width
             Label_Text.setHidden(True)
@@ -723,21 +758,21 @@ class CustomControls(RibbonToolButton):
         if width <= iconHeight:
             width = iconHeight + 12
             Label_Text.setFixedWidth(width)
-        
+
         ArrowButton.setFixedWidth(width)
         # Compensate the height when text is visible
         if showText is True:
-            CommandButton.setFixedHeight(ButtonSize.height()-Label_Text.height())
+            CommandButton.setFixedHeight(ButtonSize.height() - Label_Text.height())
         # Compensate the height when text is visible and a menu is present
         if showText is True and Menu is not None and len(Menu.actions()) > 0:
-            CommandButton.setFixedHeight(ButtonSize.height()-Label_Text.height() - MenuButtonSpace + 3)
-        
+            CommandButton.setFixedHeight(
+                ButtonSize.height() - Label_Text.height() - MenuButtonSpace + 3
+            )
+
         btn.setFixedSize(QSize(width, ButtonSize.height()))
-        
+
         # Set the stylesheet
-        StyleSheet = StyleMapping_Ribbon.ReturnStyleSheet(
-            control="toolbutton", radius="2px"
-        )
+        StyleSheet = StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton", radius="2px")
         StyleSheet_Addition_Arrow = (
             "QToolButton, QToolButton:hover, QLabel, QLabel:hover {background-color: "
             + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
@@ -758,7 +793,7 @@ class CustomControls(RibbonToolButton):
         ArrowButton.setStyleSheet(StyleSheet_Addition_Arrow + StyleSheet)
         CommandButton.setStyleSheet(StyleSheet)
         Label_Text.setStyleSheet(StyleSheet)
-        
+
         # Store the widths
         self.labelWidth = width
         self.menuButtonWidth = ArrowButton.width()
@@ -782,12 +817,12 @@ class CustomControls(RibbonToolButton):
         Menu: QMenu = None,
         MenuButtonSpace=16,
         parent=None,
-        ButtonStyle = "small"
+        ButtonStyle="small",
     ):
         # Small buttons have no wordwrap
         if ButtonStyle == "small":
-            setWordWrap= False
-        
+            setWordWrap = False
+
         # Define the controls
         btn = QToolButton()
         CommandButton = QToolButton()
@@ -819,7 +854,7 @@ class CustomControls(RibbonToolButton):
             if len(Menu.actions()) == 0:
                 CommandButton.addAction(Action)
         CommandButton.setDefaultAction(Action)
-        
+
         CommandButton.setObjectName("CommandButton")
         ArrowButton.setObjectName("MenuButton")
 
@@ -836,7 +871,7 @@ class CustomControls(RibbonToolButton):
         # if showText is False:
         if MenuButtonSpace < 8:
             MenuButtonSpace = 8
-            
+
         # Set the width according the commandbutton
         ArrowButton.setFixedWidth(MenuButtonSpace)
 
@@ -876,7 +911,7 @@ class CustomControls(RibbonToolButton):
                         Text, maxLength, MaxNumberOfLines, True
                     )[1]
                     # Add the line with a space to avoid te need to set spacing. (Spacing breaks the hover background)
-                    Label_Text.setText(Label_Text.text() + "\n" +" " + line2)
+                    Label_Text.setText(Label_Text.text() + "\n" + " " + line2)
                     if (
                         FontMetrics.tightBoundingRect(line1).width()
                         > FontMetrics.tightBoundingRect(line2).width()
@@ -974,28 +1009,22 @@ class CustomControls(RibbonToolButton):
             def mouseClickevent(event):
                 ArrowButton.animateClick()
 
-            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
-            ArrowButton.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
+            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
+            ArrowButton.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
 
             # Change the background color for commandbutton and label on hovering (CSS)
             def enterEventCustom(event):
                 # if CommandButton.isEnabled() is False:
                 #     return
-                
+
                 BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Border_Color")
                 if Parameters.CUSTOM_COLORS_ENABLED:
                     BorderColor = Parameters.COLOR_BORDERS
                 if Parameters.BORDER_TRANSPARANT:
-                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem(
-                        "Background_Color_Hover"
-                    )     
+                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
                 StyleSheet_Addition_Arrow = ""
-                StyleSheet_Addition_Label = ""   
-                if showText is False:        
+                StyleSheet_Addition_Label = ""
+                if showText is False:
                     StyleSheet_Addition_Arrow = (
                         "QToolButton, QToolButton:hover, QLabel, QLabel:hover {"
                         + "background-color: "
@@ -1030,7 +1059,7 @@ class CustomControls(RibbonToolButton):
                         + ";spacing: 0px"
                         + ";}"
                     )
-                if showText is True:        
+                if showText is True:
                     StyleSheet_Addition_Arrow = (
                         "QToolButton, QToolButton:hover, QLabel, QLabel:hover {background-color: "
                         # + StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
@@ -1090,9 +1119,7 @@ class CustomControls(RibbonToolButton):
                 ArrowButton.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
 
             Label_Text.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
-            CommandButton.enterEvent = lambda enterEvent: enterEventCustom(
-                enterEvent
-            )
+            CommandButton.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
 
             # restore the stylesheets on leaving
             def leaveEventCustom(event):
@@ -1133,29 +1160,23 @@ class CustomControls(RibbonToolButton):
             def mouseClickevent(event):
                 CommandButton.animateClick()
 
-            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
-            ArrowButton.mousePressEvent = lambda mouseClick: mouseClickevent(
-                mouseClick
-            )
+            Label_Text.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
+            ArrowButton.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
 
             # Change the background color for commandbutton and label on hovering (CSS)
             def enterEventCustom(event):
                 # if CommandButton.isEnabled() is False:
                 #     return
-                
+
                 BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Border_Color")
                 if Parameters.CUSTOM_COLORS_ENABLED:
                     BorderColor = Parameters.COLOR_BORDERS
                 if Parameters.BORDER_TRANSPARANT:
-                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem(
-                        "Background_Color_Hover"
-                    )
-                
-                StyleSheet_Addition_Command= ""
-                StyleSheet_Addition_Label= ""
-                if showText is False:                    
+                    BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
+
+                StyleSheet_Addition_Command = ""
+                StyleSheet_Addition_Label = ""
+                if showText is False:
                     StyleSheet_Addition_Label = (
                         "QToolButton, QToolButton:hover, QLabel, QLabel:hover {background-color: "
                         # + StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
@@ -1227,10 +1248,8 @@ class CustomControls(RibbonToolButton):
                     CommandButton.setStyleSheet(StyleSheet_Addition_Command)
 
             Label_Text.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
-            CommandButton.enterEvent = lambda enterEvent: enterEventCustom(
-                enterEvent
-            )
-                
+            CommandButton.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
+
             # restore the stylesheets on leaving
             def leaveEventCustom(event):
                 StyleSheet = StyleMapping_Ribbon.ReturnStyleSheet(
@@ -1256,10 +1275,8 @@ class CustomControls(RibbonToolButton):
             # Set the menubutton space to zero because there is no menu
             MenuButtonSpace = 0
 
-        btn.mouseMoveEvent = lambda mouseEvent: CustomControls.mouseMoveEvent(
-            btn, mouseEvent
-        )
-        
+        btn.mouseMoveEvent = lambda mouseEvent: CustomControls.mouseMoveEvent(btn, mouseEvent)
+
         # Hide the text if set in preferences
         if showText is False:
             Label_Text.setHidden(True)
@@ -1270,11 +1287,11 @@ class CustomControls(RibbonToolButton):
 
         # Add the layout
         btn.setLayout(Layout)
-         # Set the stylesheet for the controls
+        # Set the stylesheet for the controls
         StyleSheet = StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton")
         StyleSheet_Addition_Arrow = (
-            str(StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton")) +
-            "QToolButton, QLabel {background-color: "
+            str(StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton"))
+            + "QToolButton, QLabel {background-color: "
             + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
             + ";margin: 0px"
             + ";spacing: 0px"
@@ -1294,11 +1311,11 @@ class CustomControls(RibbonToolButton):
             """QToolButton, QLabel, RibbonToolButton, QLayout {
                         margin: 0px;
                         spacing: 0px;"""
-                    + """;background: """
-                    + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
-                    # + """;border: """
-                    # + BorderColor
-                    + """;}"""
+            + """;background: """
+            + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
+            # + """;border: """
+            # + BorderColor
+            + """;}"""
         )
         CommandButton.setStyleSheet(StyleSheet)
         ArrowButton.setStyleSheet(StyleSheet_Addition_Arrow + StyleSheet)
@@ -1311,10 +1328,10 @@ class CustomControls(RibbonToolButton):
             Label_Text.setHidden(True)
             btn.setFixedWidth(ButtonSize.width() + MenuButtonSpace)
         btn.setFixedHeight(ButtonSize.height())
-        
+
         self.labelWidth = TextWidth
         self.menuButtonWidth = ArrowButton.width()
-        
+
         # return the new button
         # btn.setObjectName("CustomWidget_Small")
         # if ButtonStyle == "medium":
@@ -1346,7 +1363,6 @@ class CustomControls(RibbonToolButton):
                 action_1.setObjectName(action_0.data())
                 # Add the second action
                 Menu.addAction(action_1)
-                
 
         # Set the stylesheet
         BackGroundColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
@@ -1354,9 +1370,7 @@ class CustomControls(RibbonToolButton):
         if Parameters.CUSTOM_COLORS_ENABLED:
             BorderColor = Parameters.COLOR_BORDERS
         if Parameters.BORDER_TRANSPARANT:
-            BorderColor = StyleMapping_Ribbon.ReturnStyleItem(
-                "Background_Color_Hover"
-            )
+            BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
         Menu.setStyleSheet("background-color: " + BackGroundColor + ";border: " + BorderColor + ";")
 
         # Define an custom enter event, to set "MenuEntered" to True on the ribbon and unfold the ribbon
@@ -1389,39 +1403,38 @@ class CustomControls(RibbonToolButton):
 
     def EmptyButton():
         btn = QToolButton()
-        btn.mouseMoveEvent = lambda mouseEvent: CustomControls.mouseMoveEvent(
-            btn, mouseEvent
-        )
+        btn.mouseMoveEvent = lambda mouseEvent: CustomControls.mouseMoveEvent(btn, mouseEvent)
         return btn
+
 
 class QuickAccessToolButton(QToolButton):
     def __init__(
         self,
         Action: QAction,
         Size: int = 0,
-        Menu = None,
+        Menu=None,
         MenuButtonSpace=0,
         parent=None,
         *args,
-        **kwargs       
+        **kwargs,
     ):
         QToolButton.__init__(self, parent=None, *args, **kwargs)
         self.menu = Menu
         self.menuButtonWidth = 0
         self.action = Action
-        
+
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-                
+
         # Added the widget
-        widget = self.CreateButton(Action,Size, Menu, MenuButtonSpace, parent)
+        widget = self.CreateButton(Action, Size, Menu, MenuButtonSpace, parent)
         self.setFixedSize(QSize(Size + MenuButtonSpace, Size))
         self.layout.addWidget(widget)
-        self.setContentsMargins(0,0,0,0)
+        self.setContentsMargins(0, 0, 0, 0)
         self.layout.setStretchFactor(widget, Size)
-        
+
         BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Border_Color")
         if Parameters.BORDER_TRANSPARANT is True:
             BorderColor = StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
@@ -1429,14 +1442,15 @@ class QuickAccessToolButton(QToolButton):
             """QToolButton, QLabel, RibbonToolButton, QLayout {
                         margin: 0px;
                         spacing: 0px;"""
-                    + """;padding-right: """
-                    + str(MenuButtonSpace) + """px"""
-                    + """;background: """
-                    + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
-                    + """;border: """
-                    + BorderColor
-                    + """;}"""
-                    + """ QToolTip {
+            + """;padding-right: """
+            + str(MenuButtonSpace)
+            + """px"""
+            + """;background: """
+            + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
+            + """;border: """
+            + BorderColor
+            + """;}"""
+            + """ QToolTip {
                     background-color: #FFFFE1;
                     color: black;
                     border: black solid 1px;
@@ -1444,37 +1458,37 @@ class QuickAccessToolButton(QToolButton):
                     }"""
         )
         self.setStyleSheet(StyleSheet_Widget)
-        
+
     def CreateButton(
         self,
         Action: QAction,
         Size: int = 0,
-        Menu = None,
+        Menu=None,
         MenuButtonSpace=0,
         parent=None,
     ):
         widget = QToolButton()
         CommandButton = QToolButton()
         ArrowButton = QToolButton()
-        
+
         if type(Action) is QAction:
             CommandButton.setDefaultAction(Action)
         else:
             CommandButton.setDefaultAction(Action[0])
-        
+
         CommandButton.setObjectName("CommandButton")
         ArrowButton.setObjectName("MenuButton")
         CommandButton.setIcon(CommandButton.defaultAction().icon())
         CommandButton.setIconSize(QSize(Size, Size).expandedTo(CommandButton.size()))
         CommandButton.setContentsMargins(0, 0, 0, 0)
-        
+
         # Add the command button
         Layout = QGridLayout(widget)
-        Layout.addWidget(CommandButton, 0,0)
+        Layout.addWidget(CommandButton, 0, 0)
         # Set the content margins to zero
         Layout.setContentsMargins(0, 0, 0, 0)
         Layout.setSpacing(0)
-        
+
         if Menu is not None and len(Menu.actions()) > 1:
             # Define a menu
             ArrowButton.setMenu(Menu)
@@ -1492,20 +1506,20 @@ class QuickAccessToolButton(QToolButton):
             # Set the arrow to none. It will be defined via CSS
             ArrowButton.setArrowType(Qt.ArrowType.DownArrow)
             # Set the content margins
-            ArrowButton.setContentsMargins(0, 0, 0, 0)            
+            ArrowButton.setContentsMargins(0, 0, 0, 0)
             if MenuButtonSpace < 12:
                 MenuButtonSpace = 12
             ArrowButton.setFixedWidth(MenuButtonSpace)
             # Add the Arrow button to the layout
-            Layout.addWidget(ArrowButton,0,1)
+            Layout.addWidget(ArrowButton, 0, 1)
         else:
             MenuButtonSpace = 0
-        
+
         # Set the stylesheet for the controls
         StyleSheet = StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton")
         StyleSheet_Addition_Arrow = (
-            str(StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton")) +
-            "QToolButton, QLabel {background-color: "
+            str(StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton"))
+            + "QToolButton, QLabel {background-color: "
             + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
             + ";margin: 0px"
             + ";spacing: 0px"
@@ -1523,11 +1537,11 @@ class QuickAccessToolButton(QToolButton):
             """QToolButton, QLabel, RibbonToolButton, QLayout {
                         margin: 0px;
                         spacing: 0px;"""
-                    + """;background: """
-                    + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
-                    + """;border: """
-                    + BorderColor
-                    + """;}"""
+            + """;background: """
+            + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
+            + """;border: """
+            + BorderColor
+            + """;}"""
         )
         CommandButton.setStyleSheet(StyleSheet)
         ArrowButton.setStyleSheet(StyleSheet_Addition_Arrow)
@@ -1535,10 +1549,10 @@ class QuickAccessToolButton(QToolButton):
 
         # Set the correct dimensions
         CommandButton.setFixedSize(QSize(Size, Size))
-        # ArrowButton.setFixedSize(QSize(MenuButtonSpace, Size))        
-                
-        return(widget)
-                
+        # ArrowButton.setFixedSize(QSize(MenuButtonSpace, Size))
+
+        return widget
+
     # Add dragdrop functionality
     def mouseMoveEvent(self, e):
         if e.buttons() == Qt.MouseButton.LeftButton:
@@ -1553,6 +1567,7 @@ class QuickAccessToolButton(QToolButton):
                 drag.exec_(Qt.DropAction.MoveAction)
             except Exception as e:
                 print(e)
+
 
 class CustomSeparator(RibbonSeparator):
     def mouseMoveEvent(self, e):
@@ -1570,22 +1585,23 @@ class CustomSeparator(RibbonSeparator):
             except Exception as e:
                 print(e)
 
+
 class DragTargetIndicator(QLabel):
     _topMargins: int = 6
     _bottomMargins: int = 6
     _leftMargins: int = 6
     _rightMargins: int = 6
     _orientation: str = "right"
-    
-    def __init__(self, parent=None, orientation = None, margins = 6):
+
+    def __init__(self, parent=None, orientation=None, margins=6):
         """Create a new drag indicator
 
         Args:
             parent (optional): parent of the drag indicator. Defaults to None.
-            orientation ("left", "right, "top", "bottom", optional): The orientation of the drag indicater. If set, a line is drawn otherwise a background color is set.  
+            orientation ("left", "right, "top", "bottom", optional): The orientation of the drag indicater. If set, a line is drawn otherwise a background color is set.
             Defaults to None.
             margins (int, optional): the margins for the line if orientation is set. Defaults to 6.
-        """        
+        """
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         if orientation is None:
@@ -1601,7 +1617,7 @@ class DragTargetIndicator(QLabel):
         self._leftMargins = margins
         self._rightMargins = margins
         self.setAcceptDrops(True)
-    
+
     def paintEvent(self, event: QPaintEvent) -> None:
         if self._orientation is None:
             return
@@ -1611,7 +1627,7 @@ class DragTargetIndicator(QLabel):
         pen.setWidth(3)
         painter.setPen(pen)
         if self._orientation == "right":
-            x1 = self.rect().x() + self.rect().width() -3
+            x1 = self.rect().x() + self.rect().width() - 3
             painter.drawLine(
                 QPoint(x1, self.rect().top() + self._topMargins),
                 QPoint(x1, self.rect().bottom() - self._bottomMargins),
@@ -1629,25 +1645,26 @@ class DragTargetIndicator(QLabel):
                 QPoint(self.rect().right() - self._rightMargins, y1),
             )
         if self._orientation == "bottom":
-            y1 = self.rect().y() - self.rect().heigth() +3
+            y1 = self.rect().y() - self.rect().heigth() + 3
             painter.drawLine(
                 QPoint(self.rect().left() + self._leftMargins, y1),
                 QPoint(self.rect().right() - self._rightMargins, y1),
             )
 
+
 class QuickAccessSeparator(QToolButton):
     _topMargins: int = 0
     _bottomMargins: int = 0
-    
-    def __init__(self, parent=None, margins = 2):
+
+    def __init__(self, parent=None, margins=2):
         """Create a new drag indicator
 
         Args:
             parent (optional): parent of the drag indicator. Defaults to None.
-            orientation ("left", "right, "top", "bottom", optional): The orientation of the drag indicater. If set, a line is drawn otherwise a background color is set.  
+            orientation ("left", "right, "top", "bottom", optional): The orientation of the drag indicater. If set, a line is drawn otherwise a background color is set.
             Defaults to None.
             margins (int, optional): the margins for the line if orientation is set. Defaults to 6.
-        """        
+        """
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         self._topMargins = margins
@@ -1667,7 +1684,7 @@ class QuickAccessSeparator(QToolButton):
                 drag.exec_(Qt.DropAction.MoveAction)
             except Exception as e:
                 print(e)
-    
+
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)
         pen = QPen()
@@ -1682,41 +1699,35 @@ class QuickAccessSeparator(QToolButton):
             QPoint(x1, self.rect().bottom() - self._bottomMargins),
         )
 
+
 class RightToolButton(QToolButton):
-    
     def __init__(
-        self,
-        Menu: QMenu,
-        Size: int = 0,
-        MenuButtonSpace=0,
-        parent=None,
-        Icon = None,
-        *args,
-        **kwargs       
+        self, Menu: QMenu, Size: int = 0, MenuButtonSpace=0, parent=None, Icon=None, *args, **kwargs
     ):
         QToolButton.__init__(self, parent=None, *args, **kwargs)
         self.menu = Menu
         self.menuButtonWidth = 0
         self.size = Size
-        
+
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-                
+
         # Added the widget
-        widget = self.CreateButton(Menu,Size, MenuButtonSpace, Icon, parent)
+        widget = self.CreateButton(Menu, Size, MenuButtonSpace, Icon, parent)
         self.setFixedSize(QSize(Size + MenuButtonSpace, Size))
         self.layout.addWidget(widget)
-        self.setContentsMargins(0,0,0,0)
+        self.setContentsMargins(0, 0, 0, 0)
         self.layout.setStretchFactor(widget, Size)
-        
+
         StyleSheet_Widget = (
             """QToolButton, QToolButton:hover {
                 margin: 0px;
                 spacing: 0px;"""
             + """;padding-right: """
-            + str(MenuButtonSpace) + """px"""
+            + str(MenuButtonSpace)
+            + """px"""
             + """;background: """
             + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
             + """;border: none"""
@@ -1729,19 +1740,19 @@ class RightToolButton(QToolButton):
             }"""
         )
         self.setStyleSheet(StyleSheet_Widget)
-        
+
     def CreateButton(
         self,
         Menu: QMenu,
         Size: int = 0,
         MenuButtonSpace=0,
-        Icon = None,
+        Icon=None,
         parent=None,
     ):
         widget = QToolButton()
         CommandButton = QToolButton()
         ArrowButton = QToolButton()
-        
+
         CommandButton.setObjectName("CommandButton")
         ArrowButton.setObjectName("MenuButton")
         self.actions = Menu.actions()
@@ -1751,24 +1762,24 @@ class RightToolButton(QToolButton):
             CommandButton.setIcon(Icon)
         CommandButton.setIconSize(QSize(Size, Size).expandedTo(CommandButton.size()))
         CommandButton.setContentsMargins(0, 0, 0, 0)
-        
+
         # Add the command button
         Layout = QGridLayout(widget)
-        Layout.addWidget(CommandButton, 0,0)
+        Layout.addWidget(CommandButton, 0, 0)
         # Set the content margins to zero
         Layout.setContentsMargins(0, 0, 0, 0)
         Layout.setSpacing(0)
-        
+
         # Define a menu
         ArrowButton.setMenu(Menu)
         Menu.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         StyleSheet_Menu = (
-                "QMenu::item, QMenu::menuAction, QMenuBar::item, QMenu>QLabel {font-size: "
-                + str(Parameters.FONTSIZE_MENUS)
-                + """px;}"""
-            )
-        
-        Menu.setStyleSheet(StyleSheet_Menu) 
+            "QMenu::item, QMenu::menuAction, QMenuBar::item, QMenu>QLabel {font-size: "
+            + str(Parameters.FONTSIZE_MENUS)
+            + """px;}"""
+        )
+
+        Menu.setStyleSheet(StyleSheet_Menu)
         ArrowButton.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         # Set the height according the space for the menubutton
         ArrowButton.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -1776,21 +1787,19 @@ class RightToolButton(QToolButton):
         # Set the arrow to none. It will be defined via CSS
         ArrowButton.setArrowType(Qt.ArrowType.DownArrow)
         # Set the content margins
-        ArrowButton.setContentsMargins(0, 0, 0, 0)            
+        ArrowButton.setContentsMargins(0, 0, 0, 0)
         if MenuButtonSpace < 12:
             MenuButtonSpace = 12
         ArrowButton.setFixedWidth(MenuButtonSpace)
         # Add the Arrow button to the layout
-        Layout.addWidget(ArrowButton,0,1)
+        Layout.addWidget(ArrowButton, 0, 1)
 
         # Peform a menu click when clicked on the label
         def mouseClickevent(event):
             ArrowButton.animateClick()
 
-        CommandButton.mousePressEvent = lambda mouseClick: mouseClickevent(
-            mouseClick
-        )
-        
+        CommandButton.mousePressEvent = lambda mouseClick: mouseClickevent(mouseClick)
+
         # Set the stylesheet for the controls
         StyleSheet = StyleMapping_Ribbon.ReturnStyleSheet(control="toolbutton")
         StyleSheet_Addition_Command = (
@@ -1826,13 +1835,13 @@ class RightToolButton(QToolButton):
             """QToolButton, QToolButton:hover {
                         margin: 0px;
                         spacing: 0px;"""
-                    + """;background: """
-                    + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
-                    # + """;border: """
-                    # + BorderColor
-                    # + """ 0.5px solid"""
-                    + ";}"
-                    + """QToolButton::menu-indicator, QToolButton::menu-indicator:hover {
+            + """;background: """
+            + StyleMapping_Ribbon.ReturnStyleItem("Background_Color")
+            # + """;border: """
+            # + BorderColor
+            # + """ 0.5px solid"""
+            + ";}"
+            + """QToolButton::menu-indicator, QToolButton::menu-indicator:hover {
                     margin: 0px;
                     spacing: 0px;
                     padding: 0px;
@@ -1844,7 +1853,7 @@ class RightToolButton(QToolButton):
         CommandButton.setStyleSheet(StyleSheet_Addition_Command)
         ArrowButton.setStyleSheet(StyleSheet_Addition_Arrow)
         widget.setStyleSheet(StyleSheet_Widget)
-        
+
         def enterEventCustom(event):
             StyleSheet_Command = (
                 """QToolButton, QToolButton:hover {
@@ -1853,9 +1862,10 @@ class RightToolButton(QToolButton):
                     padding: 0px;
                     border-top-left-radius: 2px;border-bottom-left-radius: 2px;
                     border-top-right-radius: 0px;border-bottom-right-radius: 0px;
-                    ;background: """ + StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
-                    + ";}"
-                    + """QToolButton::menu-indicator {
+                    ;background: """
+                + StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
+                + ";}"
+                + """QToolButton::menu-indicator {
                         margin: 0px;
                         spacing: 0px;
                         padding: 0px;
@@ -1871,9 +1881,10 @@ class RightToolButton(QToolButton):
                     padding: 0px;
                     border-top-left-radius: 0px;border-bottom-left-radius: 0px;
                     border-top-right-radius: 2px;border-bottom-right-radius: 2px;
-                    background: """ + StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
-                    + ";}"
-                    + """QToolButton::menu-indicator {
+                    background: """
+                + StyleMapping_Ribbon.ReturnStyleItem("Background_Color_Hover")
+                + ";}"
+                + """QToolButton::menu-indicator {
                         margin: 0px;
                         spacing: 0px;
                         padding: 0px;
@@ -1884,23 +1895,23 @@ class RightToolButton(QToolButton):
             )
             CommandButton.setStyleSheet(StyleSheet_Command)
             ArrowButton.setStyleSheet(StyleSheet_Arrow)
-            
+
         ArrowButton.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
         CommandButton.enterEvent = lambda enterEvent: enterEventCustom(enterEvent)
-        
+
         def leaveEventCustom(event):
             ArrowButton.setStyleSheet(StyleSheet_Addition_Arrow)
             CommandButton.setStyleSheet(StyleSheet)
             widget.setStyleSheet(StyleSheet_Widget)
-            
+
         ArrowButton.leaveEvent = lambda leaveEvent: leaveEventCustom(leaveEvent)
         CommandButton.leaveEvent = lambda leaveEvent: leaveEventCustom(leaveEvent)
 
         # Set the correct dimensions
-        CommandButton.setFixedSize(QSize(Size, Size))  
-                
-        return(widget)
-             
+        CommandButton.setFixedSize(QSize(Size, Size))
+
+        return widget
+
     # Add dragdrop functionality
     def mouseMoveEvent(self, e):
         if e.buttons() == Qt.MouseButton.LeftButton:
@@ -1915,10 +1926,9 @@ class RightToolButton(QToolButton):
                 drag.exec_(Qt.DropAction.MoveAction)
             except Exception as e:
                 print(e)
-                
-                
-class Toggle(QCheckBox):
 
+
+class Toggle(QCheckBox):
     _transparent_pen = QPen(Qt.transparent)
     _light_grey_pen = QPen(Qt.lightGray)
 
@@ -1960,9 +1970,7 @@ class Toggle(QCheckBox):
         p.setRenderHint(QPainter.Antialiasing)
 
         p.setPen(self._transparent_pen)
-        barRect = QRectF(
-            0, 0, contRect.width() - handleRadius, 0.40 * contRect.height()
-        )
+        barRect = QRectF(0, 0, contRect.width() - handleRadius, 0.40 * contRect.height())
         barRect.moveCenter(contRect.center())
         rounding = barRect.height() / 2
 
@@ -2012,17 +2020,13 @@ class Toggle(QCheckBox):
         self._pulse_radius = pos
         self.update()
 
-class AnimatedToggle(Toggle):
 
+class AnimatedToggle(Toggle):
     _transparent_pen = QPen(Qt.GlobalColor.transparent)
     _light_grey_pen = QPen(Qt.GlobalColor.lightGray)
 
     def __init__(
-        self,
-        *args,
-        pulse_unchecked_color="#44999999",
-        pulse_checked_color="#4400B0EE",
-        **kwargs
+        self, *args, pulse_unchecked_color="#44999999", pulse_checked_color="#4400B0EE", **kwargs
     ):
 
         self._pulse_radius = 0
@@ -2063,9 +2067,7 @@ class AnimatedToggle(Toggle):
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         p.setPen(self._transparent_pen)
-        barRect = QRectF(
-            0, 0, contRect.width() - handleRadius, 0.40 * contRect.height()
-        )
+        barRect = QRectF(0, 0, contRect.width() - handleRadius, 0.40 * contRect.height())
         barRect.moveCenter(contRect.center())
         rounding = barRect.height() / 2
 
@@ -2101,13 +2103,14 @@ class AnimatedToggle(Toggle):
 
         p.end()
 
+
 class ToggleAction(QWidgetAction):
     Toggle = Toggle()
     Toggle.setObjectName("toggle")
-        
+
     checkStateChanged = Toggle.stateChanged
     checkState = Toggle.checkState()
-    
+
     def __init__(self, parent, text, checked):
         super(ToggleAction, self).__init__(parent)
         layout = QHBoxLayout()
@@ -2120,11 +2123,11 @@ class ToggleAction(QWidgetAction):
         if checked is None:
             checked = False
         self.Toggle.setChecked(checked)
-        
+
         self.setCheckable(True)
         self.setDefaultWidget(self.widget)
         return
-        
+
     def setCheckState(self, CheckState: Qt.CheckState):
         self.Toggle.setCheckState(CheckState)
         if CheckState == Qt.CheckState.Checked:
@@ -2149,23 +2152,24 @@ class ToggleAction(QWidgetAction):
 
     def isChecked(self, /) -> bool:
         return self.Toggle.isChecked()
-    
+
     def setFixedWidth(self, w):
         self.Toggle.setFixedWidth(w)
         return
-    
+
     def setFixedHeight(self, h):
         self.Toggle.setFixedHeight(h)
         return
-    
+
     def setFixedSize(self, w, h):
         self.Toggle.setFixedSize(w, h)
         return
- 
+
+
 class CheckBoxAction(QWidgetAction):
     checkbox = QCheckBox()
     checkbox.setObjectName("checkbox")
-        
+
     checkStateChanged = checkbox.stateChanged
 
     def __init__(self, parent, text):
@@ -2180,7 +2184,7 @@ class CheckBoxAction(QWidgetAction):
         spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         layout.addWidget(spacer)
         self.widget.setLayout(layout)
-        
+
         self.setCheckable(True)
         self.setDefaultWidget(self.widget)
         return
@@ -2191,31 +2195,31 @@ class CheckBoxAction(QWidgetAction):
 
     def setChecked(self, arg_1, /):
         self.checkbox.setChecked(arg_1)
-        return    
+        return
 
     def isChecked(self, /) -> bool:
         return self.checkbox.isChecked()
-    
+
     def setFixedWidth(self, w):
         self.checkbox.setFixedWidth(w)
         return
-    
+
     def setFixedHeight(self, h):
         self.checkbox.setFixedHeight(h)
         return
-    
+
     def setFixedSize(self, w, h):
         self.checkbox.setFixedSize(w, h)
         return
 
+
 class SpinBoxAction(QWidgetAction):
-        
     spinbox = QSpinBox()
     spinbox.setObjectName("spinbox")
     spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    
-    valueChanged =  spinbox.valueChanged
-    
+
+    valueChanged = spinbox.valueChanged
+
     def __init__(self, parent, text):
         super(SpinBoxAction, self).__init__(parent)
         layout = QHBoxLayout()
@@ -2228,43 +2232,43 @@ class SpinBoxAction(QWidgetAction):
 
         self.setDefaultWidget(self.widget)
         return
-        
+
     def value(self, /):
         return self.spinbox.value()
-    
+
     def setMaximum(self, max: int, /):
         self.spinbox.setMaximum(max)
         return
-    
+
     def setMinimum(self, min: int, /):
         self.spinbox.setMinimum(min)
         return
-    
+
     def setValue(self, val, /):
         self.spinbox.setValue(val)
         return
-    
+
     def setFixedWidth(self, w):
         self.spinbox.setFixedWidth(w)
         return
-    
+
     def setFixedHeight(self, h):
         self.spinbox.setFixedHeight(h)
         return
-    
+
     def setFixedSize(self, w, h):
         self.spinbox.setFixedSize(w, h)
         return
-    
+
+
 class ComboBoxAction(QWidgetAction):
-        
     combobox = QComboBox()
     combobox.setObjectName("combobox")
     combobox.setStyleSheet("""QComboBox {padding-left: 6px;}""")
-        
+
     activated = combobox.activated
     currentTextChanged = combobox.currentTextChanged
-    
+
     def __init__(self, parent, text):
         super(ComboBoxAction, self).__init__(parent)
         layout = QHBoxLayout()
@@ -2277,7 +2281,7 @@ class ComboBoxAction(QWidgetAction):
 
         self.setDefaultWidget(self.widget)
         return
-    
+
     def addItem(self, text: str, /, userData: typing.Any = None) -> None:
         exists = False
         for i in range(self.combobox.count()):
@@ -2287,42 +2291,42 @@ class ComboBoxAction(QWidgetAction):
         if exists is False:
             self.combobox.addItem(text, userData)
         return
-    
+
     def currentText(self, /):
         return self.combobox.currentText()
-    
+
     def setCurrentText(self, text: str, /):
         self.combobox.setCurrentText(text)
         return
-    
+
     def itemText(self, index, /):
         return self.combobox.itemText(index)
-    
+
     def count(self, /):
         return self.combobox.count()
-    
+
     def setFixedWidth(self, w):
         self.combobox.setFixedWidth(w)
         return
-    
+
     def setFixedHeight(self, h):
         self.combobox.setFixedHeight(h)
         return
-    
+
     def setFixedSize(self, w, h):
         self.combobox.setFixedSize(w, h)
         return
-    
+
+
 class LineEditAction(QWidgetAction):
-        
     lineEdit = QLineEdit()
     lineEdit.setObjectName("lineEdit")
     lineEdit.setFixedSize(300, 21)
     lineEdit.setClearButtonEnabled(True)
-        
-    editingFinished  = lineEdit.editingFinished    
-    textChanged =  lineEdit.textChanged
-    
+
+    editingFinished = lineEdit.editingFinished
+    textChanged = lineEdit.textChanged
+
     def __init__(self, parent, text):
         super(LineEditAction, self).__init__(parent)
         layout = QVBoxLayout()
@@ -2339,22 +2343,22 @@ class LineEditAction(QWidgetAction):
     def setText(self, val):
         self.lineEdit.setText(val)
         return
-    
+
     def setPlaceholderText(self, val):
         self.lineEdit.setPlaceholderText(val)
         return
-    
+
     def setFixedWidth(self, w):
         self.lineEdit.setFixedWidth(w)
         return
-    
+
     def setFixedHeight(self, h):
         self.lineEdit.setFixedHeight(h)
         return
-    
+
     def setFixedSize(self, w, h):
-        self.lineEdit.setFixedSize(w,h)
-        
+        self.lineEdit.setFixedSize(w, h)
+
     def setClearButtonEnabled(self, enable: bool):
         self.lineEdit.setClearButtonEnabled(enable)
         return
