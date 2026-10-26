@@ -25,8 +25,6 @@ import sys
 import FreeCADGui as Gui
 from PySide.QtCore import Qt
 
-import FreeCAD as App
-
 from .Parameters_Ribbon import Parameters
 from .resources.ui import ui_ProgressDialog
 
@@ -44,10 +42,6 @@ sys.path.append(pathStylSheets)
 sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
-
-
-# Define the translation
-translate = App.Qt.translate
 
 
 class LoadDialog(ui_ProgressDialog.Ui_dialog):

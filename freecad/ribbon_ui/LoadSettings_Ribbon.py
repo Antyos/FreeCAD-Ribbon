@@ -39,8 +39,6 @@ import FreeCAD as App
 from . import FCBinding, Parameters_Ribbon, StyleMapping_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import DefaultSettings, Parameters
-
-# import graphical created Ui. (With QtDesigner or QtCreator)
 from .resources.ui import Settings_ui
 
 # Get the resources
@@ -61,9 +59,6 @@ sys.path.append(pathBackup)
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()
-
-# Define the translation
-translate = App.Qt.translate
 
 
 class LoadDialog(Settings_ui.Ui_Settings, QObject):

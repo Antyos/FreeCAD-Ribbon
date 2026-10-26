@@ -30,6 +30,7 @@ from datetime import datetime
 from pathlib import Path
 
 import FreeCADGui as Gui
+from FreeCAD.Qt import translate
 from PySide.QtCore import (
     QEvent,
     QEventLoop,
@@ -135,7 +136,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-translate = App.Qt.translate
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()

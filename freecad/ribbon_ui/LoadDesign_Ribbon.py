@@ -27,6 +27,7 @@ import webbrowser
 from datetime import datetime, timedelta
 
 import FreeCADGui as Gui
+from FreeCAD.Qt import translate
 from PySide.QtCore import SIGNAL, QEvent, QEventLoop, QObject, QSize, Qt, Signal
 from PySide.QtGui import QIcon, QPixmap
 from PySide.QtWidgets import (
@@ -68,10 +69,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-# import graphical created Ui. (With QtDesigner or QtCreator)
-
-# Define the translation
-translate = App.Qt.translate
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()

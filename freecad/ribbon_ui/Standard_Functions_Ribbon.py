@@ -25,13 +25,9 @@ import math
 from xml.etree.ElementTree import Element
 
 import FreeCADGui as Gui
+from FreeCAD.Qt import translate
 from PySide.QtCore import QSize
 from PySide.QtGui import QIcon
-
-import FreeCAD as App
-
-# Define the translation
-translate = App.Qt.translate
 
 mw = Gui.getMainWindow()
 

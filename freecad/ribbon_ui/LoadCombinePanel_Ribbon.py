@@ -25,8 +25,6 @@ import sys
 import FreeCADGui as Gui
 from PySide.QtCore import Qt
 
-import FreeCAD as App
-
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
 from .resources.ui import CombinePanel_ui
@@ -40,10 +38,6 @@ sys.path.append(pathIcons)
 sys.path.append(pathStylSheets)
 sys.path.append(pathUI)
 sys.path.append(pathBackup)
-
-
-# Define the translation
-translate = App.Qt.translate
 
 
 class LoadDialog(CombinePanel_ui.Ui_Form):

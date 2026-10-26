@@ -27,11 +27,6 @@ import os
 
 import FreeCADGui as Gui
 
-import FreeCAD as App
-
-# Define the translation
-translate = App.Qt.translate
-
 
 class RibbonApplicationMenu_Class:
     def GetResources(self):

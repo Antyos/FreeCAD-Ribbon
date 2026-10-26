@@ -23,13 +23,12 @@ import os
 import sys
 
 import FreeCADGui as Gui
+from FreeCAD.Qt import translate
 from PySide.QtCore import Qt
 from PySide.QtGui import QPixmap
 from PySide.QtWidgets import (
     QLabel,
 )
-
-import FreeCAD as App
 
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
@@ -49,10 +48,6 @@ sys.path.append(pathStylSheets)
 sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
-
-
-# Define the translation
-translate = App.Qt.translate
 
 
 class LoadDialog(LicenseForm_ui.Ui_Dialog):

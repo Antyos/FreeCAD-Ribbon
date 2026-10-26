@@ -29,8 +29,6 @@ import FreeCAD as App
 # Set the AdvancesSizeSettingsReset version number
 AdvancedSizeReset = "1.0"
 
-# Define the translation
-translate = App.Qt.translate
 
 preferences = App.ParamGet("User parameter:BaseApp/Preferences/Mod/FreeCAD-Ribbon")
 

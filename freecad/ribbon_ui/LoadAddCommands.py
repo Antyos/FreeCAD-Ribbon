@@ -26,7 +26,7 @@ import webbrowser
 from datetime import datetime, timedelta
 
 import FreeCADGui as Gui
-from pyqtribbon_local.panel import RibbonPanel
+from FreeCAD.Qt import translate
 from PySide.QtCore import SIGNAL, QEvent, QEventLoop, QObject, QSize, Qt
 from PySide.QtGui import QIcon, QPixmap
 from PySide.QtWidgets import (
@@ -46,6 +46,7 @@ from . import CacheFunctions, FCBinding, Parameters_Ribbon, Serialize_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .CustomWidgets import QuickAccessToolButton
 from .Parameters_Ribbon import Parameters
+from .resources.packages.pyqtribbon.panel import RibbonPanel
 from .resources.ui import AddCommands_ui
 
 # Get the resources
@@ -62,9 +63,6 @@ sys.path.append(pathStylSheets)
 sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
-
-# Define the translation
-translate = App.Qt.translate
 
 # Get the main window from FreeCAD
 mw = Gui.getMainWindow()

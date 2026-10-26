@@ -25,6 +25,7 @@ import shutil
 import sys
 
 import FreeCADGui as Gui
+from FreeCAD.Qt import translate
 from PySide.QtCore import Qt
 from PySide.QtWidgets import (
     QApplication,
@@ -66,7 +67,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-translate = App.Qt.translate
 
 mw: QMainWindow = Gui.getMainWindow()
 
