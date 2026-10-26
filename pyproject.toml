@@ -26,6 +26,8 @@ dev = [
     "ruff",
     "codespell",
     "freecad-typings",
+    "numpy>=2.4.6",
+    "requests>=2.34.2",
 ]
 
 [project.urls]
