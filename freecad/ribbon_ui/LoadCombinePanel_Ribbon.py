@@ -29,6 +29,7 @@ import FreeCAD as App
 
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
+from .resources.ui import CombinePanel_ui
 
 # Get the resources
 pathIcons = Parameters.ICON_LOCATION
@@ -40,8 +41,6 @@ sys.path.append(pathStylSheets)
 sys.path.append(pathUI)
 sys.path.append(pathBackup)
 
-# import graphical created Ui. (With QtDesigner or QtCreator)
-import CombinePanel_ui as CombinePanel_ui
 
 # Define the translation
 translate = App.Qt.translate

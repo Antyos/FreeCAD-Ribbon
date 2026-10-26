@@ -102,6 +102,20 @@ from .CustomWidgets import (
     ToggleAction,
 )
 from .Parameters_Ribbon import Parameters
+from .resources.packages import pyqtribbon
+from .resources.packages.pyqtribbon.category import (
+    RibbonCategory,
+    RibbonCategoryLayoutButton,
+    RibbonContextCategory,
+    RibbonNormalCategory,
+)
+from .resources.packages.pyqtribbon.panel import (
+    RibbonPanel,
+    RibbonPanelItemWidget,
+    RibbonPanelTitle,
+)
+from .resources.packages.pyqtribbon.ribbonbar import RibbonApplicationButton, RibbonBar, RibbonMenu
+from .resources.packages.pyqtribbon.toolbutton import RibbonButtonStyle, RibbonToolButton
 from .Standard_Functions_Ribbon import CommandInfoCorrections
 
 # import Ribbon. This contains the ribbon commands for FreeCAD
@@ -122,17 +136,6 @@ sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
 translate = App.Qt.translate
-
-import pyqtribbon_local as pyqtribbon
-from pyqtribbon_local.category import (
-    RibbonCategory,
-    RibbonCategoryLayoutButton,
-    RibbonContextCategory,
-    RibbonNormalCategory,
-)
-from pyqtribbon_local.panel import RibbonPanel, RibbonPanelItemWidget, RibbonPanelTitle
-from pyqtribbon_local.ribbonbar import RibbonApplicationButton, RibbonBar, RibbonMenu
-from pyqtribbon_local.toolbutton import RibbonButtonStyle, RibbonToolButton
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()

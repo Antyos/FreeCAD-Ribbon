@@ -23,7 +23,6 @@ import os
 import sys
 import typing
 
-import FreeCAD as App
 import FreeCADGui as Gui
 from PySide.QtCore import (
     Property,
@@ -74,6 +73,8 @@ from PySide.QtWidgets import (
 from . import Standard_Functions_Ribbon as StandardFunctions
 from . import StyleMapping_Ribbon
 from .Parameters_Ribbon import Parameters
+from .resources.packages.pyqtribbon.separator import RibbonSeparator
+from .resources.packages.pyqtribbon.toolbutton import RibbonButtonStyle, RibbonToolButton
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -90,11 +91,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-
-from pyqtribbon_local.separator import RibbonSeparator
-from pyqtribbon_local.toolbutton import RibbonButtonStyle, RibbonToolButton
-
-translate = App.Qt.translate
 
 mw: QMainWindow = Gui.getMainWindow()
 

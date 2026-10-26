@@ -28,6 +28,7 @@ from PySide.QtCore import Qt
 import FreeCAD as App
 
 from .Parameters_Ribbon import Parameters
+from .resources.ui import ui_ProgressDialog
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -44,8 +45,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-# import graphical created Ui. (With QtDesigner or QtCreator)
-import ui_ProgressDialog as ui_ProgressDialog
 
 # Define the translation
 translate = App.Qt.translate

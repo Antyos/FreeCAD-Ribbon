@@ -33,6 +33,7 @@ import FreeCAD as App
 
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
+from .resources.ui import LicenseForm_ui
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -49,8 +50,6 @@ sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
-# import graphical created Ui. (With QtDesigner or QtCreator)
-import LicenseForm_ui as LicenseForm_ui
 
 # Define the translation
 translate = App.Qt.translate

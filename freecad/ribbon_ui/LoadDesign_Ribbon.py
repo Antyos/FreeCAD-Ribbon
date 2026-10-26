@@ -50,6 +50,7 @@ import FreeCAD as App
 from . import CacheFunctions, Parameters_Ribbon, Serialize_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
+from .resources.ui import Design_ui
 from .Standard_Functions_Ribbon import CommandInfoCorrections
 
 # Get the resources
@@ -68,7 +69,6 @@ sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
 # import graphical created Ui. (With QtDesigner or QtCreator)
-import Design_ui as Design_ui
 
 # Define the translation
 translate = App.Qt.translate

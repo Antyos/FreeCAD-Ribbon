@@ -46,6 +46,7 @@ from . import CacheFunctions, FCBinding, Parameters_Ribbon, Serialize_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .CustomWidgets import QuickAccessToolButton
 from .Parameters_Ribbon import Parameters
+from .resources.ui import AddCommands_ui
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
@@ -61,9 +62,6 @@ sys.path.append(pathStylSheets)
 sys.path.append(pathUI)
 sys.path.append(pathPackages)
 sys.path.append(pathBackup)
-
-# import graphical created Ui. (With QtDesigner or QtCreator)
-import AddCommands_ui as AddCommands_ui
 
 # Define the translation
 translate = App.Qt.translate
