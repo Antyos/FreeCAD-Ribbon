@@ -20,9 +20,11 @@
 # *                                                                       *
 # *************************************************************************
 
-import FreeCAD as App
-from PySide.QtGui import QColor
 import os
+
+from PySide.QtGui import QColor
+
+import FreeCAD as App
 
 # Set the AdvancesSizeSettingsReset version number
 AdvancedSizeReset = "1.0"
@@ -33,15 +35,17 @@ translate = App.Qt.translate
 preferences = App.ParamGet("User parameter:BaseApp/Preferences/Mod/FreeCAD-Ribbon")
 
 STYLESHEET_LOCATION = os.path.join(
-        os.path.dirname(__file__), "..", "..", "Resources", "stylesheets"
-    )
+    os.path.dirname(__file__), "resources", "stylesheets"
+)
 
 DefaultSettings = {
     "Docked_Dialogs": bool(False),
-    "ConfigDir":os.path.join(App.getUserAppDataDir(), "RibbonUI_Data"),
+    "ConfigDir": os.path.join(App.getUserAppDataDir(), "RibbonUI_Data"),
     "ImportLocation": os.path.join(App.getUserAppDataDir(), "RibbonUI_Data", ""),
     "ExportLocation": os.path.join(App.getUserAppDataDir(), "RibbonUI_Data", ""),
-    "RibbonStructure": os.path.join(App.getUserAppDataDir(), "RibbonUI_Data", "RibbonStructure.json"),
+    "RibbonStructure": os.path.join(
+        App.getUserAppDataDir(), "RibbonUI_Data", "RibbonStructure.json"
+    ),
     "TabBar_Style": int(0),
     "Link_IconSizes": bool(True),
     "IconSize_Small": int(24),
@@ -53,9 +57,9 @@ DefaultSettings = {
     "RightToolbarButtonSize": int(24),
     "BackupEnabled": bool(True),
     "BackupFolder": os.path.join(App.getUserAppDataDir(), "RibbonUI_Data", "Backups"),
-    "TabOrder": App.ParamGet(
-        "User parameter:BaseApp/Preferences/Workbenches/"
-    ).GetString("Ordered"),
+    "TabOrder": App.ParamGet("User parameter:BaseApp/Preferences/Workbenches/").GetString(
+        "Ordered"
+    ),
     "AutoHideRibbon": bool(False),
     "Stylesheet": os.path.join(os.path.join(STYLESHEET_LOCATION, "default.qss")),
     "ShowIconText_Small": bool(False),
@@ -110,6 +114,7 @@ DefaultSettings = {
     "ButtonSpacing": int(3),
 }
 
+
 class Settings:
     # region -- Functions to read the settings from the FreeCAD Parameters
     # and make sure that a None type result is ""
@@ -163,9 +168,7 @@ class Settings:
         if value.lower() == "none":
             value = ""
         if value == "":
-            value = DefaultSettings[
-                settingName
-            ]  # pyright: ignore[reportAssignmentType]
+            value = DefaultSettings[settingName]  # pyright: ignore[reportAssignmentType]
         preferences.SetString(settingName, value)
         App.saveParameter()
         return
@@ -177,12 +180,12 @@ class Settings:
 
     def SetIntSetting(settingName, value: int):
         # if str(value).lower() == "":
-            # value = int(DefaultSettings[settingName])
+        # value = int(DefaultSettings[settingName])
         # if str(value).lower() != "":
         preferences.SetInt(settingName, value)
         App.saveParameter()
         return
-    
+
     def SetFloatSetting(settingName, value: float):
         # if str(value).lower() == "":
         #     value = float(DefaultSettings[settingName])
@@ -194,7 +197,10 @@ class Settings:
     # endregion
 
     def WriteMissingSettings(self):
-        if self.GetStringSetting("AdvancedSizeReset") == "" or self.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset:
+        if (
+            self.GetStringSetting("AdvancedSizeReset") == ""
+            or self.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset
+        ):
             self.SetStringSetting("AdvancedSizeReset", AdvancedSizeReset)
 
         for DefaultSetting_Name, DefaultSetting_Value in DefaultSettings.items():
@@ -216,6 +222,7 @@ class Settings:
         App.saveParameter()
         return
 
+
 class Parameters:
     # region - The FreeCAD version to check
     FreeCAD_Version = {
@@ -234,35 +241,33 @@ class Parameters:
     # endregion
 
     # region - Define the resources ----------------------------------------------------------------------------------------
-    ICON_LOCATION = os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "icons")
+    ICON_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "icons")
     STYLESHEET_LOCATION = os.path.join(
-        os.path.dirname(__file__), "..", "..", "Resources", "stylesheets"
+        os.path.dirname(__file__), "resources", "stylesheets"
     )
-    UI_LOCATION = os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "ui")
+    UI_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "ui")
     # endregion ------------------------------------------------------------------------------------------------------------
 
-
     # Get the install location of FreeCAD
-    AppDir = os.path.join(App.getUserAppDataDir().split('FreeCAD')[0], "FreeCAD")
+    AppDir = os.path.join(App.getUserAppDataDir().split("FreeCAD")[0], "FreeCAD")
     OldModDir = os.path.join(AppDir, "Mod")
     CurrentModDir = os.path.join(App.getUserAppDataDir(), "Mod")
 
     # region - Define the import location ----------------------------------------------------------------------------------
     CONFIG_DIR = Settings.GetStringSetting("ConfigDir")
-    if CONFIG_DIR == ""  or os.path.isfile(CONFIG_DIR) is False:
+    if CONFIG_DIR == "" or os.path.isfile(CONFIG_DIR) is False:
         CONFIG_DIR = str(DefaultSettings["ConfigDir"])
         Settings.SetStringSetting("ConfigDir", CONFIG_DIR)
-        
-    # endregion ------------------------------------------------------------------------------------------------------------
 
+    # endregion ------------------------------------------------------------------------------------------------------------
 
     # region - Define the import location ----------------------------------------------------------------------------------
     IMPORT_LOCATION = Settings.GetStringSetting("ImportLocation")
-    if IMPORT_LOCATION == ""  or os.path.isfile(IMPORT_LOCATION) is False:
+    if IMPORT_LOCATION == "" or os.path.isfile(IMPORT_LOCATION) is False:
         IMPORT_LOCATION = str(DefaultSettings["ImportLocation"])
         Settings.SetStringSetting("ImportLocation", IMPORT_LOCATION)
         Settings.SetStringSetting("AddonDir", os.path.dirname(__file__))
-        
+
     # endregion ------------------------------------------------------------------------------------------------------------
 
     # region - Define the export location ----------------------------------------------------------------------------------
@@ -289,10 +294,7 @@ class Parameters:
     # endregion ------------------------------------------------------------------------------------------------------------
 
     # region - Define the tabbar style -------------------------------------------------------------------------------------
-    if (
-        Settings.GetIntSetting("TabBar_Style") is None
-        or Settings.GetIntSetting("TabBar_Style") > 2
-    ):
+    if Settings.GetIntSetting("TabBar_Style") is None or Settings.GetIntSetting("TabBar_Style") > 2:
         TABBAR_STYLE = int(DefaultSettings["TabBar_Style"])
         Settings.SetIntSetting("TabBar_Style", TABBAR_STYLE)
     TABBAR_STYLE = Settings.GetIntSetting("TabBar_Style")
@@ -357,10 +359,7 @@ class Parameters:
         Settings.SetIntSetting("QuickAccessButtonSize", QUICK_ICON_SIZE)
     QUICK_ICON_SIZE = Settings.GetIntSetting("QuickAccessButtonSize")
 
-    if (
-        Settings.GetIntSetting("TabBarSize") is None
-        or Settings.GetIntSetting("TabBarSize") == 0
-    ):
+    if Settings.GetIntSetting("TabBarSize") is None or Settings.GetIntSetting("TabBarSize") == 0:
         TABBAR_SIZE = int(DefaultSettings["TabBarSize"])
         Settings.SetIntSetting("TabBarSize", TABBAR_SIZE)
     TABBAR_SIZE = Settings.GetIntSetting("TabBarSize")
@@ -421,7 +420,10 @@ class Parameters:
         Settings.SetBoolSetting("ShowIconText_Large", SHOW_ICON_TEXT_LARGE)
     SHOW_ICON_TEXT_LARGE = Settings.GetBoolSetting("ShowIconText_Large")
 
-    if Settings.GetIntSetting("MaxColumnsPerPanel") is None or Settings.GetIntSetting("MaxColumnsPerPanel") == 0:
+    if (
+        Settings.GetIntSetting("MaxColumnsPerPanel") is None
+        or Settings.GetIntSetting("MaxColumnsPerPanel") == 0
+    ):
         MAX_COLUMN_PANELS = int(DefaultSettings["MaxColumnsPerPanel"])
         Settings.SetIntSetting("MaxColumnsPerPanel", MAX_COLUMN_PANELS)
     MAX_COLUMN_PANELS = Settings.GetIntSetting("MaxColumnsPerPanel")
@@ -541,8 +543,11 @@ class Parameters:
     #     USE_FC_OVERLAY = bool(DefaultSettings["UseFCOverlay"])
     #     Settings.SetBoolSetting("UseFCOverlay", USE_FC_OVERLAY)
     # USE_FC_OVERLAY = Settings.GetBoolSetting("UseFCOverlay")
-    
-    if (Settings.GetIntSetting("OverlayState") is None or Settings.GetIntSetting("OverlayState") == 0):
+
+    if (
+        Settings.GetIntSetting("OverlayState") is None
+        or Settings.GetIntSetting("OverlayState") == 0
+    ):
         OVERLAYSTATE = int(DefaultSettings["OverlayState"])
         Settings.SetIntSetting("OverlayState", OVERLAYSTATE)
     OVERLAYSTATE = Settings.GetIntSetting("OverlayState")
@@ -576,9 +581,7 @@ class Parameters:
 
     if Settings.GetStringSetting("ScrollRightButton_Category") == "":
         SCROLL_RIGHT_BUTTON_CATEGORY = str(DefaultSettings["ScrollRightButton_Category"])
-        Settings.SetStringSetting(
-            "ScrollRightButton_Category", SCROLL_RIGHT_BUTTON_CATEGORY
-        )
+        Settings.SetStringSetting("ScrollRightButton_Category", SCROLL_RIGHT_BUTTON_CATEGORY)
     SCROLL_RIGHT_BUTTON_CATEGORY = Settings.GetStringSetting("ScrollRightButton_Category")
 
     if Settings.GetStringSetting("OptionButton") == "":
@@ -609,7 +612,7 @@ class Parameters:
     if Settings.GetStringSetting("Color_Borders") == "":
         COLOR_BORDERS = str(DefaultSettings["Color_Borders"])
         Settings.SetStringSetting("Color_Borders", COLOR_BORDERS)
-    COLOR_BORDERS = Settings.GetStringSetting("Color_Borders")    
+    COLOR_BORDERS = Settings.GetStringSetting("Color_Borders")
 
     if Settings.GetStringSetting("Color_Background_Hover") == "":
         COLOR_BACKGROUND_HOVER = str(DefaultSettings["Color_Background_Hover"])
@@ -618,21 +621,19 @@ class Parameters:
 
     if Settings.GetStringSetting("Color_Background_App") == "":
         COLOR_APPLICATION_BUTTON_BACKGROUND = str(DefaultSettings["Color_Background_App"])
-        Settings.SetStringSetting(
-            "Color_Background_App", COLOR_APPLICATION_BUTTON_BACKGROUND
-        )
+        Settings.SetStringSetting("Color_Background_App", COLOR_APPLICATION_BUTTON_BACKGROUND)
     COLOR_APPLICATION_BUTTON_BACKGROUND = Settings.GetStringSetting("Color_Background_App")
-    
+
     if Settings.GetStringSetting("Color_Background_Tabs") == "":
         COLOR_BACKGROUND_TABS = str(DefaultSettings["Color_Background_Tabs"])
         Settings.SetStringSetting("Color_Background_Tabs", COLOR_BACKGROUND_TABS)
     COLOR_BACKGROUND_TABS = Settings.GetStringSetting("Color_Background_Tabs")
-    
+
     if Settings.GetStringSetting("Color_Background_TitleBar") == "":
         COLOR_BACKGROUND_TITLEBAR = str(DefaultSettings["Color_Background_TitleBar"])
         Settings.SetStringSetting("Color_Background_TitleBar", COLOR_BACKGROUND_TITLEBAR)
     COLOR_BACKGROUND_TITLEBAR = Settings.GetStringSetting("Color_Background_TitleBar")
-    
+
     if Settings.GetStringSetting("Color_Font") == "":
         COLOR_FONT = str(DefaultSettings["Color_Font"])
         Settings.SetStringSetting("Color_Font", COLOR_FONT)
@@ -648,27 +649,50 @@ class Parameters:
     # endregion
 
     # region - Advanced size settings ------------------------------------------------------------------------------------------------
-    if Settings.GetFloatSetting("SizeFactor") is None or Settings.GetFloatSetting("SizeFactor") == 0 or (Settings.GetStringSetting("AdvancedSizeReset") == "" or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset):
+    if (
+        Settings.GetFloatSetting("SizeFactor") is None
+        or Settings.GetFloatSetting("SizeFactor") == 0
+        or (
+            Settings.GetStringSetting("AdvancedSizeReset") == ""
+            or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset
+        )
+    ):
         SIZE_FACTOR = float(DefaultSettings["SizeFactor"])
         Settings.SetFloatSetting("SizeFactor", SIZE_FACTOR)
     SIZE_FACTOR = Settings.GetFloatSetting("SizeFactor")
-        
-    if Settings.GetIntSetting("PanelHeightOffset") is None or (Settings.GetStringSetting("AdvancedSizeReset") == "" or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset):
+
+    if Settings.GetIntSetting("PanelHeightOffset") is None or (
+        Settings.GetStringSetting("AdvancedSizeReset") == ""
+        or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset
+    ):
         PANEL_HEIGHT_OFFSET = int(DefaultSettings["PanelHeightOffset"])
         Settings.SetIntSetting("PanelHeightOffset", PANEL_HEIGHT_OFFSET)
     PANEL_HEIGHT_OFFSET = Settings.GetIntSetting("PanelHeightOffset")
-        
-    if Settings.GetIntSetting("RibbonHeightOffset") is None or (Settings.GetStringSetting("AdvancedSizeReset") == "" or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset):
+
+    if Settings.GetIntSetting("RibbonHeightOffset") is None or (
+        Settings.GetStringSetting("AdvancedSizeReset") == ""
+        or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset
+    ):
         RIBBON_HEIGHT_OFFSET = int(DefaultSettings["RibbonHeightOffset"])
         Settings.SetIntSetting("RibbonHeightOffset", RIBBON_HEIGHT_OFFSET)
     RIBBON_HEIGHT_OFFSET = Settings.GetIntSetting("RibbonHeightOffset")
-        
-    if Settings.GetIntSetting("RibbonMinimumHeight") is None or Settings.GetIntSetting("RibbonMinimumHeight") == 0 or (Settings.GetStringSetting("AdvancedSizeReset") == "" or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset):
+
+    if (
+        Settings.GetIntSetting("RibbonMinimumHeight") is None
+        or Settings.GetIntSetting("RibbonMinimumHeight") == 0
+        or (
+            Settings.GetStringSetting("AdvancedSizeReset") == ""
+            or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset
+        )
+    ):
         RIBBON_MINIMUM_HEIGHT = int(DefaultSettings["RibbonMinimumHeight"])
         Settings.SetIntSetting("RibbonMinimumHeight", RIBBON_MINIMUM_HEIGHT)
     RIBBON_MINIMUM_HEIGHT = Settings.GetIntSetting("RibbonMinimumHeight")
-        
-    if Settings.GetIntSetting("ButtonSpacing") is None or (Settings.GetStringSetting("AdvancedSizeReset") == "" or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset):
+
+    if Settings.GetIntSetting("ButtonSpacing") is None or (
+        Settings.GetStringSetting("AdvancedSizeReset") == ""
+        or Settings.GetStringSetting("AdvancedSizeReset") != AdvancedSizeReset
+    ):
         BUTTON_SPACING = int(DefaultSettings["ButtonSpacing"])
         Settings.SetIntSetting("ButtonSpacing", BUTTON_SPACING)
     BUTTON_SPACING = Settings.GetIntSetting("ButtonSpacing")

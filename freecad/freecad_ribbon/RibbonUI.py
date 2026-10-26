@@ -101,11 +101,11 @@ class RibbonPin_Class:
     def GetResources(self):
         from . import StyleMapping_Ribbon
         pixmap = os.path.join(
-            os.path.dirname(__file__), "..", "..", "Resources", "icons", "pin-icon-default.svg"
+            os.path.dirname(__file__), "resources", "icons", "pin-icon-default.svg"
         )
         if StyleMapping_Ribbon.darkMode:
             pixmap = os.path.join(
-                os.path.dirname(__file__), "..", "..", "Resources", "icons", "pin-icon-default_white.svg"
+                os.path.dirname(__file__), "resources", "icons", "pin-icon-default_white.svg"
             )
         
         return {

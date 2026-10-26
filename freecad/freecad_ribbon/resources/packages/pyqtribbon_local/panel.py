@@ -1,47 +1,45 @@
 from __future__ import annotations
 
 import functools
-from pydoc import text
 import re
+from pydoc import text
 from typing import Any, Callable, Dict, List, Union, overload
 
 import numpy as np
-
-from PySide.QtGui import QIcon, QKeySequence, QFontMetrics
-from PySide.QtWidgets import (
-    QToolButton,
-    QSizePolicy,
-    QWidget,
-    QHBoxLayout,
-    QFrame,
-    QListWidget,
-    QVBoxLayout,
-    QLabel,
-    QLayout,
-    QGridLayout,
-    QCheckBox,
-    QComboBox,
-    QFontComboBox,
-    QLineEdit,
-    QTextEdit,
-    QPlainTextEdit,
-    QProgressBar,
-    QSlider,
-    QSpinBox,
-    QDoubleSpinBox,
-    QDateTimeEdit,
-    QDateEdit,
-    QTimeEdit,
-    QTableWidget,
-    QTreeWidget,
-    QCalendarWidget,
-)
 from PySide.QtCore import (
-    Qt,
     QSize,
+    Qt,
     Signal,
 )
-
+from PySide.QtGui import QFontMetrics, QIcon, QKeySequence
+from PySide.QtWidgets import (
+    QCalendarWidget,
+    QCheckBox,
+    QComboBox,
+    QDateEdit,
+    QDateTimeEdit,
+    QDoubleSpinBox,
+    QFontComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QLineEdit,
+    QListWidget,
+    QPlainTextEdit,
+    QProgressBar,
+    QSizePolicy,
+    QSlider,
+    QSpinBox,
+    QTableWidget,
+    QTextEdit,
+    QTimeEdit,
+    QToolButton,
+    QTreeWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 from .constants import (
     ColumnWise,
@@ -59,7 +57,7 @@ from .utils import DataFile
 
 class RibbonPanelTitle(QLabel):
     """Widget to display the title of a panel."""
-    
+
     pass
 
 
@@ -111,9 +109,7 @@ class RibbonGridLayoutManager(object):
         if self.cells[:, -1].all():
             cols -= 1
             colSpan1 -= 1
-        self.cells = np.append(
-            self.cells, np.ones((self.rows, colSpan1), dtype=bool), axis=1
-        )
+        self.cells = np.append(self.cells, np.ones((self.rows, colSpan1), dtype=bool), axis=1)
         self.cells[:rowSpan, cols : cols + colSpan] = False
         return 0, cols
 
@@ -174,9 +170,7 @@ class RibbonPanel(QFrame):
     panelOptionClicked = Signal(bool)
 
     @overload
-    def __init__(
-        self, title: str = "", maxRows: int = 6, showPanelOptionButton=True, parent=None
-    ):
+    def __init__(self, title: str = "", maxRows: int = 6, showPanelOptionButton=True, parent=None):
         pass
 
     @overload
@@ -218,12 +212,12 @@ class RibbonPanel(QFrame):
         self._mainLayout = QGridLayout(self)
         self._mainLayout.setContentsMargins(0, 0, 3, 0)
         self._mainLayout.setSpacing(0)
-                
+
         # Actions layout
         self._actionsLayout = QGridLayout()
         self._actionsLayout.setContentsMargins(5, 5, 5, 5)
         self._actionsLayout.setSpacing(0)
-        self._mainLayout.addLayout(self._actionsLayout, 0,0)
+        self._mainLayout.addLayout(self._actionsLayout, 0, 0)
 
         # Title layout
         self._titleWidget = QWidget()
@@ -246,12 +240,12 @@ class RibbonPanel(QFrame):
             self._panelOption.clicked.connect(self.panelOptionClicked)  # type: ignore
             self._titleLayout.addWidget(self._panelOption, 0)
 
-        self._mainLayout.addWidget(self._titleWidget, 1,0,1,1)
-        
+        self._mainLayout.addWidget(self._titleWidget, 1, 0, 1, 1)
+
         # Add a separator
         self._separator = RibbonVerticalSeparator(width=3)
-        self._mainLayout.addWidget(self._separator, 0,1,2,1)  
-                 
+        self._mainLayout.addWidget(self._separator, 0, 1, 2, 1)
+
     def maximumRows(self) -> int:
         """Return the maximal number of rows in the panel.
 
@@ -356,8 +350,7 @@ class RibbonPanel(QFrame):
                 - self._titleWidget.height()
                 - self._actionsLayout.contentsMargins().top()
                 - self._actionsLayout.contentsMargins().bottom()
-                - self._actionsLayout.verticalSpacing()
-                * (self._gridLayoutManager.rows - 1)
+                - self._actionsLayout.verticalSpacing() * (self._gridLayoutManager.rows - 1)
             )
             / self._gridLayoutManager.rows
         )
@@ -421,9 +414,7 @@ class RibbonPanel(QFrame):
         for key, widget_data in data.items():
             type = widget_data.pop("type", "").capitalize()
             method = getattr(self, f"add{type}", None)  # type: Callable
-            assert callable(
-                method
-            ), f"Method add{type} is not callable or does not exist"
+            assert callable(method), f"Method add{type} is not callable or does not exist"
             args = widget_data.get("args", ())
             kwargs = widget_data.get("kwargs", widget_data.get("arguments", {}))
             widgets[key] = method(*args, **kwargs)
@@ -456,17 +447,18 @@ class RibbonPanel(QFrame):
         rowSpan = self.defaultRowSpan(rowSpan)
         self._widgets.append(widget)
         row, col = self._gridLayoutManager.request_cells(rowSpan, colSpan, mode)
-        col = col + 1 # This way you can add a widget before the first widget
-        maximumHeight = (
-            self.rowHeight() * rowSpan
-            + self._actionsLayout.verticalSpacing() * (rowSpan - 2)
+        col = col + 1  # This way you can add a widget before the first widget
+        maximumHeight = self.rowHeight() * rowSpan + self._actionsLayout.verticalSpacing() * (
+            rowSpan - 2
         )
         widget.setMaximumHeight(maximumHeight)
         if fixedHeight is True or fixedHeight > 0:
             fixedHeight = (
                 int(fixedHeight * maximumHeight)
                 if 0 < fixedHeight <= 1
-                else fixedHeight if 1 < fixedHeight < maximumHeight else maximumHeight
+                else fixedHeight
+                if 1 < fixedHeight < maximumHeight
+                else maximumHeight
             )
             fixedHeight = max(
                 fixedHeight, 0.4 * maximumHeight
@@ -484,14 +476,13 @@ class RibbonPanel(QFrame):
     def removeWidget(self, widget: QWidget):
         """Remove a widget from the panel."""
         self._actionsLayout.removeWidget(widget)
-        
+
     # def replaceWidget(self, widget: QWidget, newWidget: QWidget):
     #     self._actionsLayout.replaceWidget(widget, newWidget)
     #     index = self._widgets.index(widget)
     #     self._widgets.pop(index)
     #     self._widgets.insert(index, newWidget)
-        
-        
+
     def widget(self, index: int) -> QWidget:
         """Get the widget at the given index.
 
@@ -536,9 +527,9 @@ class RibbonPanel(QFrame):
 
         :return: The button that was added.
         """
-        assert isinstance(
-            rowSpan, RibbonButtonStyle
-        ), "rowSpan must be an instance of RibbonButtonStyle"
+        assert isinstance(rowSpan, RibbonButtonStyle), (
+            "rowSpan must be an instance of RibbonButtonStyle"
+        )
         style = rowSpan
         button = RibbonToolButton(self)
         button.setButtonStyle(style)
@@ -567,11 +558,7 @@ class RibbonPanel(QFrame):
         kwargs["rowSpan"] = (
             self.defaultRowSpan(Small)
             if style == Small
-            else (
-                self.defaultRowSpan(Medium)
-                if style == Medium
-                else self.defaultRowSpan(Large)
-            )
+            else (self.defaultRowSpan(Medium) if style == Medium else self.defaultRowSpan(Large))
         )
         self.addWidget(button, **kwargs)  # noqa
         return button
@@ -639,9 +626,7 @@ class RibbonPanel(QFrame):
         # Get the widget class and the size
         size = match.group(1)
         base_method_name = f"add{match.group(2)}"
-        assert hasattr(
-            self, base_method_name
-        ), f"Invalid method name {base_method_name}"
+        assert hasattr(self, base_method_name), f"Invalid method name {base_method_name}"
 
         # Get the base method
         base_method = getattr(self, base_method_name)
@@ -660,9 +645,7 @@ class RibbonPanel(QFrame):
     addLineEdit = functools.partialmethod(_addAnyWidget, cls=QLineEdit)
     addTextEdit = functools.partialmethod(_addAnyWidget, cls=QTextEdit)
     addPlainTextEdit = functools.partialmethod(_addAnyWidget, cls=QPlainTextEdit)
-    addLabel = functools.partialmethod(
-        _addAnyWidget, cls=QLabel, initializer=QLabel.setText
-    )
+    addLabel = functools.partialmethod(_addAnyWidget, cls=QLabel, initializer=QLabel.setText)
     addProgressBar = functools.partialmethod(_addAnyWidget, cls=QProgressBar)
     addSlider = functools.partialmethod(_addAnyWidget, cls=QSlider)
     addSpinBox = functools.partialmethod(_addAnyWidget, cls=QSpinBox)
@@ -670,18 +653,10 @@ class RibbonPanel(QFrame):
     addDateEdit = functools.partialmethod(_addAnyWidget, cls=QDateEdit)
     addTimeEdit = functools.partialmethod(_addAnyWidget, cls=QTimeEdit)
     addDateTimeEdit = functools.partialmethod(_addAnyWidget, cls=QDateTimeEdit)
-    addTableWidget = functools.partialmethod(
-        _addAnyWidget, cls=QTableWidget, rowSpan=Large
-    )
-    addTreeWidget = functools.partialmethod(
-        _addAnyWidget, cls=QTreeWidget, rowSpan=Large
-    )
-    addListWidget = functools.partialmethod(
-        _addAnyWidget, cls=QListWidget, rowSpan=Large
-    )
-    addCalendarWidget = functools.partialmethod(
-        _addAnyWidget, cls=QCalendarWidget, rowSpan=Large
-    )
+    addTableWidget = functools.partialmethod(_addAnyWidget, cls=QTableWidget, rowSpan=Large)
+    addTreeWidget = functools.partialmethod(_addAnyWidget, cls=QTreeWidget, rowSpan=Large)
+    addListWidget = functools.partialmethod(_addAnyWidget, cls=QListWidget, rowSpan=Large)
+    addCalendarWidget = functools.partialmethod(_addAnyWidget, cls=QCalendarWidget, rowSpan=Large)
 
     def addSeparator(
         self, orientation=Qt.Orientation.Vertical, width=6, **kwargs
@@ -704,9 +679,7 @@ class RibbonPanel(QFrame):
         addSeparator, orientation=Qt.Orientation.Vertical
     )
 
-    def addGallery(
-        self, minimumWidth=800, popupHideOnClick=False, **kwargs
-    ) -> RibbonGallery:
+    def addGallery(self, minimumWidth=800, popupHideOnClick=False, **kwargs) -> RibbonGallery:
         """Add a gallery to the panel.
 
         :param minimumWidth: The minimum width of the gallery.
@@ -718,9 +691,8 @@ class RibbonPanel(QFrame):
         kwargs["rowSpan"] = Large if "rowSpan" not in kwargs else kwargs["rowSpan"]
         rowSpan = self.defaultRowSpan(kwargs["rowSpan"])
         gallery = RibbonGallery(minimumWidth, popupHideOnClick, self)
-        maximumHeight = (
-            self.rowHeight() * rowSpan
-            + self._actionsLayout.verticalSpacing() * (rowSpan - 2)
+        maximumHeight = self.rowHeight() * rowSpan + self._actionsLayout.verticalSpacing() * (
+            rowSpan - 2
         )
         gallery.setFixedHeight(maximumHeight)
         return self.addWidget(gallery, **kwargs)

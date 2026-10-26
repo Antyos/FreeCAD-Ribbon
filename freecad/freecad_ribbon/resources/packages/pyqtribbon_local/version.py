@@ -3,7 +3,7 @@ from re import error as RegexError
 
 
 def _get_version():
-    root = Path(__file__).resolve().parents[1]
+    root = Path(__file__).resolve().parents[4]
     if (root / ".git").exists() and not (root / ".git/shallow").exists():
         try:
             import setuptools_scm
