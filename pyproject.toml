@@ -1,0 +1,38 @@
+# References:
+# https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+# https://packaging.python.org/en/latest/guides/packaging-namespace-packages/#native-namespace-packages
+# https://packaging.python.org/en/latest/guides/single-sourcing-package-version/
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "FreeCAD-Ribbon"
+dynamic = ["version"]
+description = "A customizable ribbon interface for FreeCAD"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+maintainers = [
+    {name = "Paul Ebbers", email = "business@apebbers.nl"},
+]
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+    "PySide6",
+    "ruff",
+    "codespell",
+    "freecad-typings",
+]
+
+[project.urls]
+source = "https://github.com/FreeCAD-Ribbon/FreeCAD-Ribbon"
+
+[tool.hatch.version]
+path = "version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["freecad"]
