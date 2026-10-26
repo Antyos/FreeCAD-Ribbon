@@ -34,7 +34,7 @@ dev = [
 source = "https://github.com/FreeCAD-Ribbon/FreeCAD-Ribbon"
 
 [tool.hatch.version]
-path = "freecad/freecad_ribbon/version.py"
+path = "freecad/ribbon_ui/version.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["freecad/freecad_ribbon"]
+packages = ["freecad/ribbon_ui"]

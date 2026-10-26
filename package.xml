@@ -26,8 +26,8 @@
   <content>
     <workbench>
       <freecadmin>0.21.0</freecadmin>
-      <icon>freecad/freecad_ribbon/resources/icons/FreecadNew.svg</icon>
-      <subdirectory>freecad/freecad_ribbon</subdirectory>
+      <icon>freecad/ribbon_ui/resources/icons/FreecadNew.svg</icon>
+      <subdirectory>freecad/ribbon_ui</subdirectory>
       <!-- Optional install of 3rd-party SearchBar to streamline ability to Search and find commands -->
       <depend type="addon" optional="true">SearchBar</depend>
       <depend type="addon" optional="true">SaveAndRestore</depend>
