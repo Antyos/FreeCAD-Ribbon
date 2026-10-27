@@ -21,6 +21,10 @@
 # *************************************************************************
 
 import os
+from collections.abc import Callable
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Generic, Self, Type, TypeVar, overload
 
 from PySide.QtGui import QColor
 
@@ -28,11 +32,88 @@ import FreeCAD as App
 
 # Set the AdvancesSizeSettingsReset version number
 AdvancedSizeReset = "1.0"
+T = TypeVar("T")
+ValueType = TypeVar("ValueType", str, int, float, bool, Path)
+
+
+class Setting(Generic[ValueType]):
+    def __init__(
+        self,
+        default: ValueType,
+        getter: Callable[[str, ValueType], ValueType],
+        setter: Callable[[str, ValueType], None],
+    ):
+        self.default = default
+        self.getter = getter
+        self.setter = setter
+
+    def __set_name__(self, owner: object, name: str):
+        self.name = name
+
+    @overload
+    def __get__(self, instance: None, owner: None) -> Self: ...
+
+    @overload
+    def __get__(self, instance: T, owner: Type[T]) -> ValueType: ...
+
+    def __get__(self, instance: T | None, owner: Type[T] | None = None) -> ValueType | Self:
+        if instance is None:
+            return self
+        else:
+            return self.getter(self.name, self.default)
+        # if self._type is str:
+        #     result = preferences.GetString(self.name)
+        #     if result.lower() == "none":
+        #         result = ""
+        #     return result
+
+    def __set__(self, instance, value: ValueType):
+        self.setter(self.name, value)
+        App.saveParameter()
+
+
+class StringSetting(Setting[str]):
+    def __init__(self, default: str):
+        super().__init__(default, getter=preferences.GetString, setter=preferences.SetString)
+
+
+class IntSetting(Setting[int]):
+    def __init__(self, default: int):
+        super().__init__(default, getter=preferences.GetInt, setter=preferences.SetInt)
+
+
+class FloatSetting(Setting[float]):
+    def __init__(self, default: float):
+        super().__init__(default, getter=preferences.GetFloat, setter=preferences.SetFloat)
+
+
+class BoolSetting(Setting[bool]):
+    def __init__(self, default: bool):
+        super().__init__(default, getter=preferences.GetBool, setter=preferences.SetBool)
+
+
+class PathSetting(Setting[Path]):
+    def __init__(self, default: Path | str):
+        super().__init__(
+            Path(default),
+            getter=self._getter,
+            setter=lambda name, value: preferences.SetString(name, str(value)),
+        )
+
+    def _getter(self, name, default: Path) -> Path:
+        value = preferences.GetString(name, str(default))
+        return Path(value)
+
+
+@dataclass
+class SettingsDC: ...
 
 
 preferences = App.ParamGet("User parameter:BaseApp/Preferences/Mod/FreeCAD-Ribbon")
 
-STYLESHEET_LOCATION = os.path.join(os.path.dirname(__file__), "resources", "stylesheets")
+resources_dir = Path(__file__).parent / "resources"
+
+STYLESHEET_LOCATION = resources_dir / "stylesheets"
 
 DefaultSettings = {
     "Docked_Dialogs": bool(False),
@@ -160,6 +241,7 @@ class Settings:
     # region - Functions to write settings to the FreeCAD Parameters
     #
     #
+    @staticmethod
     def SetStringSetting(settingName, value: str):
         if value.lower() == "none":
             value = ""
@@ -169,11 +251,13 @@ class Settings:
         App.saveParameter()
         return
 
+    @staticmethod
     def SetBoolSetting(settingName, value: bool):
         preferences.SetBool(settingName, value)
         App.saveParameter()
         return
 
+    @staticmethod
     def SetIntSetting(settingName, value: int):
         # if str(value).lower() == "":
         # value = int(DefaultSettings[settingName])
@@ -182,6 +266,7 @@ class Settings:
         App.saveParameter()
         return
 
+    @staticmethod
     def SetFloatSetting(settingName, value: float):
         # if str(value).lower() == "":
         #     value = float(DefaultSettings[settingName])
