@@ -144,7 +144,7 @@ mw: QMainWindow = Gui.getMainWindow()
 timer = QTimer()
 
 # Write all settings, if they are not present yet
-Parameters_Ribbon.Settings.WriteMissingSettings(Parameters_Ribbon.Settings)
+Parameters_Ribbon.Parameters.WriteMissingSettings()
 
 
 class ModernMenu(RibbonBar):
