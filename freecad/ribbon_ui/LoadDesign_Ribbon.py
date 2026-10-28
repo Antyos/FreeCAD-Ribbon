@@ -372,7 +372,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.form.LoadWB.connect(self.form.LoadWB, SIGNAL("clicked()"), self.on_ReloadWB_clicked)
 
         # Create the a message to indicate when the last time the data was (re)created.
-        TimeStamp = Parameters_Ribbon.Settings.GetStringSetting("ReloadTimeStamp")
+        TimeStamp = Parameters.ReloadTimeStamp
         if TimeStamp != "":
             try:
                 date_format = "%m-%d-%Y, %H:%M:%S"

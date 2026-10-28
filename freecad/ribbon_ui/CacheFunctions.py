@@ -21,7 +21,6 @@
 # *************************************************************************
 import json
 import os
-import sys
 from datetime import datetime
 
 import FreeCADGui as Gui
@@ -36,7 +35,7 @@ from PySide.QtWidgets import (
 
 import FreeCAD as App
 
-from . import Parameters_Ribbon, Serialize_Ribbon
+from . import Serialize_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
 from .Standard_Functions_Ribbon import CommandInfoCorrections
@@ -442,7 +441,7 @@ def CreateCache(RestartFreeCAD=False):
 
     # Write a time stamp to preferences
     TimeStamp = datetime.now().strftime("%m-%d-%Y, %H:%M:%S")
-    Parameters_Ribbon.Settings.SetStringSetting("ReloadTimeStamp", TimeStamp)
+    Parameters.ReloadTimeStamp = TimeStamp
 
     if RestartFreeCAD is True:
         result = StandardFunctions.RestartDialog(includeIcons=True)

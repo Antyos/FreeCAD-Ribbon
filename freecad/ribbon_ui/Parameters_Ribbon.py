@@ -223,6 +223,7 @@ class _Parameters:
     RibbonStructureVersion = IntSetting(2, "RibbonStructureVersion")
     """Set a value for the current needed version of the Ribbon structure. Increasing
     this results in a new created default structure file. """
+    ReloadTimeStamp = StringSetting("", "ReloadTimeStamp")
 
     def __init__(self):
         reset_required = self.ADVANCED_SIZE_RESET != AdvancedSizeReset

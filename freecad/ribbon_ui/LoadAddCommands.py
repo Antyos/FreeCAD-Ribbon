@@ -486,7 +486,7 @@ class LoadDialog(AddCommands_ui.Ui_Form):
         self.form.LoadWB.setIconSize(QSize(20, 20))
 
         # Create the a message to indicate when the last time the data was (re)created.
-        TimeStamp = Parameters_Ribbon.Settings.GetStringSetting("ReloadTimeStamp")
+        TimeStamp = Parameters.ReloadTimeStamp
         if TimeStamp != "":
             try:
                 date_format = "%m-%d-%Y, %H:%M:%S"
