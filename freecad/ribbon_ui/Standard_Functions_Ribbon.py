@@ -22,7 +22,8 @@
 
 import datetime
 import math
-from typing import NamedTuple
+from pathlib import Path
+from typing import Literal, NamedTuple
 from xml.etree.ElementTree import Element
 
 import FreeCADGui as Gui
@@ -34,12 +35,14 @@ import FreeCAD as App
 
 mw = Gui.getMainWindow()
 
+package_root = Path(__file__).parents[3]
+
 
 def Mbox(
     text,
     title="",
     style=0,
-    IconType="Information",
+    IconType: Literal["NoIcon", "Information", "Question", "Warning", "Critical"] = "Information",
     default="",
     stringList="[,]",
 ):
@@ -56,15 +59,14 @@ def Mbox(
     from PySide.QtCore import Qt
     from PySide.QtWidgets import QInputDialog, QMessageBox
 
-    Icon = QMessageBox.Icon.Information
-    if IconType == "NoIcon":
-        Icon = QMessageBox.Icon.NoIcon
-    if IconType == "Question":
-        Icon = QMessageBox.Icon.Question
-    if IconType == "Warning":
-        Icon = QMessageBox.Icon.Warning
-    if IconType == "Critical":
-        Icon = QMessageBox.Icon.Critical
+    icons = {
+        "NoIcon": QMessageBox.Icon.NoIcon,
+        "Information": QMessageBox.Icon.Information,
+        "Question": QMessageBox.Icon.Question,
+        "Warning": QMessageBox.Icon.Warning,
+        "Critical": QMessageBox.Icon.Critical,
+    }
+    Icon = icons.get(IconType, QMessageBox.Icon.Information)
 
     if style == 0:
         # Set the messagebox
@@ -184,7 +186,7 @@ def RestartDialog(message="", includeIcons=False):
     msgBox.button(QMessageBox.StandardButton.No).setText(
         translate("FreeCAD Ribbon", "Restart later")
     )
-    if includeIcons is True:
+    if includeIcons:
         msgBox.button(QMessageBox.StandardButton.No).setIcon(Gui.getIcon("edit_Cancel.svg"))
         msgBox.button(QMessageBox.StandardButton.Yes).setIcon(Gui.getIcon("edit_OK.svg"))
 
@@ -279,7 +281,7 @@ def GetNumberFromLetter(Letter):
     return number
 
 
-def ColorConvertor(ColorRGB: [], Alpha: float = 1, Hex=False, KeepHexAlpha=True):
+def ColorConvertor(ColorRGB: list[int], Alpha: float = 1, Hex=False, KeepHexAlpha=True):
     """
     A single function to convert colors to rgba colors as a tuple of float from 0-1
     ColorRGB:   [255,255,255]
@@ -294,7 +296,7 @@ def ColorConvertor(ColorRGB: [], Alpha: float = 1, Hex=False, KeepHexAlpha=True)
     color = (ColorRed, colorGreen, colorBlue)
 
     result = mcolors.to_rgba(color, Alpha)
-    if Hex is True:
+    if Hex:
         result = mcolors.to_hex((ColorRed, colorGreen, colorBlue, Alpha), KeepHexAlpha)
 
     return result
@@ -424,9 +426,7 @@ def CreateToolbar(Name: str, WorkBenchName: str = "Global", ButtonList: list = [
     # Define the name for the toolbar
     ToolBarName = Name
     # define the parameter path for the toolbar
-    WorkbenchToolBarsParamPath = (
-        "User parameter:BaseApp/Workbench/" + ToolbarGroupName + "/Toolbar/"
-    )
+    WorkbenchToolBarsParamPath = f"User parameter:BaseApp/Workbench/{ToolbarGroupName}/Toolbar/"
 
     # check if there is already a toolbar with the same name
     CustomToolbars: list = App.ParamGet(
@@ -462,22 +462,27 @@ def RemoveWorkBenchToolbars(Name: str, WorkBenchName: str = "Global") -> None:
     # Define the name for the toolbar
     ToolBarName = Name
     # define the parameter path for the toolbar
-    ToolBarsParamPath = "User parameter:BaseApp/Workbench/" + ToolbarGroupName + "/Toolbar/"
+    ToolBarsParamPath = f"User parameter:BaseApp/Workbench/{ToolbarGroupName}/Toolbar/"
 
     custom_toolbars = App.ParamGet(ToolBarsParamPath)
     custom_toolbars.RemGroup(ToolBarName)
     return
 
 
-def ReturnXML_Value(path: str, ElementName: str, attribKey: str = "", attribValue: str = ""):
-    import os
+def ReturnXML_Value(
+    path: str | Path, ElementName: str, attribKey: str = "", attribValue: str = ""
+) -> str:
     import xml.etree.ElementTree as ET
 
     # Passing the path of the
     # xml document to enable the
     # parsing process
-    PackageXML = os.path.join(os.path.dirname(__file__), path)
-    tree = ET.parse(PackageXML)
+    if isinstance(path, str):
+        if not Path(path).is_absolute():
+            path = package_root / path
+        else:
+            path = Path(path)
+    tree = ET.parse(path)
     # getting the parent tag of
     # the xml document
     root = tree.getroot()
@@ -488,7 +493,7 @@ def ReturnXML_Value(path: str, ElementName: str, attribKey: str = "", attribValu
                 for key, value in child.attrib.items():
                     if key == attribKey and value == attribValue:
                         result = child.text
-                        return result
+                        return result or ""
             else:
                 result = child.text
     if result is None:
