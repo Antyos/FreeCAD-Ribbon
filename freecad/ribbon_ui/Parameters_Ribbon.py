@@ -29,6 +29,8 @@ from PySide.QtGui import QColor
 
 import FreeCAD as App
 
+from .Standard_Functions_Ribbon import FreeCADVersion
+
 # Set the AdvancesSizeSettingsReset version number
 AdvancedSizeReset = "1.0"
 T = TypeVar("T")
@@ -209,12 +211,12 @@ class Settings:
 
 
 class _Parameters:
-    FreeCAD_Version = {
-        "mainVersion": 1,
-        "subVersion": 1,
-        "patchVersion": 0,
-        "gitVersion": 14555,
-    }
+    FreeCAD_Version = FreeCADVersion(
+        main=1,
+        sub=1,
+        patch=0,
+        git=14555,
+    )
 
     ICON_LOCATION = Path(__file__).parent / "resources" / "icons"
     STYLESHEET_LOCATION = Path(__file__).parent / "resources" / "stylesheets"

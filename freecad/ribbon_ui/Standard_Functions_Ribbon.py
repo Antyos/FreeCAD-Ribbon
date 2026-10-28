@@ -22,12 +22,15 @@
 
 import datetime
 import math
+from typing import NamedTuple
 from xml.etree.ElementTree import Element
 
 import FreeCADGui as Gui
 from FreeCAD.Qt import translate
 from PySide.QtCore import QSize
 from PySide.QtGui import QIcon
+
+import FreeCAD as App
 
 mw = Gui.getMainWindow()
 
@@ -1001,7 +1004,14 @@ def AddToClipboard(Text):
     clipboard.setText(Text)
 
 
-def checkFreeCADVersion(main: int, sub: int, patch: int, git: int):
+class FreeCADVersion(NamedTuple):
+    main: int
+    sub: int
+    patch: int
+    git: int
+
+
+def checkFreeCADVersion(version: FreeCADVersion) -> bool:
     """Checks if the FreeCAD version is equal or newer than the given version number.
 
     Args:
@@ -1013,16 +1023,14 @@ def checkFreeCADVersion(main: int, sub: int, patch: int, git: int):
     Returns:
         True if the FreeCAD version is equal or higher than the given version number.
     """
-    version = App.Version()
+    current_version = App.Version()
 
-    if main <= int(version[0]):
-        if sub <= int(version[1]):
-            if patch <= int(version[2]):
-                git_version = int(version[3].split(" ")[0])
-                if git <= git_version:
-                    return True
-
-    return False
+    return (
+        version.main <= int(current_version[0])
+        and version.sub <= int(current_version[1])
+        and version.patch <= int(current_version[2])
+        and version.git <= int(current_version[3].split(" ")[0])
+    )
 
 
 def TimeDeltaToDict(timeDelta: datetime.timedelta) -> dict:
