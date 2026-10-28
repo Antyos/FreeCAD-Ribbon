@@ -370,7 +370,7 @@ def LightOrDark(rgbColor=[0, 128, 255, 255]):
         return "dark"
 
 
-def GetFileDialog(Filter="", parent=None, DefaultPath="", SaveAs: bool = True) -> str:
+def GetFileDialog(Filter="", parent=None, DefaultPath: str | Path = "", SaveAs: bool = True) -> str:
     """
     Set filter like:
     "Images (*.png *.xpm .jpg);;Text files (.txt);;XML files (*.xml)"
@@ -380,24 +380,22 @@ def GetFileDialog(Filter="", parent=None, DefaultPath="", SaveAs: bool = True) -
     """
     from PySide.QtWidgets import QFileDialog
 
-    file = ""
-    if SaveAs is False:
-        file = QFileDialog.getOpenFileName(
-            parent=parent, caption="Select a file", dir=DefaultPath, filter=Filter
-        )[0]
-    if SaveAs is True:
+    if SaveAs:
         file = QFileDialog.getSaveFileName(
-            parent=parent, caption="Select a file", dir=DefaultPath, filter=Filter
+            parent=parent, caption="Select a file", dir=str(DefaultPath), filter=Filter
+        )[0]
+    else:
+        file = QFileDialog.getOpenFileName(
+            parent=parent, caption="Select a file", dir=str(DefaultPath), filter=Filter
         )[0]
     return file
 
 
-def GetFolder(parent=None, DefaultPath="") -> str:
+def GetFolder(parent=None, DefaultPath: str | Path = "") -> str:
     from PySide.QtWidgets import QFileDialog
 
-    Directory = ""
     Directory = QFileDialog.getExistingDirectory(
-        parent=parent, caption="Select Folder", dir=DefaultPath
+        parent=parent, caption="Select Folder", dir=str(DefaultPath)
     )
 
     return Directory

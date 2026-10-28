@@ -21,7 +21,6 @@
 # *************************************************************************
 
 from collections.abc import Callable
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Generic, Self, Type, TypeVar, overload
 
@@ -113,15 +112,9 @@ class PathSetting(Setting[Path]):
         return Path(value)
 
 
-@dataclass
-class SettingsDC: ...
-
-
 preferences = App.ParamGet("User parameter:BaseApp/Preferences/Mod/FreeCAD-Ribbon")
 
 resources_dir = Path(__file__).parent / "resources"
-
-STYLESHEET_LOCATION = resources_dir / "stylesheets"
 
 
 class _Parameters:
@@ -132,19 +125,20 @@ class _Parameters:
         git=14555,
     )
 
-    ICON_LOCATION = Path(__file__).parent / "resources" / "icons"
-    STYLESHEET_LOCATION = Path(__file__).parent / "resources" / "stylesheets"
-    UI_LOCATION = Path(__file__).parent / "resources" / "ui"
+    ICON_LOCATION = resources_dir / "icons"
+    STYLESHEET_LOCATION = resources_dir / "stylesheets"
+    UI_LOCATION = resources_dir / "ui"
     AppDir = Path(App.getUserAppDataDir().split("FreeCAD")[0]) / "FreeCAD"
     OldModDir = AppDir / "Mod"
     CurrentModDir = Path(App.getUserAppDataDir()) / "Mod"
+    ribbonui_data_dir = Path(App.getUserAppDataDir()) / "RibbonUI_Data"
 
     DOCKED_DIALOGS = BoolSetting(False, "Docked_Dialogs")
-    CONFIG_DIR = PathSetting(Path(App.getUserAppDataDir()) / "RibbonUI_Data", "ConfigDir")
-    IMPORT_LOCATION = PathSetting(Path(App.getUserAppDataDir()) / "RibbonUI_Data", "ImportLocation")
-    EXPORT_LOCATION = PathSetting(Path(App.getUserAppDataDir()) / "RibbonUI_Data", "ExportLocation")
+    CONFIG_DIR = PathSetting(ribbonui_data_dir / "ConfigDir")
+    IMPORT_LOCATION = PathSetting(ribbonui_data_dir, "ImportLocation")
+    EXPORT_LOCATION = PathSetting(ribbonui_data_dir, "ExportLocation")
     RIBBON_STRUCTURE_JSON = PathSetting(
-        Path(App.getUserAppDataDir()) / "RibbonUI_Data" / "RibbonStructure.json",
+        ribbonui_data_dir / "RibbonStructure.json",
         "RibbonStructure",
     )
     DEFAULT_PANEL_POSITION_CUSTOM = StringSetting("Right", "CustomPanelPosition")
@@ -160,9 +154,7 @@ class _Parameters:
     TABBAR_SIZE = IntSetting(24, "TabBarSize")
     RIGHT_ICON_SIZE = IntSetting(24, "RightToolbarButtonSize")
     ENABLE_BACKUP = BoolSetting(True, "BackupEnabled")
-    BACKUP_LOCATION = PathSetting(
-        Path(App.getUserAppDataDir()) / "RibbonUI_Data" / "Backups", "BackupFolder"
-    )
+    BACKUP_LOCATION = PathSetting(ribbonui_data_dir / "Backups", "BackupFolder")
     TAB_ORDER = StringSetting(
         App.ParamGet("User parameter:BaseApp/Preferences/Workbenches/").GetString("Ordered"),
         "TabOrder",

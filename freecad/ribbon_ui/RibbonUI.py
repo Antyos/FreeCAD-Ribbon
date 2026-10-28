@@ -23,7 +23,7 @@
 # Script for creating the command for FreeCAD
 
 # FreeCAD init script of the Work Features module
-import os
+from pathlib import Path
 
 import FreeCADGui as Gui
 
@@ -101,16 +101,14 @@ class RibbonPin_Class:
     def GetResources(self):
         from . import StyleMapping_Ribbon
 
-        pixmap = os.path.join(
-            os.path.dirname(__file__), "resources", "icons", "pin-icon-default.svg"
-        )
+        icon_dir = Path(__file__).parent / "resources" / "icons"
         if StyleMapping_Ribbon.darkMode:
-            pixmap = os.path.join(
-                os.path.dirname(__file__), "resources", "icons", "pin-icon-default_white.svg"
-            )
+            pixmap = icon_dir / "pin-icon-default_white.svg"
+        else:
+            pixmap = icon_dir / "pin-icon-default.svg"
 
         return {
-            "Pixmap": pixmap,
+            "Pixmap": str(pixmap),
             "Accel": "Alt+T",
             "MenuText": "Pin button",
             "ToolTip": "Click to toggle the autohide function on or off",
