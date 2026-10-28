@@ -220,6 +220,9 @@ class _Parameters:
     MainWindowState = StringSetting(
         (lambda: "Maximized" if Gui.getMainWindow().isMaximized() else "Normal")(), "MainWindow"
     )
+    RibbonStructureVersion = IntSetting(2, "RibbonStructureVersion")
+    """Set a value for the current needed version of the Ribbon structure. Increasing
+    this results in a new created default structure file. """
 
     def __init__(self):
         reset_required = self.ADVANCED_SIZE_RESET != AdvancedSizeReset
