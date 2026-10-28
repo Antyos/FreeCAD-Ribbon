@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Generic, Self, Type, TypeVar, overload
 
-from PySide.QtGui import QColor
+import FreeCADGui as Gui
 
 import FreeCAD as App
 
@@ -124,92 +124,6 @@ resources_dir = Path(__file__).parent / "resources"
 STYLESHEET_LOCATION = resources_dir / "stylesheets"
 
 
-class Settings:
-    # region -- Functions to read the settings from the FreeCAD Parameters
-    # and make sure that a None type result is ""
-    def GetStringSetting(settingName) -> str:
-        result = preferences.GetString(settingName)
-
-        if result.lower() == "none":
-            result = ""
-        return result
-
-    def GetIntSetting(settingName) -> int:
-        result = preferences.GetInt(settingName)
-        if result == "":
-            result = None
-        return result
-
-    def GetFloatSetting(settingName) -> float:
-        result = preferences.GetFloat(settingName)
-        if result == "":
-            result = None
-        return result
-
-    def GetBoolSetting(settingName) -> bool:
-        result = None
-        settings = preferences.GetContents()
-        exists = False
-        if settings is not None:
-            for setting in settings:
-                if setting[0] == "Boolean" and setting[1] == settingName:
-                    exists = True
-                    break
-            if exists is True:
-                result = preferences.GetBool(settingName)
-        return result
-
-    def GetColorSetting(self, settingName: str) -> object:
-        # Create a tuple from the int value of the color
-        result = QColor.fromRgba(preferences.GetUnsigned(settingName)).toTuple()
-
-        # correct the order of the tuple and divide them by 255
-        result = (result[3] / 255, result[0] / 255, result[1] / 255, result[2] / 255)
-
-        return tuple(result)
-
-    # endregion
-
-    # region - Functions to write settings to the FreeCAD Parameters
-    #
-    #
-    @staticmethod
-    def SetStringSetting(settingName, value: str):
-        if value.lower() == "none":
-            value = ""
-        if value == "":
-            for setting in _Parameters.__class__.__dict__.values():
-                if (
-                    isinstance(setting, (StringSetting, PathSetting))
-                    and setting.name == settingName
-                ):
-                    value = str(setting.default)
-                    break
-        preferences.SetString(settingName, value)
-        App.saveParameter()
-        return
-
-    @staticmethod
-    def SetBoolSetting(settingName, value: bool):
-        preferences.SetBool(settingName, value)
-        App.saveParameter()
-        return
-
-    @staticmethod
-    def SetIntSetting(settingName, value: int):
-        preferences.SetInt(settingName, value)
-        App.saveParameter()
-        return
-
-    @staticmethod
-    def SetFloatSetting(settingName, value: float):
-        preferences.SetFloat(settingName, value)
-        App.saveParameter()
-        return
-
-    # endregion
-
-
 class _Parameters:
     FreeCAD_Version = FreeCADVersion(
         main=1,
@@ -301,6 +215,11 @@ class _Parameters:
     BUTTON_SPACING = IntSetting(3, "ButtonSpacing")
     ADVANCED_SIZE_RESET = StringSetting(AdvancedSizeReset, "AdvancedSizeReset")
     STORED_OVERLAY_STATE = StringSetting("", "StoredOverlayState")
+    RibbonViewRemoved = BoolSetting(False)
+    ToolsViewRemoved = BoolSetting(False)
+    MainWindowState = StringSetting(
+        (lambda: "Maximized" if Gui.getMainWindow().isMaximized() else "Normal")(), "MainWindow"
+    )
 
     def __init__(self):
         reset_required = self.ADVANCED_SIZE_RESET != AdvancedSizeReset

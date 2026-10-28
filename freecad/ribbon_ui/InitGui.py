@@ -194,7 +194,7 @@ try:
         mw.setWindowFlags(Qt.WindowType.WindowFullscreenButtonHint)
         mw.workbenchActivated.connect(FCBinding.run)
         # Set the mainwindow to the last state
-        if Parameters_Ribbon.Settings.GetStringSetting("MainWindow") == "Maximized":
+        if Parameters.MainWindowState == "Maximized":
             mw.showMaximized()
         # Restore the cursor
         QApplication.restoreOverrideCursor()
@@ -213,7 +213,7 @@ try:
         # This is now done in FCBinding with an eventfilter class
         print(translate("FreeCAD Ribbon", "Ribbon UI: FreeCAD loaded without titlebar"))
         # Set the mainwindow to the last state
-        if Parameters_Ribbon.Settings.GetStringSetting("MainWindow") == "Maximized":
+        if Parameters.MainWindowState == "Maximized":
             mw.showMaximized()
         # Restore the cursor
         QApplication.restoreOverrideCursor()

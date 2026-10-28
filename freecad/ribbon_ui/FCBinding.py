@@ -144,7 +144,7 @@ mw: QMainWindow = Gui.getMainWindow()
 timer = QTimer()
 
 # Write all settings, if they are not present yet
-Parameters_Ribbon.Parameters.WriteMissingSettings()
+Parameters.WriteMissingSettings()
 
 
 class ModernMenu(RibbonBar):
@@ -331,22 +331,20 @@ class ModernMenu(RibbonBar):
         self.connectSignals()
 
         # read ribbon structure from JSON file
-        if os.path.exists(Parameters.RIBBON_STRUCTURE_JSON) is False:
+        if not Parameters.RIBBON_STRUCTURE_JSON.exists():
             # Create the new folder for the data
-            if not os.path.exists(ConfigDirectory):
-                os.makedirs(ConfigDirectory)
-            Parameters.RIBBON_STRUCTURE_JSON = os.path.join(ConfigDirectory, "RibbonStructure.json")
+            ConfigDirectory.mkdir(parents=True, exist_ok=True)
+            Parameters.RIBBON_STRUCTURE_JSON = ConfigDirectory / "RibbonStructure.json"
         with open(Parameters.RIBBON_STRUCTURE_JSON, "r") as file:
             self.ribbonStructure.update(json.load(file))
         file.close()
 
-        DataFile2 = os.path.join(ConfigDirectory, "RibbonDataFile2.dat")
-        if os.path.exists(DataFile2) is True:
+        DataFile2 = ConfigDirectory / "RibbonDataFile2.dat"
+        if DataFile2.exists() is True:
             Data = {}
             # read ribbon structure from JSON file
             with open(DataFile2, "r") as file:
                 Data.update(json.load(file))
-            file.close()
             try:
                 # Load the list of commands
                 self.List_Commands = Data["List_Commands"]
@@ -376,17 +374,8 @@ class ModernMenu(RibbonBar):
             int(App.Version()[0]) == 1 and int(App.Version()[1]) == 0
         ):
             self.ConvertRibbonStructure(checkFCVersion=False, RestartFreeCAD=False)
-        else:
-            if (
-                StandardFunctions.checkFreeCADVersion(
-                    Parameters.FreeCAD_Version["mainVersion"],
-                    Parameters.FreeCAD_Version["subVersion"],
-                    Parameters.FreeCAD_Version["patchVersion"],
-                    Parameters.FreeCAD_Version["gitVersion"],
-                )
-                is True
-            ):
-                self.ConvertRibbonStructure()
+        elif StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version):
+            self.ConvertRibbonStructure()
 
         # check the language and remove texts from the ribbonstructure if the language does not match
         self.CheckLanguage()
@@ -413,23 +402,23 @@ class ModernMenu(RibbonBar):
             )
 
         # Check there is a custom toolbar "views - ribbon". If so, remove it
-        if Parameters_Ribbon.Settings.GetBoolSetting("RibbonViewRemoved") is False:
+        if not Parameters.RibbonViewRemoved:
             StandardFunctions.RemoveWorkBenchToolbars(
                 Name="Views - Ribbon",
                 WorkBenchName="Global",
             )
-        Parameters_Ribbon.Settings.SetBoolSetting("RibbonViewRemoved", True)
+            Parameters.RibbonViewRemoved = True
         # Check there is a custom toolbar "Tools". If so, remove it
-        if Parameters_Ribbon.Settings.GetBoolSetting("ToolsRemoved") is False:
+        if not Parameters.ToolsViewRemoved:
             StandardFunctions.RemoveWorkBenchToolbars(
                 Name="Tools",
                 WorkBenchName="Global",
             )
-        Parameters_Ribbon.Settings.SetBoolSetting("ToolsRemoved", True)
+            Parameters.ToolsViewRemoved = True
 
         # Add a toolbar "Views - Ribbon"
         #
-        PreferredToolbar = Parameters_Ribbon.Settings.GetIntSetting("Preferred_view")
+        PreferredToolbar = Parameters.PREFERRED_VIEW
         # Create a key if not present
         if PreferredToolbar == 2:
             StandardFunctions.add_keys_nested_dict(
@@ -454,7 +443,7 @@ class ModernMenu(RibbonBar):
                 pass
         # # Add a toolbar "tools"
         #
-        UseToolsPanel = Parameters_Ribbon.Settings.GetBoolSetting("UseToolsPanel")
+        UseToolsPanel = Parameters.USE_TOOLSPANEL
         # Create a key if not present
         try:
             NeedsUpdating = False
@@ -482,7 +471,7 @@ class ModernMenu(RibbonBar):
             pass
 
         # Set the preferred toolbars
-        PreferredToolbar = Parameters_Ribbon.Settings.GetIntSetting("Preferred_view")
+        PreferredToolbar = Parameters.PREFERRED_VIEW
         ListIgnoredToolbars: list = self.ribbonStructure["ignoredToolbars"]
         # check if the toolbar is already ignored
         View_Inlist = False
@@ -1141,7 +1130,7 @@ class ModernMenu(RibbonBar):
             delta = event.angleDelta().y()
             x += delta and delta // abs(delta)
 
-            NoClicks = Parameters_Ribbon.Settings.GetIntSetting("Ribbon_Scroll")
+            NoClicks = Parameters.RIBBON_SCROLLSPEED
             if NoClicks == 0 or NoClicks is None:
                 NoClicks = 1
 
@@ -1166,7 +1155,7 @@ class ModernMenu(RibbonBar):
             ScrollLeftButton_Tab: QToolButton = ScrollButtons_Tab[0]
             ScrollRightButton_Tab: QToolButton = ScrollButtons_Tab[1]
 
-            NoClicks = Parameters_Ribbon.Settings.GetIntSetting("TabBar_Scroll")
+            NoClicks = Parameters.TABBAR_SCROLLSPEED
             if NoClicks == 0 or NoClicks is None:
                 NoClicks = 1
 
@@ -4161,7 +4150,7 @@ class ModernMenu(RibbonBar):
         for i in range(len(WorkbenchOrderedList)):
             if WorkbenchOrderedList[i] != "":
                 param_string = param_string + "," + WorkbenchOrderedList[i]
-        Parameters_Ribbon.Settings.SetStringSetting("TabOrder", param_string)
+        Parameters.TAB_ORDER = param_string
 
         # add category for each workbench
         self.tabBar().setAcceptDrops(True)
@@ -5118,7 +5107,6 @@ class ModernMenu(RibbonBar):
                 pinButton = self.currentCategory().findChildren(QToolButton, "pinButton")[0]
 
             if Parameters.AUTOHIDE_RIBBON is False:
-                Parameters_Ribbon.Settings.SetBoolSetting("AutoHideRibbon", True)
                 Parameters.AUTOHIDE_RIBBON = True
 
                 pinButton.setIcon(StyleMapping_Ribbon.ReturnStyleItem("PinButton_closed"))
@@ -5129,10 +5117,8 @@ class ModernMenu(RibbonBar):
 
                 self.FoldRibbon()
                 return
-            if Parameters.AUTOHIDE_RIBBON is True:
+            elif Parameters.AUTOHIDE_RIBBON is True:
                 self.UnfoldRibbon()
-
-                Parameters_Ribbon.Settings.SetBoolSetting("AutoHideRibbon", False)
                 Parameters.AUTOHIDE_RIBBON = False
 
                 pinButton.setIcon(StyleMapping_Ribbon.ReturnStyleItem("PinButton_open"))
@@ -5158,10 +5144,9 @@ class ModernMenu(RibbonBar):
         # Store the status
         self.BetaFunctionsEnabled = switchStatus
         if switchStatus is True:
-            # Write the parameter
-            Parameters_Ribbon.Settings.SetBoolSetting("BetaFunctions", True)
             # print a message
             print(translate("FreeCAD Ribbon", "Ribbon UI: Béta functions enabled"))
+            # Write the parameter
             Parameters.BETA_FUNCTIONS_ENABLED = True
 
             # Create a backup
@@ -5178,11 +5163,10 @@ class ModernMenu(RibbonBar):
             BackupFile = os.path.join(pathBackup, BackupName)
             # Copy the file
             shutil.copy(JsonFile, BackupFile)
-        if switchStatus is False:
-            # Write the parameter
-            Parameters_Ribbon.Settings.SetBoolSetting("BetaFunctions", False)
+        elif switchStatus is False:
             # print a message
             print(translate("FreeCAD Ribbon", "Ribbon UI: Béta functions disabled"))
+            # Write the parameter
             Parameters.BETA_FUNCTIONS_ENABLED = False
         return
 
@@ -8263,15 +8247,15 @@ class EventInspector(QObject):
                 "User parameter:BaseApp/MainWindow/DockWindows/OverlayTop"
             )
             String = OverlayParam_Top.GetString("Widgets")
-            Parameters_Ribbon.Settings.SetStringSetting("StoredOverlayState", String)
+            Parameters.STORED_OVERLAY_STATE = String
             App.saveParameter()
 
             # Store the state of the mainwindow
             mw = Gui.getMainWindow()
             if mw.isMaximized():
-                Parameters_Ribbon.Settings.SetStringSetting("MainWindow", "Maximized")
+                Parameters.MainWindowState = "Maximized"
             else:
-                Parameters_Ribbon.Settings.SetStringSetting("MainWindow", "Normal")
+                Parameters.MainWindowState = "Normal"
 
         if event.type() == QEvent.Type.ApplicationActivated:
             mw = Gui.getMainWindow()
