@@ -6,7 +6,7 @@
 # * it under the terms of the GNU Lesser General Public License (LGPL)    *
 # * as published by the Free Software Foundation; either version 3 of     *
 # * the License, or (at your option) any later version.                   *
-# * for detail see the LICENCE text file.                                 *
+# * for detail see the LICENSE text file.                                 *
 # *                                                                       *
 # * This program is distributed in the hope that it will be useful,       *
 # * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
@@ -24,12 +24,14 @@
 # An backup will be created in the folder ../Backupss
 
 
-import FreeCAD as App
-import FreeCADGui as Gui
-import os
 import json
-from datetime import datetime
+import os
 import shutil
+from datetime import datetime
+
+import FreeCADGui as Gui
+
+import FreeCAD as App
 
 ParentPath = os.path.dirname(os.path.dirname(__file__))
 
@@ -118,9 +120,9 @@ def UpdateCommands():
             # Continue if the "Toolbar" is not named order. This is the orderlist for the toolbars
             if ToolBar != "order":
                 # Go through the commands in the toolbar
-                for Command in Dict_RibbonCommandPanel["workbenches"][WorkBench][
-                    "toolbars"
-                ][ToolBar]["commands"]:
+                for Command in Dict_RibbonCommandPanel["workbenches"][WorkBench]["toolbars"][
+                    ToolBar
+                ]["commands"]:
                     # Get the command (key) and its custom name (value) from the commandlist
                     # And compare them with the command in the Dict_RibbonCommandPanel
                     for key, value in list(Dict_Commands.items()):
@@ -128,9 +130,9 @@ def UpdateCommands():
                         # Get the custom name and change the text in the Dict_RibbonCommandPanel
                         if Command == key:
                             if value[2] != "" and value[2] != "...":
-                                Dict_RibbonCommandPanel["workbenches"][WorkBench][
-                                    "toolbars"
-                                ][ToolBar]["commands"][Command]["text"] = value[2]
+                                Dict_RibbonCommandPanel["workbenches"][WorkBench]["toolbars"][
+                                    ToolBar
+                                ]["commands"][Command]["text"] = value[2]
 
 
 def WriteJson():

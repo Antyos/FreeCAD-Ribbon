@@ -6,7 +6,7 @@
 # * it under the terms of the GNU Lesser General Public License (LGPL)    *
 # * as published by the Free Software Foundation; either version 3 of     *
 # * the License, or (at your option) any later version.                   *
-# * for detail see the LICENCE text file.                                 *
+# * for detail see the LICENSE text file.                                 *
 # *                                                                       *
 # * This program is distributed in the hope that it will be useful,       *
 # * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
@@ -26,13 +26,13 @@
 # The goal of this script is to provide a starting point for your own ribbon customization.
 # The file "RibbonStructure_default.json" is used by the reset button to replace RibbonStructure.json with "RibbonStructure_default.json".
 
-import FreeCAD as App
-import FreeCADGui as Gui
+import json
 import os
 
-import json
-
+import FreeCADGui as Gui
 from PySide.QtWidgets import QToolBar, QToolButton
+
+import FreeCAD as App
 
 ParentPath = os.path.dirname(os.path.dirname(__file__))
 
@@ -794,9 +794,7 @@ CustomJson_Workbenches = {
                         "Post Process",
                         "Check the CAM job for common errors",
                     ],
-                    "commands": {
-                        "CAM_Job": {"size": "large", "text": "Job", "icon": "CAM_Job"}
-                    },
+                    "commands": {"CAM_Job": {"size": "large", "text": "Job", "icon": "CAM_Job"}},
                 },
                 "Tool Commands": {
                     "order": [
@@ -2883,9 +2881,9 @@ def CreateJson():
                     "order",
                 ],
             )
-            Dict_RibbonCommandPanel["workbenches"][WorkBenchName]["toolbars"][
-                "order"
-            ] = ToolbarOrder
+            Dict_RibbonCommandPanel["workbenches"][WorkBenchName]["toolbars"]["order"] = (
+                ToolbarOrder
+            )
 
             # Go through the toolbars
             for key, value in list(wbToolbars.items()):
@@ -2953,12 +2951,12 @@ def CreateJson():
                                     ],
                                 )
 
-                                Dict_RibbonCommandPanel["workbenches"][WorkBenchName][
-                                    "toolbars"
-                                ][Toolbar]["order"] = Order
-                                Dict_RibbonCommandPanel["workbenches"][WorkBenchName][
-                                    "toolbars"
-                                ][Toolbar]["commands"][CommandName] = {
+                                Dict_RibbonCommandPanel["workbenches"][WorkBenchName]["toolbars"][
+                                    Toolbar
+                                ]["order"] = Order
+                                Dict_RibbonCommandPanel["workbenches"][WorkBenchName]["toolbars"][
+                                    Toolbar
+                                ]["commands"][CommandName] = {
                                     "size": Size,
                                     "text": MenuName,
                                     "icon": IconName,
@@ -3114,10 +3112,7 @@ def List_ReturnCustomToolbars():
 
                 for Group in CustomToolbars:
                     Parameter = App.ParamGet(
-                        "User parameter:BaseApp/Workbench/"
-                        + WorkBenchName
-                        + "/Toolbar/"
-                        + Group
+                        "User parameter:BaseApp/Workbench/" + WorkBenchName + "/Toolbar/" + Group
                     )
                     Name = Parameter.GetString("Name")
 
@@ -3152,10 +3147,7 @@ def Dict_ReturnCustomToolbars(WorkBenchName):
 
             for Group in CustomToolbars:
                 Parameter = App.ParamGet(
-                    "User parameter:BaseApp/Workbench/"
-                    + WorkBenchName
-                    + "/Toolbar/"
-                    + Group
+                    "User parameter:BaseApp/Workbench/" + WorkBenchName + "/Toolbar/" + Group
                 )
                 Name = Parameter.GetString("Name")
 
@@ -3182,9 +3174,7 @@ def Dict_AddCustomToolbarsToWorkbench(WorkBenchName):
     try:
         for CustomToolbar in Dict_CustomPanels["customToolbars"][WorkBenchName]:
             ListCommands = []
-            Commands = Dict_CustomPanels["customToolbars"][WorkBenchName][
-                CustomToolbar
-            ]["commands"]
+            Commands = Dict_CustomPanels["customToolbars"][WorkBenchName][CustomToolbar]["commands"]
 
             for key, value in list(Commands.items()):
                 for i in range(len(List_Commands)):

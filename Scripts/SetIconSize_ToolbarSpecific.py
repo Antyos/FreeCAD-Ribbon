@@ -6,7 +6,7 @@
 # * it under the terms of the GNU Lesser General Public License (LGPL)    *
 # * as published by the Free Software Foundation; either version 3 of     *
 # * the License, or (at your option) any later version.                   *
-# * for detail see the LICENCE text file.                                 *
+# * for detail see the LICENSE text file.                                 *
 # *                                                                       *
 # * This program is distributed in the hope that it will be useful,       *
 # * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
@@ -28,13 +28,13 @@
 # The scripts only looks in the toolbars currently present in the "RibbonStructure.json" file.
 # To create a complete file, run "CreateDefaultRibbonStructure.py" first.
 
-import FreeCAD as App
-import FreeCADGui as Gui
+import json
 import os
 
-import json
-
+import FreeCADGui as Gui
 from PySide.QtWidgets import QToolBar, QToolButton
+
+import FreeCAD as App
 
 ParentPath = os.path.dirname(os.path.dirname(__file__))
 
@@ -78,12 +78,12 @@ def UpdateJson():
             for ToolBar in ribbonStructure["workbenches"][WorkBench]["toolbars"]:
                 if ToolBar == Item:
                     # Go through all commands for this toolbar and set the size
-                    for Command in ribbonStructure["workbenches"][WorkBench][
-                        "toolbars"
-                    ][ToolBar]["commands"]:
-                        ribbonStructure["workbenches"][WorkBench]["toolbars"][ToolBar][
-                            "commands"
-                        ][Command]["size"] = IconSize
+                    for Command in ribbonStructure["workbenches"][WorkBench]["toolbars"][ToolBar][
+                        "commands"
+                    ]:
+                        ribbonStructure["workbenches"][WorkBench]["toolbars"][ToolBar]["commands"][
+                            Command
+                        ]["size"] = IconSize
     # Go through the workbenches again. now add the toolbars when they are not present.
     for WorkBench in ribbonStructure["workbenches"]:
         # Go through the list with toolbars to update
@@ -100,9 +100,7 @@ def UpdateJson():
                                 Command = Gui.Command.get(CommandName)
                                 if Command is not None:
                                     IconName = Command.getInfo()["pixmap"]
-                                    MenuName = Command.getInfo()["menuText"].replace(
-                                        "&", ""
-                                    )
+                                    MenuName = Command.getInfo()["menuText"].replace("&", "")
 
                                     # Create an empty list for orders
                                     Order = []
@@ -131,12 +129,12 @@ def UpdateJson():
                                         ],
                                     )
 
-                                    ribbonStructure["workbenches"][WorkBench][
-                                        "toolbars"
-                                    ][key]["order"] = Order
-                                    ribbonStructure["workbenches"][WorkBench][
-                                        "toolbars"
-                                    ][key]["commands"][CommandName] = {
+                                    ribbonStructure["workbenches"][WorkBench]["toolbars"][key][
+                                        "order"
+                                    ] = Order
+                                    ribbonStructure["workbenches"][WorkBench]["toolbars"][key][
+                                        "commands"
+                                    ][CommandName] = {
                                         "size": Size,
                                         "text": MenuName,
                                         "icon": IconName,

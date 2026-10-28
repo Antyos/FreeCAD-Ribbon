@@ -6,7 +6,7 @@
 # * it under the terms of the GNU Lesser General Public License (LGPL)    *
 # * as published by the Free Software Foundation; either version 3 of     *
 # * the License, or (at your option) any later version.                   *
-# * for detail see the LICENCE text file.                                 *
+# * for detail see the LICENSE text file.                                 *
 # *                                                                       *
 # * This program is distributed in the hope that it will be useful,       *
 # * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
@@ -24,10 +24,12 @@
 # This list can be updated with custom names for the commands.
 # Use "UpdateCommandNames.py" to update the "RibbonStructure.json" with the custom names
 
-import FreeCAD as App
-import FreeCADGui as Gui
-import os
 import json
+import os
+
+import FreeCADGui as Gui
+
+import FreeCAD as App
 
 ParentPath = os.path.dirname(os.path.dirname(__file__))
 
@@ -139,9 +141,7 @@ def CreateLists():
         # get the command with this name
         command = Gui.Command.get(CommandName[0])
         WorkBenchName = CommandName[1]
-        if command is not None and not List_QuickAccessCommands.__contains__(
-            CommandName[0]
-        ):
+        if command is not None and not List_QuickAccessCommands.__contains__(CommandName[0]):
             # get the icon for this command
             if command.getInfo()["pixmap"] != "":
                 Icon = Gui.getIcon(command.getInfo()["pixmap"])

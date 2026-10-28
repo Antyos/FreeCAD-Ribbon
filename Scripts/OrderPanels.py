@@ -6,7 +6,7 @@
 # * it under the terms of the GNU Lesser General Public License (LGPL)    *
 # * as published by the Free Software Foundation; either version 3 of     *
 # * the License, or (at your option) any later version.                   *
-# * for detail see the LICENCE text file.                                 *
+# * for detail see the LICENSE text file.                                 *
 # *                                                                       *
 # * This program is distributed in the hope that it will be useful,       *
 # * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
@@ -28,13 +28,13 @@
 # The scripts only looks in the toolbars currently present in the "RibbonStructure.json" file.
 # To create a complete file, run "CreateDefaultRibbonStructure.py" first.
 
-import FreeCAD as App
-import FreeCADGui as Gui
+import json
 import os
 
-import json
-
+import FreeCADGui as Gui
 from PySide.QtWidgets import QToolBar, QToolButton
+
+import FreeCAD as App
 
 ParentPath = os.path.dirname(os.path.dirname(__file__))
 
