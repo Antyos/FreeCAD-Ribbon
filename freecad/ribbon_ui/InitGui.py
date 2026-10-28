@@ -23,26 +23,22 @@ import logging
 import os
 import shutil
 import sys
+from pathlib import Path
 
 import FreeCADGui as Gui
 from FreeCAD.Qt import translate
 from PySide.QtCore import Qt
-from PySide.QtWidgets import (
-    QApplication,
-    QDockWidget,
-    QMainWindow,
-)
+from PySide.QtWidgets import QApplication, QDockWidget
 
 import FreeCAD as App
 
-from . import FCBinding, Parameters_Ribbon
-from .Parameters_Ribbon import Parameters, Settings
+from . import FCBinding
+from .Parameters_Ribbon import Parameters
 
 # Set the logger levels to avoid extra output in the report panel
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
-# Set a value for the current needed version of the Ribbon structure.
-# Increasing this, results in a new created default structure file.
+
 CurrentStructureVersion = 2
 
 
@@ -68,8 +64,6 @@ sys.path.append(pathPackages)
 sys.path.append(pathBackup)
 
 
-mw: QMainWindow = Gui.getMainWindow()
-
 # Set the wait cursor
 QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
 
@@ -77,89 +71,67 @@ QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
 # Function to move the data files out the addon folder to fix issue with the new addon manager
 #
 # Create the new folder for the data
-if not os.path.exists(ConfigDirectory):
-    os.makedirs(ConfigDirectory)
+ConfigDirectory.mkdir(parents=True, exist_ok=True)
+
+SourceDir = Path(__file__).parent.parent.parent
 
 # Move the files if present
-if Settings.GetStringSetting("RibbonStructure") == os.path.join(
-    os.path.dirname(FCBinding.__file__), "RibbonStructure.json"
-):
+if Parameters.RIBBON_STRUCTURE_JSON == SourceDir / "RibbonStructure.json":
     try:
         # Update the paths for the ribbon structure and the backup folder
-        Settings.SetStringSetting(
-            "RibbonStructure", os.path.join(ConfigDirectory, "RibbonStructure.json")
-        )
+        Parameters.RIBBON_STRUCTURE_JSON = ConfigDirectory / "RibbonStructure.json"
         # Copy the data files if they exits
-        if os.path.exists(
-            os.path.join(os.path.dirname(FCBinding.__file__), "RibbonStructure.json")
-        ):
+        if (SourceDir / "RibbonStructure.json").exists():
             shutil.copyfile(
-                os.path.join(os.path.dirname(FCBinding.__file__), "RibbonStructure.json"),
-                os.path.join(ConfigDirectory, "RibbonStructure.json"),
+                SourceDir / "RibbonStructure.json",
+                ConfigDirectory / "RibbonStructure.json",
             )
-        if os.path.exists(os.path.join(os.path.dirname(FCBinding.__file__), "RibbonDataFile.dat")):
+        if (SourceDir / "RibbonDataFile.dat").exists():
             shutil.copyfile(
-                os.path.join(os.path.dirname(FCBinding.__file__), "RibbonDataFile.dat"),
-                os.path.join(ConfigDirectory, "RibbonDataFile.dat"),
+                SourceDir / "RibbonDataFile.dat",
+                ConfigDirectory / "RibbonDataFile.dat",
             )
-        if os.path.exists(os.path.join(os.path.dirname(FCBinding.__file__), "RibbonDataFile2.dat")):
+        if (SourceDir / "RibbonDataFile2.dat").exists():
             shutil.copyfile(
-                os.path.join(os.path.dirname(FCBinding.__file__), "RibbonDataFile2.dat"),
-                os.path.join(ConfigDirectory, "RibbonDataFile2.dat"),
+                SourceDir / "RibbonDataFile2.dat",
+                ConfigDirectory / "RibbonDataFile2.dat",
             )
     except Exception as e:
         print(e)
         pass
 
-if Settings.GetStringSetting("BackupFolder") == os.path.join(
-    os.path.dirname(FCBinding.__file__), "BackupFolder"
-):
+if Parameters.BACKUP_LOCATION == SourceDir / "BackupFolder":
     try:
-        Settings.SetStringSetting("BackupFolder", os.path.join(ConfigDirectory, "Backups"))
-        if os.path.exists(os.path.join(os.path.dirname(FCBinding.__file__), "Backups")):
-            shutil.copytree(
-                os.path.join(os.path.dirname(FCBinding.__file__), "Backups"),
-                os.path.join(ConfigDirectory, "Backups"),
-            )
+        Parameters.BACKUP_LOCATION = ConfigDirectory / "Backups"
+        if (SourceDir / "Backups").exists():
+            shutil.copytree(SourceDir / "Backups", ConfigDirectory / "Backups")
     except Exception:
         pass
 
 # check if there is a "RibbonStructure.json". if not create one
-file = os.path.join(ConfigDirectory, "RibbonStructure.json")
-file_default = os.path.join(ConfigDirectory, "RibbonStructure_default.json")
-source = os.path.join(os.path.dirname(FCBinding.__file__), "..", "..", "CreateStructure.txt")
-source_default = os.path.join(
-    os.path.dirname(FCBinding.__file__), "..", "..", "CreateStructure.txt"
-)
-
-NewDefaultNeeded = True
-ribbonStructureVersion = Parameters_Ribbon.Settings.GetIntSetting("RibbonStructureVersion")
-if ribbonStructureVersion >= CurrentStructureVersion:
-    NewDefaultNeeded = False
-
-# check if file exits
-fileExists = os.path.exists(file)
+ribbon_file = ConfigDirectory / "RibbonStructure.json"
+default_ribbon_file = ConfigDirectory / "RibbonStructure_default.json"
+source = SourceDir / "CreateStructure.txt"
+source_default = SourceDir / "CreateStructure.txt"
 
 # if not, copy and rename
-if fileExists is False:
-    shutil.copy(source, file)
+if not ribbon_file.exists():
+    shutil.copy(source, ribbon_file)
 
 # check if file exits
-fileExists = os.path.isfile(file_default)
+fileExists = os.path.isfile(default_ribbon_file)
 # if not, copy and rename
-if fileExists is False or NewDefaultNeeded is True:
-    shutil.copy(source_default, file_default)
-    Parameters_Ribbon.Settings.SetIntSetting("RibbonStructureVersion", CurrentStructureVersion)
+if not default_ribbon_file.exists() or Parameters.RibbonStructureVersion >= CurrentStructureVersion:
+    shutil.copy(source_default, default_ribbon_file)
+    Parameters.RibbonStructureVersion = CurrentStructureVersion
 
 # Make sure that the parameter for the ribbon structure is correct
-if os.path.exists(Settings.GetStringSetting("RibbonStructure")) is False:
-    Settings.SetStringSetting(
-        "RibbonStructure", os.path.join(ConfigDirectory, "RibbonStructure.json")
-    )
+if not Parameters.RIBBON_STRUCTURE_JSON.exists():
+    Parameters.RIBBON_STRUCTURE_JSON = ConfigDirectory / "RibbonStructure.json"
 
 # Make sure that the parameter for the backup folder is correct
-if os.path.exists(Settings.GetStringSetting("BackupFolder")) is False:
-    Settings.SetStringSetting("BackupFolder", os.path.join(ConfigDirectory, "Backups"))
+if not Parameters.BACKUP_LOCATION.exists():
+    Parameters.BACKUP_LOCATION = ConfigDirectory / "Backups"
 
 # remove the test workbench
 try:
@@ -169,39 +141,28 @@ except Exception:
 
 # Get the overlay settings
 preferences_DockWindows = App.ParamGet("User parameter:BaseApp/Preferences/DockWindows")
-if preferences_DockWindows.GetBool("ActivateOverlay") is True:
+if preferences_DockWindows.GetBool("ActivateOverlay"):
     Parameters.USE_OVERLAY = True
-    if Parameters.OVERLAYSTATE == 2:
-        state = Parameters_Ribbon.Settings.GetStringSetting("StoredOverlayState")
-        if state != "":
-            OverlayParam_Top = App.ParamGet(
-                "User parameter:BaseApp/MainWindow/DockWindows/OverlayTop"
-            )
-            # Set the new string in parameters
-            OverlayParam_Top.SetString("Widgets", state)
+    if Parameters.OVERLAYSTATE == 2 and Parameters.STORED_OVERLAY_STATE:
+        OverlayParam_Top = App.ParamGet("User parameter:BaseApp/MainWindow/DockWindows/OverlayTop")
+        # Set the new string in parameters
+        OverlayParam_Top.SetString("Widgets", Parameters.STORED_OVERLAY_STATE)
 
 # Check if a reset is present for the overlay function
-USECUSTOMOVERLAY = os.path.join(os.path.dirname(FCBinding.__file__), "OVERLAY_DISABLED")
-if os.path.exists(USECUSTOMOVERLAY) is True:
+if (SourceDir / "OVERLAY_DISABLED").exists():
     print("Overlay function is disabled by RibbonUI")
     preferences_DockWindows.SetBool("ActivateOverlay", False)
     Parameters.USE_OVERLAY = False
 try:
     print(translate("FreeCAD Ribbon", "Activating Ribbon UI..."))
-    # mw: QMainWindow = Gui.getMainWindow()
+    mw = Gui.getMainWindow()
 
-    if Parameters.HIDE_TITLEBAR_FC is False:
+    if not Parameters.HIDE_TITLEBAR_FC:
         mw.setWindowFlags(Qt.WindowType.WindowFullscreenButtonHint)
         mw.workbenchActivated.connect(FCBinding.run)
-        # Set the mainwindow to the last state
-        if Parameters.MainWindowState == "Maximized":
-            mw.showMaximized()
-        # Restore the cursor
-        QApplication.restoreOverrideCursor()
-        QApplication.restoreOverrideCursor()
 
     # Hide the Titlebar of FreeCAD
-    if Parameters.HIDE_TITLEBAR_FC is True:
+    else:
         # make a customized toolbar and hide all the buttons.
         # This works better than a frameless window
         mw.setWindowFlags(Qt.WindowType.CustomizeWindowHint)
@@ -212,22 +173,22 @@ try:
         # Normally after setting the window frameless you show the window with mw.show()
         # This is now done in FCBinding with an eventfilter class
         print(translate("FreeCAD Ribbon", "Ribbon UI: FreeCAD loaded without titlebar"))
-        # Set the mainwindow to the last state
-        if Parameters.MainWindowState == "Maximized":
-            mw.showMaximized()
-        # Restore the cursor
-        QApplication.restoreOverrideCursor()
-        QApplication.restoreOverrideCursor()
 
-    Ribbon: QDockWidget = mw.findChild(QDockWidget, "Ribbon")
-    Ribbon.show()
+    # Set the mainwindow to the last state
+    if Parameters.MainWindowState == "Maximized":
+        mw.showMaximized()
+
+    # Restore the cursor
+    QApplication.restoreOverrideCursor()
+    QApplication.restoreOverrideCursor()
+
+    if (ribbon := mw.findChild(QDockWidget, "Ribbon")) is not None:
+        ribbon.show()
 
 except Exception as e:
     # raise e
-    if Parameters.DEBUG_MODE is True:
+    if Parameters.DEBUG_MODE:
         print(f"{e.with_traceback(e.__traceback__)}, 0")
 
-Gui.addLanguagePath(
-    os.path.join(os.path.join(os.path.dirname(FCBinding.__file__), "..", "..", "translations"))
-)
+Gui.addLanguagePath(str(SourceDir / "translations"))
 Gui.updateLocale()
