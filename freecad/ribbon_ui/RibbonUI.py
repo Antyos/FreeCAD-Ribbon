@@ -148,10 +148,8 @@ class MenuBar_Class:
         mb = mw.menuBar()
         if mb.isVisible():
             mb.hide()
-            return
-        if mb.isVisible() is False:
+        else:
             mb.show()
-            return
         return
 
 

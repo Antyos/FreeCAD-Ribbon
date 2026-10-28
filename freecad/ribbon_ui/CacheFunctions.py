@@ -115,30 +115,30 @@ def CreateCache(RestartFreeCAD=False):
     List_Workbenches.clear()
     for WorkBenchName in Gui.listWorkbenches().keys():
         try:
-            if str(WorkBenchName) != "" or WorkBenchName is not None:
-                if str(WorkBenchName) != "NoneWorkbench":
-                    # Gui.activateWorkbench(WorkBenchName)
-                    WorkBench = Gui.getWorkbench(WorkBenchName)
-                    # Get the toolbar items
-                    ToolbarItems: dict = WorkBench.getToolbarItems()
-                    # Update the toolbar items with corrections
-                    ToolbarItems: dict = StandardFunctions.CorrectGetToolbarItems(ToolbarItems)
+            if not WorkBenchName or WorkBenchName == "" or WorkBenchName == "NoneWorkbench":
+                continue
 
-                    IconName = ""
-                    IconName = str(Gui.getWorkbench(WorkBenchName).Icon)
-                    WorkbenchTitle = Gui.getWorkbench(WorkBenchName).MenuText
-                    WorkbenchTitleTranslated = StandardFunctions.TranslationsMapping(
-                        WorkBenchName, WorkbenchTitle
-                    )
-                    List_Workbenches.append(
-                        [
-                            str(WorkBenchName),
-                            IconName,
-                            WorkbenchTitle,
-                            ToolbarItems,
-                            WorkbenchTitleTranslated,
-                        ]
-                    )
+            # Gui.activateWorkbench(WorkBenchName)
+            WorkBench = Gui.getWorkbench(WorkBenchName)
+            # Get the toolbar items
+            ToolbarItems: dict = WorkBench.getToolbarItems()
+            # Update the toolbar items with corrections
+            ToolbarItems: dict = StandardFunctions.CorrectGetToolbarItems(ToolbarItems)
+
+            IconName = str(WorkBench.Icon)
+            WorkbenchTitle = WorkBench.MenuText
+            WorkbenchTitleTranslated = StandardFunctions.TranslationsMapping(
+                WorkBenchName, WorkbenchTitle
+            )
+            List_Workbenches.append(
+                [
+                    str(WorkBenchName),
+                    IconName,
+                    WorkbenchTitle,
+                    ToolbarItems,
+                    WorkbenchTitleTranslated,
+                ]
+            )
         except Exception:
             pass
 
@@ -162,12 +162,8 @@ def CreateCache(RestartFreeCAD=False):
                 )
 
     # Add the custom toolbars
-    CustomToolbars = List_ReturnCustomToolbars()
-    for Customtoolbar in CustomToolbars:
-        StringList_Toolbars.append(Customtoolbar)
-    CustomToolbars = List_ReturnCustomToolbars_Global()
-    for Customtoolbar in CustomToolbars:
-        StringList_Toolbars.append(Customtoolbar)
+    StringList_Toolbars.extend(List_ReturnCustomToolbars())
+    StringList_Toolbars.extend(List_ReturnCustomToolbars_Global())
 
     # --- Commands ----------------------------------------------------------------------------------------------
     #
@@ -200,7 +196,7 @@ def CreateCache(RestartFreeCAD=False):
                         if CommandNamesItem == Item:
                             IsInList = True
                             break
-                    if IsInList is False:
+                    if not IsInList:
                         CommandNames.append(Item)
         # Add commands that are not in any toolbars
         for commandNamesItem in Gui.listCommands():
@@ -215,7 +211,7 @@ def CreateCache(RestartFreeCAD=False):
                 if commandNamesItem == "Std_Workbench":
                     continue
 
-                if inList is False:
+                if not inList:
                     CommandNames.append([CommandName_2, "Standard"])
             else:
                 inList = False
@@ -223,7 +219,7 @@ def CreateCache(RestartFreeCAD=False):
                     if CommandName[0] == commandNamesItem:
                         inList = True
 
-                if inList is False:
+                if not inList:
                     WorkBench = ""
                     for WorkBenchName in List_Workbenches:
                         if CommandName_2.startswith(WorkBenchName[0]) or WorkBenchName[
@@ -232,7 +228,7 @@ def CreateCache(RestartFreeCAD=False):
                             WorkBench = WorkBenchName[0]
                             break
                     Icon = StandardFunctions.returnQiCons_Commands(CommandName_2)
-                    if Icon is not None or Icon.isNull() is False:
+                    if Icon and not Icon.isNull():
                         CommandNames.append([CommandName_2, WorkBench])
 
     # Go through the list

@@ -323,7 +323,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                         "Warning",
                     )
         except Exception as e:
-            if Parameters.DEBUG_MODE is True:
+            if Parameters.DEBUG_MODE:
                 StandardFunctions.Print(f"{e.with_traceback(e.__traceback__)}", "Warning")
             pass
 
@@ -812,7 +812,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.form.HelpButton.setMinimumHeight(self.form.Close.minimumHeight())
 
         # Hide the correct ok and cancel button when the form is docked or not
-        if Parameters.DOCKED_DIALOGS is True:
+        if Parameters.DOCKED_DIALOGS:
             self.form.Close.setHidden(True)
             self.form.Cancel.setHidden(True)
             self.form.UpdateJson.setHidden(True)
@@ -820,12 +820,12 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.form.DockedButtonFrame.setHidden(True)
 
         # Disable and hide the restore button if the backup function is disabled
-        if Parameters.ENABLE_BACKUP is False:
-            self.form.RestoreJson.setDisabled(True)
-            self.form.RestoreJson.setHidden(True)
-        else:
+        if Parameters.ENABLE_BACKUP:
             self.form.RestoreJson.setEnabled(True)
             self.form.RestoreJson.setVisible(True)
+        else:
+            self.form.RestoreJson.setDisabled(True)
+            self.form.RestoreJson.setHidden(True)
 
         # Set the icon and size for the refresh button
         self.form.LoadWB.setIcon(Gui.getIcon("view-refresh"))
@@ -842,15 +842,15 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         # Create the data file
         CacheFunctions.CreateCache()
 
-        if RestartFreeCAD is False:
+        if RestartFreeCAD:
             # Show the dialog again
-            self.closeSignal.emit()
-        if RestartFreeCAD is True:
             result = StandardFunctions.RestartDialog(includeIcons=True)
             if result == "yes":
                 StandardFunctions.restart_freecad()
             else:
                 self.closeSignal.emit()
+        else:
+            self.closeSignal.emit()
         # show the dialog
         self.form.show()
         return
@@ -872,7 +872,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.LoadControls()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         return
 
@@ -890,7 +890,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.LoadControls()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         return
 
@@ -907,7 +907,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.LoadControls()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         return
 
@@ -950,7 +950,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             JsonFile.close()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         return
 
@@ -980,7 +980,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     Size=Size,
                 )
             except Exception as e:
-                if Parameters.DEBUG_MODE is True:
+                if Parameters.DEBUG_MODE:
                     raise (e)
                 else:
                     continue
@@ -1001,7 +1001,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.LoadControls()
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
         return
 
@@ -1031,7 +1031,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     Size=Size,
                 )
             except Exception as e:
-                if Parameters.DEBUG_MODE is True:
+                if Parameters.DEBUG_MODE:
                     raise (e)
                 else:
                     continue
@@ -1050,7 +1050,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.form.show()
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -1061,7 +1061,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.form.CustomPanelPositionRight.setChecked(False)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
     def on_CustomPanelPositionRight_IS_clicked(self):
@@ -1070,7 +1070,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.form.CustomPanelPositionLeft.setChecked(False)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
     # endregion---------------------------------------------------------------------------------------
@@ -1174,7 +1174,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.List_QuickAccessCommands = Order
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
         return
 
@@ -1442,7 +1442,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 ListWidgetItem.setData(Qt.ItemDataRole.UserRole, Toolbar)
                 self.form.PanelAvailable_CP.addItem(ListWidgetItem)
 
-                if setCustomToolbarSelector_CP is True:
+                if setCustomToolbarSelector_CP:
                     self.form.CustomToolbarSelector_CP.setCurrentText(
                         translate("FreeCAD Ribbon", "New")
                     )
@@ -1460,7 +1460,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem(ListWidget=self.form.PanelSelected_CP, Up=True)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -1469,7 +1469,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem(ListWidget=self.form.PanelSelected_CP, Up=False)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -1527,7 +1527,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                     self.form.PanelSelected_CP.addItem(ListWidgetItem)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -1571,7 +1571,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 if CommandItem[0] == ListWidgetItem.data(Qt.ItemDataRole.UserRole)[1]:
                     MenuName = CommandItem[2].replace("&", "")
                     # For FC 1.1.0, use commandnames instead of menu names
-                    if StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version) is True:
+                    if StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version):
                         MenuName = CommandItem[0]
 
                     # Get the original toolbar
@@ -1623,7 +1623,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             )
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -1694,7 +1694,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.form.PanelName_CP.setText(CustomPanelTitle.split("_")[0])
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         else:
             return
@@ -1770,7 +1770,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                             )
 
                             # Enable the apply button
-                            if self.CheckChanges() is True:
+                            if self.CheckChanges():
                                 self.form.UpdateJson.setEnabled(True)
 
                             # Set the current text to new
@@ -1782,7 +1782,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                             return
                 except Exception as e:
-                    if Parameters.DEBUG_MODE is True:
+                    if Parameters.DEBUG_MODE:
                         raise (e)
         return
 
@@ -1862,7 +1862,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.form.CustomToolbarSelector_NP.setCurrentText(f"{NewPanelTitle}, {WorkBenchTitle}")
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         return
 
@@ -1944,7 +1944,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                     ] = orderList
 
                                 # Enable the apply button
-                                if self.CheckChanges() is True:
+                                if self.CheckChanges():
                                     self.form.UpdateJson.setEnabled(True)
 
                                 # Set the current text to new
@@ -1955,7 +1955,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                                 return
                 except Exception as e:
-                    if Parameters.DEBUG_MODE is True:
+                    if Parameters.DEBUG_MODE:
                         raise (e)
 
         return
@@ -2065,7 +2065,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                         ShadowList.append(f"{CommandName}")
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         else:
             return
@@ -2098,7 +2098,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         )
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2111,7 +2111,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         )
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2120,7 +2120,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem(ListWidget=self.form.NewPanel_NP, Up=True)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2129,7 +2129,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem(ListWidget=self.form.NewPanel_NP, Up=False)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2214,7 +2214,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.newDDBList.append(DropDownName)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2280,7 +2280,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                         self.form.ControlName_DDB.clear()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2313,7 +2313,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         )
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2325,7 +2325,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         )
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2334,7 +2334,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem(ListWidget=self.form.NewControl_DDB, Up=True)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2343,7 +2343,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem(ListWidget=self.form.NewControl_DDB, Up=False)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -2405,14 +2405,13 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     or Newpanel[0] != "Views"
                 ):
                     wbToolbars.append(Newpanel[0])
-                PreferredToolbar = Parameters_Ribbon.Settings.GetIntSetting("Preferred_view")
-                if PreferredToolbar == 0:
+                if Parameters.PREFERRED_VIEW == 0:
                     if Newpanel[0] == "Individual views":
                         wbToolbars.append(Newpanel[0])
-                if PreferredToolbar == 1:
+                elif Parameters.PREFERRED_VIEW == 1:
                     if Newpanel[0] == "View":
                         wbToolbars.append(Newpanel[0])
-                if PreferredToolbar == 2:
+                else:
                     if Newpanel[0] == "Views - Ribbon":
                         wbToolbars.append(Newpanel[0])
 
@@ -2826,10 +2825,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                             MenuName.replace("&", ""),
                         )
                         # If it is a newer version of FreeCAD. use the commandname instead
-                        if (
-                            StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version)
-                            is True
-                        ):
+                        if StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version):
                             CommandWidgetItem.setData(
                                 Qt.ItemDataRole.UserRole,
                                 CommandName,
@@ -2997,7 +2993,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         )
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
         return
 
@@ -3005,13 +3001,13 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.Remove_TableItem(self.form.CommandTable_RD, "separator")
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
 
     def on_IconOnly_RD_clicked(self):
-        if self.form.IconOnly_RD.isChecked() is True:
+        if self.form.IconOnly_RD.isChecked():
             toolbar = self.form.PanelList_RD.currentData(Qt.ItemDataRole.UserRole)
             if toolbar not in self.List_IconOnly_Toolbars:
                 self.List_IconOnly_Toolbars.append(toolbar)
@@ -3022,7 +3018,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 self.List_IconOnly_Toolbars.remove(toolbar)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -3042,7 +3038,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.on_PanelOrder_RD_changed()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
 
         return
@@ -3128,10 +3124,10 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             self.on_PanelOrder_RD_changed()
 
             # Enable the apply button
-            if self.CheckChanges() is True:
+            if self.CheckChanges():
                 self.form.UpdateJson.setEnabled(True)
         except Exception as e:
-            if Parameters.DEBUG_MODE is True:
+            if Parameters.DEBUG_MODE:
                 print(e)
             pass
 
@@ -3141,7 +3137,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem_CommandTable(self.form.CommandTable_RD, True)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -3150,7 +3146,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.MoveItem_CommandTable(self.form.CommandTable_RD, False)
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -3160,7 +3156,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.on_PanelOrder_RD_changed()
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -3170,7 +3166,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.on_PanelOrder_RD_changed()
 
         # Enable the apply button
-        if self.CheckChanges() is True:
+        if self.CheckChanges():
             self.form.UpdateJson.setEnabled(True)
 
         return
@@ -3307,7 +3303,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.form.close()
 
         # show the restart dialog
-        if self.IsChanged is True:
+        if self.IsChanged:
             result = StandardFunctions.RestartDialog(includeIcons=True)
             if result == "yes":
                 StandardFunctions.restart_freecad()
@@ -3427,9 +3423,9 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     ListWidgetItem_IW.setIcon(Icon)
 
                 # Add the ListWidgetItem to the correct ListWidget
-                if IsSelected is False:
+                if not IsSelected:
                     self.form.WorkbenchesAvailable_IW.addItem(ListWidgetItem_IW)
-                if IsSelected is True:
+                else:
                     # Add the listwidgetItem to all workbench listwidgets
                     self.form.WorkbenchesSelected_IW.addItem(ListWidgetItem_IW)
                     self.form.WorkbenchList_IS.addItem(ListWidgetItem_IW.clone())
@@ -3516,7 +3512,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 ListWidgetItem = QListWidgetItem()
                 ListWidgetItem.setText(ToolbarTransLated.replace("&", ""))
                 ListWidgetItem.setData(Qt.ItemDataRole.UserRole, Toolbar[0])
-                if IsSelected is False:
+                if not IsSelected:
                     IsInlist = False
                     for i in range(self.form.PanelsToExclude_EP.count()):
                         ToolbarItem = self.form.PanelsToExclude_EP.item(i)
@@ -3525,7 +3521,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                     if IsInlist is False:
                         self.form.PanelsToExclude_EP.addItem(ListWidgetItem)
-                if IsSelected is True:
+                else:
                     IsInlist = False
                     for i in range(self.form.PanelsExcluded_EP.count()):
                         ToolbarItem = self.form.PanelsExcluded_EP.item(i)
@@ -3552,7 +3548,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             if len(CommandItem) == 5:
                 MenuNameTranslated = CommandItem[4].replace("&", "")  # Translated
             # Remove numbers from dropdown child commands
-            if MenuNameTranslated.split(" ")[0].isdigit() is True:
+            if MenuNameTranslated.split(" ")[0].isdigit():
                 MenuNameTranslated = MenuNameTranslated.split(" ")[1]
             # Remove any suffix frp, the menuname
             if CommandName.endswith("_ddb"):
@@ -3602,7 +3598,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                 IsSelected = True
 
                         if Icon is not None and Icon.isNull() is False:
-                            if IsSelected is False:
+                            if not IsSelected:
                                 IsInlist = False
                                 for i in range(self.form.CommandsAvailable_QC.count()):
                                     Command = self.form.CommandsAvailable_QC.item(i)
@@ -3611,7 +3607,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                                 if IsInlist is False:
                                     self.form.CommandsAvailable_QC.addItem(ListWidgetItem)
-                            if IsSelected is True:
+                            else:
                                 IsInlist = False
                                 for i in range(self.form.CommandsSelected_QC.count()):
                                     Command = self.form.CommandsSelected_QC.item(i)
@@ -3692,7 +3688,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                             f"{CustomPanelTitle.replace('_custom', '')}, {WorkBenchTitle}"
                         )
         except Exception as e:
-            if Parameters.DEBUG_MODE is True:
+            if Parameters.DEBUG_MODE:
                 StandardFunctions.Print(f"{e.with_traceback(e.__traceback__)}", "Warning")
             pass
 
@@ -3716,7 +3712,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     )
             self.on_CustomToolbarSelector_NP_activated()
         except Exception as e:
-            if Parameters.DEBUG_MODE is True:
+            if Parameters.DEBUG_MODE:
                 StandardFunctions.Print(f"{e.with_traceback(e.__traceback__)}", "Warning")
             pass
         # Add a "new" item to the dropdown list and set it current
@@ -3749,7 +3745,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                         CommandName = self.List_Commands[i2][0]
 
                 # If it is a newer version of FreeCAD. use the commandname instead
-                if StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version) is True:
+                if StandardFunctions.checkFreeCADVersion(Parameters.FreeCAD_Version):
                     CommandName = self.form.CommandTable_RD.item(row, 0).data(
                         Qt.ItemDataRole.UserRole
                     )
@@ -3845,7 +3841,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     "icon": IconName,
                 }
             except Exception as e:
-                if Parameters.DEBUG_MODE is True:
+                if Parameters.DEBUG_MODE:
                     StandardFunctions.Print(f"{CommandName}, {WorkBenchName} {e}", "Warning")
                 continue
         return
@@ -4008,7 +4004,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             DestinationItem = QListWidgetItem(Value)
 
             IsInList = False
-            if CheckIfInList is True:
+            if CheckIfInList:
                 for i in range(DestinationWidget.count()):
                     item = DestinationWidget.item(i)
                     if item.data(Qt.ItemDataRole.UserRole) == DestinationItem.data(
@@ -4047,11 +4043,11 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         # remove the current row
         Item = ListWidget.takeItem(Row)
         # Add the just removed row, one row higher on the list
-        if Up is True:
+        if Up:
             ListWidget.insertItem(Row - 1, Item)
             # Set the moved row, to the current row
             ListWidget.setCurrentRow(Row - 1)
-        if Up is False:
+        else:
             ListWidget.insertItem(Row + 1, Item)
             # Set the moved row, to the current row
             ListWidget.setCurrentRow(Row + 1)
@@ -4061,16 +4057,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
     def MoveItem_CommandTable(self, CommandTable: QTableWidget, Up: bool = True):
         row = CommandTable.currentRow()
         column = CommandTable.currentColumn()
-        if Up is False:
-            if row < CommandTable.rowCount() - 1:
-                CommandTable.insertRow(row + 2)
-                for i in range(CommandTable.columnCount()):
-                    item = CommandTable.takeItem(row, i)
-                    CommandTable.setItem(row + 2, i, item)
-                    CommandTable.setCurrentCell(row + 2, column)
-                CommandTable.removeRow(row)
-
-        if Up is True:
+        if Up:
             if row > 0:
                 CommandTable.insertRow(row - 1)
                 for i in range(CommandTable.columnCount()):
@@ -4078,6 +4065,14 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                     CommandTable.setItem(row - 1, i, item)
                     CommandTable.setCurrentCell(row - 1, column)
                 CommandTable.removeRow(row + 1)
+        else:
+            if row < CommandTable.rowCount() - 1:
+                CommandTable.insertRow(row + 2)
+                for i in range(CommandTable.columnCount()):
+                    item = CommandTable.takeItem(row, i)
+                    CommandTable.setItem(row + 2, i, item)
+                    CommandTable.setCurrentCell(row + 2, column)
+                CommandTable.removeRow(row)
 
         # Update the data with the (text)changed
         self.UpdateData()
@@ -4488,7 +4483,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
     def LoadControls(self, ClearLists=True):
         # Clear all listWidgets
-        if ClearLists is True:
+        if ClearLists:
             self.form.WorkbenchList_IS.clear()
             self.form.Panels_IS.clear()
             #
@@ -4671,7 +4666,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                             return Icon
 
                 if Icon is None or (Icon is not None and Icon.isNull()):
-                    if Parameters.DEBUG_MODE is True:
+                    if Parameters.DEBUG_MODE:
                         StandardFunctions.Print(
                             f"An icon retrieved from data file for '{CommandName}'"
                         )
@@ -4699,7 +4694,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                                     return Icon
                         except Exception as e:
-                            if Parameters.DEBUG_MODE is True:
+                            if Parameters.DEBUG_MODE:
                                 StandardFunctions.Print(
                                     f"Trying the get an icon for {CommandName}\n{e}",
                                     "Warning",
@@ -4759,7 +4754,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 if len(ToolbarCommand) == 5:
                     MenuNameTranslated = ToolbarCommand[4].replace("&", "")  # Translated
                 # Remove numbers from dropdown child commands
-                if MenuNameTranslated.split(" ")[0].isdigit() is True:
+                if MenuNameTranslated.split(" ")[0].isdigit():
                     MenuNameTranslated = MenuNameTranslated.split(" ")[1]
                 # Remove any suffix from the menuname
                 if CommandName.endswith("_ddb"):
@@ -4794,7 +4789,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                 else:
                                     WorkbenchTitle = WorkBenchName
                             except Exception as e:
-                                if Parameters.DEBUG_MODE is True:
+                                if Parameters.DEBUG_MODE:
                                     print(e)
                                 return
                             try:
@@ -4818,7 +4813,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                                     if Icon is not None and Icon.isNull() is False:
                                         Allow = False
-                                        if SingleCommandsOnly is True:
+                                        if SingleCommandsOnly:
                                             command = Gui.Command.get(CommandName)
                                             if (
                                                 command is not None
@@ -4827,7 +4822,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                                 Allow = True
 
                                         if SingleCommandsOnly is False or (
-                                            SingleCommandsOnly is True and Allow is True
+                                            SingleCommandsOnly and Allow
                                         ):
                                             # Check if there is an Icon. if not add a replacement
                                             if Icon.pixmap(64, 64).toImage().bytesPerLine() < 256:
@@ -4853,7 +4848,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                                 # Add the commandName to the shadowList
                                                 ShadowList.append(CommandName)
                                     if Icon.isNull() or Icon is None:
-                                        if Parameters.DEBUG_MODE is True:
+                                        if Parameters.DEBUG_MODE:
                                             StandardFunctions.Print(
                                                 f"{CommandName} has no icon!", "Warning"
                                             )
@@ -4867,12 +4862,12 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             # Go through the stored listwidget items and add them to the listwidget
             for item in self.listWidgetItems:
                 Allow = False
-                if SingleCommandsOnly is True:
+                if SingleCommandsOnly:
                     CommandName = item.data(Qt.ItemDataRole.UserRole)
                     command = Gui.Command.get(CommandName)
                     if command is not None and len(command.getAction()) == 1:
                         Allow = True
-                if SingleCommandsOnly is False or (SingleCommandsOnly is True and Allow is True):
+                if SingleCommandsOnly is False or (SingleCommandsOnly and Allow):
                     try:
                         ListWidget_Commands.addItem(item.clone())
                     except Exception:
@@ -4926,7 +4921,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 if len(ToolbarCommand) == 5:
                     MenuNameTranslated = ToolbarCommand[4].replace("&", "")  # Translated
                 # Remove numbers from dropdown child commands
-                if MenuNameTranslated.split(" ")[0].isdigit() is True:
+                if MenuNameTranslated.split(" ")[0].isdigit():
                     MenuNameTranslated = MenuNameTranslated.split(" ")[1]
                 # Remove any suffix frp, the menuname
                 if CommandName.endswith("_ddb"):
@@ -4959,7 +4954,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                 try:
                                     WorkbenchTitle = Gui.getWorkbench(WorkBenchName).MenuText
                                 except Exception as e:
-                                    if Parameters.DEBUG_MODE is True:
+                                    if Parameters.DEBUG_MODE:
                                         print(e)
                                     return
                                 if (
@@ -4981,7 +4976,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                                     if Icon is not None and Icon.isNull() is False:
                                         Allow = False
-                                        if SingleCommandsOnly is True:
+                                        if SingleCommandsOnly:
                                             command = Gui.Command.get(CommandName)
                                             if (
                                                 command is not None
@@ -4990,7 +4985,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                                                 Allow = True
 
                                         if SingleCommandsOnly is False or (
-                                            SingleCommandsOnly is True and Allow is True
+                                            SingleCommandsOnly and Allow
                                         ):
                                             # Check if there is an Icon. if not add a replacement
                                             if Icon.pixmap(64, 64).toImage().bytesPerLine() < 256:
@@ -5028,14 +5023,12 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
                             if Icon is not None and Icon.isNull() is False:
                                 Allow = False
-                                if SingleCommandsOnly is True:
+                                if SingleCommandsOnly:
                                     command = Gui.Command.get(CommandName)
                                     if command is not None and len(command.getAction()) == 1:
                                         Allow = True
 
-                                if SingleCommandsOnly is False or (
-                                    SingleCommandsOnly is True and Allow is True
-                                ):
+                                if not SingleCommandsOnly or (SingleCommandsOnly and Allow):
                                     # Check if there is an Icon. if not add a replacement
                                     if Icon.pixmap(64, 64).toImage().bytesPerLine() < 256:
                                         # Icon = Gui.getIcon("preferences-workbenches")
@@ -5049,12 +5042,12 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             # Go through the stored listwidget items and add them to the listwidget
             for item in self.listWidgetItems:
                 Allow = False
-                if SingleCommandsOnly is True:
+                if SingleCommandsOnly:
                     CommandName = item.data(Qt.ItemDataRole.UserRole)
                     command = Gui.Command.get(CommandName)
                     if command is not None and len(command.getAction()) == 1:
                         Allow = True
-                if SingleCommandsOnly is False or (SingleCommandsOnly is True and Allow is True):
+                if SingleCommandsOnly is False or (SingleCommandsOnly and Allow):
                     try:
                         ListWidget_Commands.addItem(item.clone())
                     except Exception:
@@ -5232,27 +5225,23 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         AutoHide=True,
         HideOnly=False,
         FinishMessage="",
-        progressBar: QProgressBar = None,
+        progressBar: QProgressBar | None = None,
         maximum=0,
     ):
         if HideOnly is False:
             activeWorkbench = Gui.activeWorkbench().name()
-            progressBar.show()
             lst = Gui.listWorkbenches()
-            progressBar.setMaximum(len(lst) - 1 + maximum)
+            if progressBar is not None:
+                progressBar.show()
+                progressBar.setMaximum(len(lst) - 1 + maximum)
             for i, wb in enumerate(lst):
                 msg = (
-                    translate("FreeCAD Ribbon", "Loading workbench ")
-                    + wb
-                    + " ("
-                    + str(i + 1)
-                    + "/"
-                    + str(len(lst))
-                    + ")"
+                    translate("FreeCAD Ribbon", "Loading workbench ") + f"{wb} ({i + 1}/{len(lst)})"
                 )
                 print(msg)
-                progressBar.setFormat(msg)
-                progressBar.setValue(i)
+                if progressBar is not None:
+                    progressBar.setFormat(msg)
+                    progressBar.setValue(i)
                 Gui.updateGui()  # Probably slower with this, because it redraws the entire GUI with all tool buttons changed etc. but allows the label to actually be updated, and it looks nice and gives a quick overview of all the workbenches…
                 try:
                     Gui.activateWorkbench(wb)
@@ -5261,7 +5250,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             if FinishMessage != "":
                 print(FinishMessage)
             Gui.activateWorkbench(activeWorkbench)
-        if AutoHide is True or HideOnly is True:
+        if progressBar is not None and (AutoHide or HideOnly):
             progressBar.close()
 
     # endregion---------------------------------------------------------------------------------------
