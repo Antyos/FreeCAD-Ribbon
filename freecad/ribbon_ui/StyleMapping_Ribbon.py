@@ -21,6 +21,7 @@
 # *************************************************************************
 import os
 import sys
+from typing import Literal
 
 import FreeCADGui as Gui
 from PySide.QtGui import QColor, QIcon, QPixmap
@@ -201,7 +202,7 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
         if key == currentStyleSheet:
             IsInList = True
             break
-    if IsInList is False:
+    if not IsInList:
         currentStyleSheet = "none"
 
     ListIcons = [
@@ -222,10 +223,10 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
     try:
         if ControlName == "TitleBarButtons":
             return StyleMapping["Stylesheets"][ControlName]
-        if isIcon is True:
+        if isIcon:
             result = None
             PixmapName = ""
-            if Parameters.CUSTOM_ICONS_ENABLED is True or ShowCustomIcon is True:
+            if Parameters.CUSTOM_ICONS_ENABLED or ShowCustomIcon:
                 PixmapName = StyleMapping["Stylesheets"][ControlName]
             else:
                 PixmapName = ""
@@ -243,19 +244,20 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
         if isIcon is False:
             result = ""
 
-            if Parameters.CUSTOM_COLORS_ENABLED is True:
+            if Parameters.CUSTOM_COLORS_ENABLED:
                 result = StyleMapping["Stylesheets"][ControlName]
             if (
-                Parameters.BUTTON_BACKGROUND_ENABLED is False
-                and Parameters.USE_OVERLAY is True
+                not Parameters.BUTTON_BACKGROUND_ENABLED
+                and Parameters.USE_OVERLAY
                 and ControlName == "Background_Color"
-                and IgnoreOverlay is False
+                and not IgnoreOverlay
             ):
                 result = "none"
-            if result == "" or result is None:
-                result = StyleMapping_default["Stylesheets"][currentStyleSheet][ControlName]
-                if result == "" or result is None:
-                    result = StyleMapping_default["Stylesheets"][""][ControlName]
+            if not result:
+                result = (
+                    StyleMapping_default["Stylesheets"][currentStyleSheet][ControlName]
+                    or StyleMapping_default["Stylesheets"][""][ControlName]
+                )
             return result
     except Exception as e:
         print(e)
@@ -263,7 +265,7 @@ def ReturnStyleItem(ControlName, ShowCustomIcon=False, IgnoreOverlay=False):
 
 
 def ReturnStyleSheet(
-    control,
+    control: Literal["toolbutton", "applicationbutton", "dragindicator"],
     radius="2px",
     padding_left="0px",
     padding_top="0px",
@@ -280,7 +282,6 @@ def ReturnStyleSheet(
         applicationbutton,
         DragIndicator,
     """
-    StyleSheet = ""
     try:
         BorderColor = ReturnStyleItem("Border_Color")
         BackgroundColor = ReturnStyleItem("Background_Color")
@@ -296,111 +297,75 @@ def ReturnStyleSheet(
         AppBorder_2 = BorderColor
         if BackgroundColor is not None and BorderColor is not None:
             if control.lower() == "toolbutton":
-                if Parameters.BORDER_TRANSPARANT is True:
+                if Parameters.BORDER_TRANSPARANT:
                     BorderColor = BackgroundColor
-                StyleSheet = (
-                    """QLayout {spacing: 0px}"""
-                    + """QToolButton, QLabel {
+                return f"""QLayout {{spacing: 0px}}
+                    QToolButton, QLabel {{
                         margin: 0px;
                         padding: 0px;
-                        color: """
-                    + FontColor
-                    + """;background: """
-                    + BackgroundColor
-                    + """;padding-left: """
-                    + padding_left
-                    + """;padding-top: """
-                    + padding_top
-                    + """;padding-bottom: """
-                    + padding_bottom
-                    + """;padding-right: """
-                    + padding_right
-                    + """;spacing: 0px;}"""
-                    + """QToolButton::menu-button {
+                        color: {FontColor};
+                        background: {BackgroundColor};
+                        padding-left: {padding_left};
+                        padding-top: {padding_top};
+                        padding-bottom: {padding_bottom};
+                        padding-right: {padding_right};
+                        spacing: 0px;
+                    }}
+                    QToolButton::menu-button {{
                         top: 0px;
                         right: 0px;
                         margin: 0px;
                         padding: 0px;
-                        width: """
-                    + width
-                    + """;
-                        border-radius: """
-                    + radius
-                    + """px;"""
-                    + """padding: 0px;
+                        width: {width};
+                        border-radius: {radius}px;
+                        padding: 0px;
                         subcontrol-origin: padding;
                         subcontrol-position: center right;
-                    }"""
-                    + """QToolButton:hover, QLabel:hover {
+                    }}
+                    QToolButton:hover, QLabel:hover {{
                         margin: 0px;
-                        padding: 0px;"""
-                    + """;background: """
-                    + HoverColor
-                    + """;padding-left: """
-                    + padding_left
-                    + """;padding-top: """
-                    + padding_top
-                    + """;padding-bottom: """
-                    + padding_bottom
-                    + """;padding-right: """
-                    + padding_right
-                    + """;border: 0.5px solid"""
-                    + BorderColor
-                    + """;}"""
-                    + "QToolButton:disabled, QLabel:disabled {background-color: "
-                    + ReturnStyleItem("Background_Color")
-                    + ";border: 0.5px solid"
-                    + BorderColor
-                    + ";}"
-                )
-                return StyleSheet
+                        padding: 0px;
+                        background: {HoverColor};
+                        padding-left: {padding_left};
+                        padding-top: {padding_top};
+                        padding-bottom: {padding_bottom};
+                        padding-right: {padding_right};
+                        border: 0.5px solid{BorderColor};
+                    }}
+                    QToolButton:disabled, QLabel:disabled {{
+                        background-color: {ReturnStyleItem("Background_Color")};
+                        border: 0.5px solid{BorderColor};
+                    }}"""
             if control.lower() == "applicationbutton":
-                StyleSheet = (
-                    """QToolButton {
-                        border-radius : """
-                    + radius
-                    + """;padding-left: """
-                    + padding_left
-                    + """;padding-top: """
-                    + padding_top
-                    + """;padding-bottom: """
-                    + padding_bottom
-                    + """;padding-right: """
-                    + padding_right
-                    + """;background-color: """
-                    + AppColor_1
-                    + """;border: 0.5px solid"""
-                    + BorderColor
-                    + """;color: """
-                    + FontColor
-                    + """;}"""
-                    + """QToolButton:hover { """
-                    + """border: 2px solid"""
-                    + BorderColor
-                    + """;border-radius : """
-                    + radius
-                    + """;}"""
-                    + """\n\nQToolTip {
-                    background-color: #FFFFE1;
-                    color: black;
-                    border: black solid 1px;
-                    border-radius: 2px;
-                    }"""
-                )
+                return f"""QToolButton {{
+                        border-radius : {radius};
+                        padding-left: {padding_left};
+                        padding-top: {padding_top};
+                        padding-bottom: {padding_bottom};
+                        padding-right: {padding_right};
+                        background-color: {AppColor_1};
+                        border: 0.5px solid{BorderColor};
+                        color: {FontColor};
+                    }}QToolButton:hover {{
+                        border: 2px solid{BorderColor};
+                        border-radius : {radius};
+                    }}
+
+                    QToolTip {{
+                        background-color: #FFFFE1;
+                        color: black;
+                        border: black solid 1px;
+                        border-radius: 2px;
+                    }}"""
             if control.lower() == "dragindicator":
-                StyleSheet = (
-                    """QLabel {
-                        background-color: """
-                    + HoverColor
-                    + """;border-radius: """
-                    + radius
-                    + """px;"""
-                    + """;}"""
-                )
-            return StyleSheet
+                return f"""QLabel {{
+                        background-color: {HoverColor};
+                        border-radius: {radius}px;
+                    }}"""
+            return ""
     except Exception as e:
         print(e)
-        return StyleSheet
+        return ""
 
 
 def GetIconBasedOnTag(ControlName=""):
