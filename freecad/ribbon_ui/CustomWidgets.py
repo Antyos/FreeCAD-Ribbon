@@ -92,7 +92,7 @@ class CustomControls(RibbonToolButton):
         setWordWrap=True,
         ElideMode=False,
         MaxNumberOfLines=2,
-        Menu: QMenu = None,
+        Menu: QMenu | None = None,
         MenuButtonSpace=10,
         parent=None,
         ButtonStyle=RibbonButtonStyle.Small,
@@ -224,7 +224,7 @@ class CustomControls(RibbonToolButton):
         TextAlignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter,
         setWordWrap=True,
         MaxNumberOfLines=2,
-        Menu: QMenu = None,
+        Menu: QMenu | None = None,
         MenuButtonSpace=10,
         parent=None,
     ):
@@ -364,11 +364,7 @@ class CustomControls(RibbonToolButton):
         if Menu is not None and len(Menu.actions()) > 1:
             # Define a menu
             Menu.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            StyleSheet_Menu = (
-                "QMenu::item, QMenu::menuAction, QMenuBar::item, QMenu>QLabel {font-size: "
-                + str(Parameters.FONTSIZE_MENUS)
-                + "px;}"
-            )
+            StyleSheet_Menu = f"QMenu::item, QMenu::menuAction, QMenuBar::item, QMenu>QLabel {{font-size: {Parameters.FONTSIZE_MENUS}px;}}"
             Menu.setStyleSheet(StyleSheet_Menu)
             ArrowButton.setMenu(Menu)
             ArrowButton.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
