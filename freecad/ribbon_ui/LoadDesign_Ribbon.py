@@ -22,7 +22,6 @@
 import json
 import os
 import shutil
-import sys
 import webbrowser
 from datetime import datetime, timedelta
 
@@ -56,18 +55,7 @@ from .Standard_Functions_Ribbon import CommandInfoCorrections
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "resources", "packages")
 pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
 
 
 # Get the main window of FreeCAD
@@ -3263,9 +3251,9 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         self.form.setWindowFlags(Qt.WindowType.WindowStaysOnBottomHint)
         # get the path for the Json file
         JsonPath = ConfigDirectory
-        JsonFile = os.path.join(JsonPath, "RibbonStructure.json")
+        JsonFile = JsonPath / "RibbonStructure.json"
 
-        BackupFile = os.path.join(JsonPath, "RibbonStructure_default.json")
+        BackupFile = JsonPath / "RibbonStructure_default.json"
 
         # Add a warning message with an option to back out
         message = translate(
@@ -3979,19 +3967,17 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
         JsonFile = Parameters.RIBBON_STRUCTURE_JSON
 
         # create a copy and rename it as a backup if enabled
-        if Parameters.ENABLE_BACKUP is True:
+        if Parameters.ENABLE_BACKUP:
             Suffix = datetime.now().strftime("%Y%m%d_%H%M%S")
             BackupName = f"RibbonStructure_{Suffix}.json"
-            if os.path.exists(pathBackup) is False:
-                os.makedirs(pathBackup)
-            BackupFile = os.path.join(pathBackup, BackupName)
+            pathBackup.mkdir(parents=True, exist_ok=True)
+            BackupFile = pathBackup / BackupName
             shutil.copy(JsonFile, BackupFile)
 
         # Writing to sample.json
         with open(JsonFile, "w") as outfile:
             json.dump(self.Dict_RibbonCommandPanel, outfile, indent=4)
 
-        outfile.close()
         return
 
     def ListWidgetItems(self, ListWidget: QListWidget) -> list:
@@ -4431,8 +4417,8 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
     def CheckChanges(self):
         # Open the JsonFile and load the data
-        JsonFile = open(os.path.join(ConfigDirectory, "RibbonStructure.json"))
-        data = json.load(JsonFile)
+        with open(ConfigDirectory / "RibbonStructure.json", "r") as JsonFile:
+            data = json.load(JsonFile)
 
         IsChanged = False
         if "ignoredToolbars" in data:
@@ -4464,7 +4450,6 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
             if data["workbenches"] != self.Dict_RibbonCommandPanel["workbenches"]:
                 IsChanged = True
 
-        JsonFile.close()
         self.IsChanged = IsChanged
         return IsChanged
 
@@ -4690,9 +4675,9 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                         StandardFunctions.Print(
                             f"An icon retrieved from data file for '{CommandName}'"
                         )
-                    DataFile = os.path.join(ConfigDirectory, "RibbonDataFile.dat")
+                    DataFile = ConfigDirectory / "RibbonDataFile.dat"
 
-                    if os.path.exists(DataFile) is True:
+                    if DataFile.exists():
                         Data = {}
                         # read ribbon structure from JSON file
                         with open(DataFile, "r") as file:

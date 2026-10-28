@@ -36,18 +36,6 @@ from .resources.ui import LicenseForm_ui
 
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "resources", "packages")
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
 
 
 class LoadDialog(LicenseForm_ui.Ui_Dialog):
@@ -58,7 +46,7 @@ class LoadDialog(LicenseForm_ui.Ui_Dialog):
         super(LoadDialog, self).__init__()
 
         # # this will create a Qt widget from our ui file
-        self.form = Gui.PySideUic.loadUi(os.path.join(pathUI, "LicenseForm.ui"))
+        self.form = Gui.PySideUic.loadUi(Parameters.UI_LOCATION / "LicenseForm.ui")
 
         # Make sure that the dialog stays on top
         # self.form.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
@@ -85,7 +73,7 @@ class LoadDialog(LicenseForm_ui.Ui_Dialog):
             branch = "-"
 
         # Add a logo
-        pixmap = QPixmap(os.path.join(pathIcons, "FreecadNew.svg"))
+        pixmap = QPixmap(Parameters.ICON_LOCATION / "FreecadNew.svg")
         self.form.LogoHolder.setFixedSize(pixmap.height(), pixmap.width())
         self.form.LogoHolder.setPixmap(pixmap)
 

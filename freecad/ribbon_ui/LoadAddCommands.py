@@ -21,7 +21,6 @@
 # *************************************************************************
 import json
 import os
-import sys
 import webbrowser
 from datetime import datetime, timedelta
 
@@ -42,27 +41,14 @@ from PySide.QtWidgets import (
 
 import FreeCAD as App
 
-from . import CacheFunctions, FCBinding, Parameters_Ribbon, Serialize_Ribbon
+from . import CacheFunctions, FCBinding, Serialize_Ribbon
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .CustomWidgets import QuickAccessToolButton
 from .Parameters_Ribbon import Parameters
 from .resources.packages.pyqtribbon.panel import RibbonPanel
 from .resources.ui import AddCommands_ui
 
-# Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "resources", "packages")
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
 
 # Get the main window from FreeCAD
 mw = Gui.getMainWindow()
@@ -158,8 +144,8 @@ class LoadDialog(AddCommands_ui.Ui_Form):
         self.form.move(Rectangle.topLeft())
 
         # Check if there is a datafile. if not, ask the user to create one.
-        DataFile = os.path.join(ConfigDirectory, "RibbonDataFile.dat")
-        if os.path.exists(DataFile) is False:
+        DataFile = ConfigDirectory / "RibbonDataFile.dat"
+        if not DataFile.exists():
             Question = translate(
                 "FreeCAD Ribbon",
                 "The first time, a data file must be generated!\n"

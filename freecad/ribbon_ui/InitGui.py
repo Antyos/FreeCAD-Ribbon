@@ -46,22 +46,8 @@ def QT_TRANSLATE_NOOP(context, text):
     return text
 
 
-global pathIcons
-
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(FCBinding.__file__), "resources", "packages")
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
 
 
 # Set the wait cursor

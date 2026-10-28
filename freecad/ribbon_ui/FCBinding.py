@@ -23,7 +23,6 @@ import json
 import os
 import platform
 import shutil
-import sys
 import traceback
 import webbrowser
 from datetime import datetime
@@ -119,22 +118,7 @@ from .resources.packages.pyqtribbon.toolbutton import RibbonButtonStyle, RibbonT
 from .Standard_Functions_Ribbon import CommandInfoCorrections
 
 # import Ribbon. This contains the ribbon commands for FreeCAD
-
-# Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "resources", "packages")
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
-
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()
@@ -4587,8 +4571,7 @@ class ModernMenu(RibbonBar):
             translate("FreeCAD Ribbon", "Open the backup directory")
         )
         # If the backup folder doesn't exists, create it
-        if os.path.exists(Parameters.BACKUP_LOCATION) is False:
-            os.makedirs(Parameters.BACKUP_LOCATION)
+        Parameters.BACKUP_LOCATION.mkdir(parents=True, exist_ok=True)
         OpenBackupFolder.triggered.connect(
             lambda: StandardFunctions.OpenDirectory(Parameters.BACKUP_LOCATION)
         )

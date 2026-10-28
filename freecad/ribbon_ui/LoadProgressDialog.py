@@ -28,21 +28,6 @@ from PySide.QtCore import Qt
 from .Parameters_Ribbon import Parameters
 from .resources.ui import ui_ProgressDialog
 
-# Get the resources
-ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "resources", "packages")
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
-
 
 class LoadDialog(ui_ProgressDialog.Ui_dialog):
     Text = ""
@@ -52,7 +37,7 @@ class LoadDialog(ui_ProgressDialog.Ui_dialog):
         super(LoadDialog, self).__init__()
 
         # # this will create a Qt widget from our ui file
-        self.form = Gui.PySideUic.loadUi(os.path.join(pathUI, "ProgressDialog.ui"))
+        self.form = Gui.PySideUic.loadUi(os.path.join(Parameters.UI_LOCATION, "ProgressDialog.ui"))
 
         # Make sure that the dialog stays on top
         # self.form.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)

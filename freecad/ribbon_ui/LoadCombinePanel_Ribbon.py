@@ -19,8 +19,6 @@
 # * USA                                                                   *
 # *                                                                       *
 # *************************************************************************
-import os
-import sys
 
 import FreeCADGui as Gui
 from PySide.QtCore import Qt
@@ -28,16 +26,6 @@ from PySide.QtCore import Qt
 from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
 from .resources.ui import CombinePanel_ui
-
-# Get the resources
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathBackup)
 
 
 class LoadDialog(CombinePanel_ui.Ui_Form):
@@ -50,12 +38,11 @@ class LoadDialog(CombinePanel_ui.Ui_Form):
         mw = Gui.getMainWindow()
 
         # # this will create a Qt widget from our ui file
-        self.form = Gui.PySideUic.loadUi(os.path.join(pathUI, "CombinePanel.ui"))
+        self.form = Gui.PySideUic.loadUi(Parameters.UI_LOCATION / "CombinePanel.ui")
 
         # Get the address of the repository address
-        PackageXML = os.path.join(os.path.dirname(__file__), "package.xml")
         self.ReproAdress = StandardFunctions.ReturnXML_Value(
-            PackageXML, "url", "type", "repository"
+            "package.xml", "url", "type", "repository"
         )
 
         # Make sure that the dialog stays on top

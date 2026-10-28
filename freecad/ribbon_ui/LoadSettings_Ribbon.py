@@ -41,22 +41,6 @@ from . import Standard_Functions_Ribbon as StandardFunctions
 from .Parameters_Ribbon import Parameters
 from .resources.ui import Settings_ui
 
-# Get the resources
-ConfigDirectory = Parameters.CONFIG_DIR
-pathIcons = Parameters.ICON_LOCATION
-pathStylSheets = Parameters.STYLESHEET_LOCATION
-pathUI = Parameters.UI_LOCATION
-pathScripts = os.path.join(ConfigDirectory, "Scripts")
-pathPackages = os.path.join(os.path.dirname(__file__), "resources", "packages")
-pathBackup = Parameters.BACKUP_LOCATION
-sys.path.append(ConfigDirectory)
-sys.path.append(pathIcons)
-sys.path.append(pathStylSheets)
-sys.path.append(pathUI)
-sys.path.append(pathPackages)
-sys.path.append(pathBackup)
-
-
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()
 
@@ -192,7 +176,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         QApplication.processEvents(QEventLoop.ProcessEventsFlag.AllEvents)
 
         # # this will create a Qt widget from our ui file
-        self.form = Gui.PySideUic.loadUi(os.path.join(pathUI, "Settings.ui"))
+        self.form = Gui.PySideUic.loadUi(Parameters.UI_LOCATION / "Settings.ui")
 
         # Getthe main window
         mw = Gui.getMainWindow()
@@ -1078,7 +1062,7 @@ class LoadDialog(Settings_ui.Ui_Settings, QObject):
         )
         # if File is not nothing, set the icon in settings and on the button
         if File is not None and File != "" and os.path.isfile(File):
-            Parameters_Ribbon.Settings.SetStringSetting("ScrollLeftButton_Tab", File)
+            Parameters.SCROLL_LEFT_BUTTON_TAB = File
             self.form.Tab_Scroll_Left.setIcon(QIcon(QPixmap(File)))
             self.form.Tab_Scroll_Left.setIconSize(
                 QSize(
