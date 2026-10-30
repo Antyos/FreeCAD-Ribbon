@@ -24,6 +24,7 @@ import os
 import shutil
 import webbrowser
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import FreeCADGui as Gui
 from FreeCAD.Qt import translate
@@ -56,7 +57,7 @@ from .Standard_Functions_Ribbon import CommandInfoCorrections
 # Get the resources
 ConfigDirectory = Parameters.CONFIG_DIR
 pathBackup = Parameters.BACKUP_LOCATION
-
+freecad_icon_dir = Path(__file__).parent / "resources" / "freecad_icons"
 
 # Get the main window of FreeCAD
 mw: QMainWindow = Gui.getMainWindow()
@@ -228,12 +229,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
                 if isInList is False:
                     # Check first if the icon can be loaded quickly
                     Icon = QIcon()
-                    FreeCAD_Icons = os.path.abspath(
-                        os.path.join(
-                            os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"
-                        )
-                    )
-                    for root, dirs, files in os.walk(FreeCAD_Icons):
+                    for root, dirs, files in os.walk(freecad_icon_dir):
                         for fileName in files:
                             if CommandItem[0] == fileName.split(".")[0]:
                                 Icon = QIcon()
@@ -4602,10 +4598,7 @@ class LoadDialog(Design_ui.Ui_Form, QObject):
 
         # If the icon is still empty, try to get the icon from file
         if Icon is None or (Icon is not None and Icon.isNull()):
-            FreeCAD_Icons = os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons")
-            )
-            for root, dirs, files in os.walk(FreeCAD_Icons):
+            for root, dirs, files in os.walk(freecad_icon_dir):
                 for fileName in files:
                     if CommandName in fileName:
                         Icon = QIcon()

@@ -130,6 +130,7 @@ timer = QTimer()
 Parameters.WriteMissingSettings()
 
 package_root = Path(__file__).parents[3]
+freecad_icon_dir = Path(__file__).parent / "resources" / "freecad_icons"
 
 
 class ModernMenu(RibbonBar):
@@ -5416,12 +5417,7 @@ class ModernMenu(RibbonBar):
                 action = None
                 Icon = QIcon()
                 if Command is not None:
-                    FreeCAD_Icons = os.path.abspath(
-                        os.path.join(
-                            os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"
-                        )
-                    )
-                    for root, dirs, files in os.walk(FreeCAD_Icons):
+                    for root, dirs, files in os.walk(freecad_icon_dir):
                         for fileName in files:
                             if CommandName in fileName:
                                 Icon.addPixmap(QPixmap(os.path.join(root, fileName)))
@@ -5675,10 +5671,7 @@ class ModernMenu(RibbonBar):
         Icon = QIcon()
         # Try to get the icon from file
         if Icon is None or (Icon is not None and Icon.isNull()):
-            FreeCAD_Icons = os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons")
-            )
-            for root, dirs, files in os.walk(FreeCAD_Icons):
+            for root, dirs, files in os.walk(freecad_icon_dir):
                 for fileName in files:
                     if CommandName in fileName:
                         Icon = QIcon()
@@ -6580,12 +6573,7 @@ class ModernMenu(RibbonBar):
                             text = action.text()
 
                         # Try to get the icon from the stored freecad icons
-                        FreeCAD_Icons = os.path.abspath(
-                            os.path.join(
-                                os.path.dirname(__file__), "..", "..", "Resources", "FreeCAD Icons"
-                            )
-                        )
-                        for root, dirs, files in os.walk(FreeCAD_Icons):
+                        for root, dirs, files in os.walk(freecad_icon_dir):
                             for fileName in files:
                                 if CommandName in fileName:
                                     Icon.addPixmap(QPixmap(os.path.join(root, fileName)))
