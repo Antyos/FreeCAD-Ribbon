@@ -3,12 +3,12 @@
 An Ribbon UI for FreeCAD, based on the PyQtRibbon library (https://github.com/haiiliin/pyqtribbon).
 This ribbon is based the work of Geolta (https://github.com/geolta/FreeCAD-Ribbon) and HakanSeven (https://github.com/HakanSeven12/Modern-UI) for the Modern-UI workbench.
 
-![Screenshot_light](./Resources/Images/Screenshot.png)
-![Closeup_Light](./Resources/Images/Screenshot_CloseUP.png)
+![Screenshot_light](./docs/media/Screenshot.png)
+![Closeup_Light](./docs/media/Screenshot_CloseUP.png)
 
 
-![Screenshot_Dark](./Resources/Images/Screenshot_DarkMode.png)
-![Closeup_Dark](./Resources/Images/Screenshot_DarkMode_CloseUP.png)
+![Screenshot_Dark](./docs/media/Screenshot_DarkMode.png)
+![Closeup_Dark](./docs/media/Screenshot_DarkMode_CloseUP.png)
 
 The FreeCAD ribbon provides the following functions and features:
 
@@ -36,10 +36,10 @@ In the [Road map](https://github.com/APEbbers/FreeCAD-Ribbon/wiki/07-%E2%80%90-R
 Please note that the road map is a live document that can change over time.
 
 ## Videos of the beta functionalities:
-  * [Add a new panel](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/Resources/Videos/Add%20a%20newPanel%20-%201.webm)
-  * [Customize the quick access toolbar](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/Resources/Videos/Customise%20quick%20toolbar%20-%201.webm)
-  * [Combine panels](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/Resources/Videos/Combine%20panels%20-%201.webm)
-  * [Create a dropdown button](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/Resources/Videos/Create%20dropdown%20button%20-%201.webm)
+  * [Add a new panel](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/docs/media/Add%20a%20newPanel%20-%201.webm)
+  * [Customize the quick access toolbar](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/docs/media/Customise%20quick%20toolbar%20-%201.webm)
+  * [Combine panels](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/docs/media/Combine%20panels%20-%201.webm)
+  * [Create a dropdown button](https://codeberg.org/apebbers/FreeCAD-Ribbon/src/branch/Develop/docs/media/Create%20dropdown%20button%20-%201.webm)
 
 ## Installation
 
@@ -63,7 +63,7 @@ Note: See [wiki page/installation](https://github.com/APEbbers/FreeCAD-Ribbon/wi
    1. If have the "Save and Restore" addon installed, you can use it to restore all toolbars.
       Go to "Tools" and click on "Save and restore". a Dialog will show.
       Click on "Restore toolbars".  
-      ![SaveAndRestore](https://codeberg.org/apebbers/SaveAndRestore/raw/branch/Develop/Resources/Images/Dialog%20-%201.png)  
+      ![SaveAndRestore](https://codeberg.org/apebbers/SaveAndRestore/raw/branch/Develop/docs/media/Dialog%20-%201.png)  
 1. Use a macro to restore the toolbars:
    1. Create a new macro (Macro menu -> macros...-> create macro)
    1. Paste this code in to the new macro.
