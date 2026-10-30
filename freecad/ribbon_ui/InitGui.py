@@ -176,5 +176,7 @@ except Exception as e:
     if Parameters.DEBUG_MODE:
         print(f"{e.with_traceback(e.__traceback__)}, 0")
 
-Gui.addLanguagePath(str(SourceDir / "translations"))
+resource_dir = Path(__file__).parent / "resources"
+
+Gui.addLanguagePath(str(resource_dir / "translations"))
 Gui.updateLocale()

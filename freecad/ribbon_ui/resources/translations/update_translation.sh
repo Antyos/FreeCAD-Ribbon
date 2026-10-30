@@ -65,7 +65,7 @@ is_locale_supported() {
 update_locale() {
 	local locale="$1"
 	local u=${locale:+_} # Conditional underscore
-	FILES="../freecad/ribbon_ui/*.py ../freecad/ribbon_ui/resources/ui/*.ui"
+	FILES="../../*.py ../ui/*.ui"
 
 	# NOTE: Execute the right commands depending on:
 	# - if it's a locale file or the main, agnostic one
